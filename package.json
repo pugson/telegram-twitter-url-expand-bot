@@ -1,11 +1,10 @@
 {
   "name": "telegram-twitter-url-expand-bot",
   "version": "1.0.0",
-  "description": "Replaces twitter.com links with vxtwitter.com links.",
+  "description": "Replaces twitter.com links with vxtwitter.com links in Telegram chats.",
   "main": "index.js",
   "repository": "https://github.com/pugson/telegram-twitter-url-expand-bot.git",
   "author": "Wojtek Witkowski <hi@wojtek.im>",
-  "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.1",
     "tgfancy": "^0.13.0"
