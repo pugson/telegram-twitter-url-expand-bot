@@ -7,7 +7,6 @@
   "author": "Wojtek Witkowski <hi@wojtek.im>",
   "dependencies": {
     "dotenv": "^16.0.1",
-    "quickmetrics": "^1.0.2",
     "tgfancy": "^0.13.0"
   },
   "type": "module"
