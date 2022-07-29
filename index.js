@@ -1,10 +1,12 @@
 import * as dotenv from "dotenv";
 import Tgfancy from "tgfancy";
+import Quickmetrics from "quickmetrics";
 
 dotenv.config();
 
 const TWITTER_URL = /https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/gim;
 const bot = new Tgfancy(process.env.BOT_TOKEN, { polling: true });
+const qm = new Quickmetrics(process.env.QUICKMETRICS_TOKEN);
 
 // 1. Match Twitter links
 bot.onText(TWITTER_URL, (msg, match, error) => {
@@ -46,6 +48,7 @@ bot.on("callback_query", async (answer) => {
   if (link === "no") {
     // 6a. Delete the bot reply so it doesn’t spam the chat
     bot.deleteMessage(chatId, msgId);
+    qm.event("twitter.link.cancel", 1);
     return;
   }
 
@@ -56,4 +59,6 @@ bot.on("callback_query", async (answer) => {
     chat_id: chatId,
     message_id: msgId,
   });
+
+  qm.event("twitter.link.expand", 1);
 });
