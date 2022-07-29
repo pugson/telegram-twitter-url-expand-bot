@@ -7,6 +7,7 @@
   "author": "Wojtek Witkowski <hi@wojtek.im>",
   "dependencies": {
     "dotenv": "^16.0.1",
+    "node-fetch": "^3.2.9",
     "tgfancy": "^0.13.0"
   },
   "type": "module"

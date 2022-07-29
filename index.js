@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv";
 import Tgfancy from "tgfancy";
+import fetch from "node-fetch";
 
 dotenv.config();
 
