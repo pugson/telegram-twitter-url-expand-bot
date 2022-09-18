@@ -51,12 +51,30 @@ bot.on("callback_query", async (answer) => {
     return;
   }
 
+  if (link === "undo") {
+    // 6b. Undo the link expansion and delete the bot reply
+    bot.deleteMessage(chatId, msgId);
+    fetch(`https://qckm.io?m=twitter.link.undo&v=1&k=${process.env.QUICKMETRICS_TOKEN}`);
+    return;
+  }
+
   const expandedLink = link.replace("twitter.com", "vxtwitter.com");
 
-  // 6b. Replace the reply with an expanded Tweet link
+  // 7. Replace the reply with an expanded Tweet link
   bot.editMessageText(expandedLink, {
     chat_id: chatId,
     message_id: msgId,
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "↩️ Undo",
+            callback_data: "undo",
+            // callback_data has a 64 byte limit!!!
+          },
+        ],
+      ],
+    },
   });
 
   fetch(`https://qckm.io?m=twitter.link.expand&v=1&k=${process.env.QUICKMETRICS_TOKEN}`);
