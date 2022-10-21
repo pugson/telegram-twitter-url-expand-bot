@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
 import Tgfancy from "tgfancy";
 import fetch from "node-fetch";
+import { fetchTweet } from "./tweet-parser.js";
 
 dotenv.config();
 
@@ -58,24 +59,39 @@ bot.on("callback_query", async (answer) => {
     return;
   }
 
-  const expandedLink = link.replace("twitter.com", "vxtwitter.com");
-
-  // 7. Replace the reply with an expanded Tweet link
-  bot.editMessageText(expandedLink, {
-    chat_id: chatId,
-    message_id: msgId,
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "↩️ Undo",
-            callback_data: "undo",
-            // callback_data has a 64 byte limit!!!
-          },
+  const expandTweet = (url) => {
+    bot.editMessageText(url, {
+      chat_id: chatId,
+      message_id: msgId,
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "↩️ Undo",
+              callback_data: "undo",
+              // callback_data has a 64 byte limit!!!
+            },
+          ],
         ],
-      ],
-    },
-  });
+      },
+    });
 
-  fetch(`https://qckm.io?m=twitter.link.expand&v=1&k=${process.env.QUICKMETRICS_TOKEN}`);
+    fetch(`https://qckm.io?m=twitter.link.expand&v=1&k=${process.env.QUICKMETRICS_TOKEN}`);
+  };
+
+  // 7. Check if tweet has multiple images
+  fetchTweet(link)
+    .then((hasImages) => {
+      const replacement = hasImages ? "c.vxtwitter.com" : "vxtwitter.com";
+      const expandedLink = link.replace("twitter.com", replacement);
+      // 8a. Replace the reply with an expanded Tweet link
+      expandTweet(expandedLink);
+    })
+    .catch((error) => {
+      console.error(error);
+
+      // 8b. Fallback to vxtwitter.com if the API call fails
+      const expandedLink = link.replace("twitter.com", "vxtwitter.com");
+      expandTweet(expandedLink);
+    });
 });
