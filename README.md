@@ -1,6 +1,6 @@
 # Twitter Link Expander — Telegram Bot
 
-![banner-2](https://user-images.githubusercontent.com/6843656/182035588-e6ab4eda-6361-44b6-9b8c-ff660f18eabf.png)
+![banner-3](https://user-images.githubusercontent.com/6843656/197365594-275256ed-2ae2-4256-98d5-d5c88772004e.png)
 
 Some Twitter links stopped expanding inside Telegram which made it extremely annoying when you wanted to send a banger tweet to your homies in the group chat. This bot replies with an alternative [vxtwitter.com](https://vxtwitter.com) URL which has a working embed for multiple photos and even includes inline video.
 
