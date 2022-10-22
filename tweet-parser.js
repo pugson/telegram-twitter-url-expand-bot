@@ -11,11 +11,6 @@ export const fetchTweet = async (url) => {
     });
     const data = await response.json();
     const hasImages = data.extended_entities && data.extended_entities.media.length > 1;
-
-    if (hasImages) {
-      fetch(`https://qckm.io?m=twitter.link.multipleImages&v=1&k=${process.env.QUICKMETRICS_TOKEN}`);
-    }
-
     return hasImages;
   } catch (error) {
     console.error(url, error);
