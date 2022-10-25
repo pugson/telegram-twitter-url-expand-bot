@@ -6,7 +6,7 @@ import { trackEvent } from "./analytics.js";
 dotenv.config();
 
 const TWITTER_INSTAGRAM_URL =
-  /https?:\/\/(?:www\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+))/gim;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+))/gim;
 const bot = new Tgfancy(process.env.BOT_TOKEN, { polling: true });
 
 // Match Twitter or Instagram links
@@ -27,7 +27,7 @@ bot.onText(TWITTER_INSTAGRAM_URL, (msg) => {
           [
             {
               text: "✅ Yes",
-              callback_data: link,
+              callback_data: link.replace("mobile.", ""),
               // callback_data has a 64 byte limit!!!
             },
             {
