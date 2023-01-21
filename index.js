@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 import Tgfancy from "tgfancy";
 import { fetchTweet } from "./tweet-parser.js";
-import { trackEvent } from "./analytics.js";
 
 dotenv.config();
 
@@ -51,14 +50,12 @@ bot.on("callback_query", async (answer) => {
   if (link.startsWith("no.")) {
     // Delete the bot reply so it doesn’t spam the chat
     bot.deleteMessage(chatId, msgId);
-    trackEvent(isInstagram ? "instagram.link.cancel" : "twitter.link.cancel");
     return;
   }
 
   if (link.startsWith("undo.")) {
     // Undo the link expansion and delete the bot reply
     bot.deleteMessage(chatId, msgId);
-    trackEvent(isInstagram ? "instagram.link.undo" : "twitter.link.undo");
     return;
   }
 
@@ -78,8 +75,6 @@ bot.on("callback_query", async (answer) => {
         ],
       },
     });
-
-    trackEvent(isInstagram ? "instagram.link.expand" : "twitter.link.expand");
   };
 
   if (isInstagram) {
@@ -94,7 +89,6 @@ bot.on("callback_query", async (answer) => {
         const newLink = link.replace("twitter.com", replacement);
         // Replace the reply with an expanded Tweet link
         expandLink(newLink);
-        if (hasImages) trackEvent("twitter.link.multipleImages");
       })
       .catch((error) => {
         console.error(error);

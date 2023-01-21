@@ -31,7 +31,7 @@ https://user-images.githubusercontent.com/6843656/182036672-5b566200-cba4-462d-b
 
 🙅‍♂️ **No, I will never do that.** 🙅‍♂️
 
-While it is technically possible through the Bot API, I simply do not have the time or desire to snoop on your shit. The only thing I keep track of is counting anonymous events when buttons are clicked or if a tweet has multiple images, to see if people are finding this bot helpful.
+While it is technically possible through the Bot API, I simply do not have the time or desire to snoop on your shit. The only thing I will keep track of is counting anonymous events when buttons are clicked, bot commands are used, a tweet has multiple images (etc.) to monitor stats to see if people are finding this bot useful.
 
 <img width="593" alt="image" src="https://user-images.githubusercontent.com/6843656/197364188-850c89fa-1186-4f44-a6b1-be6798c88f6e.png">
 
