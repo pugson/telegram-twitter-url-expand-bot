@@ -1,10 +1,14 @@
 # Twitter Link Expander — Telegram Bot
 
-![banner-3](https://user-images.githubusercontent.com/6843656/197365594-275256ed-2ae2-4256-98d5-d5c88772004e.png)
+![banner-4@1x](https://user-images.githubusercontent.com/6843656/214643610-8876165d-c2fc-484e-aea8-489fcd731b93.png)
 
 Some Twitter links stopped expanding inside Telegram which made it extremely annoying when you wanted to send a banger tweet to your homies in the group chat. This bot replies with an alternative [vxtwitter.com](https://vxtwitter.com) URL which has a working embed for multiple photos and even includes inline video.
 
-## ✨🆕✨ Also supports Instagram links!
+## ✨🆕✨ Also supports TikTok!
+
+The bot can now expand TikTok videos inside Telegram. It will reply with a link to [vxtiktok.com](https://vxtiktok.com) which has a working embed for TikTok videos so you can see them play inline inside Telegram.
+
+## Also supports Instagram!
 
 You can now expand Instagram links inside Telegram with this bot. It will reply with a link to [ddinstagram.com](https://ddinstagram.com) which has a working embed for multiple photos and even includes inline video. Works with regular Instagram Posts and Reels. Doesn’t work with Stories or Highlights yet.
 
@@ -22,7 +26,7 @@ https://user-images.githubusercontent.com/6843656/182036672-5b566200-cba4-462d-b
 
 1. Find it on Telegram as `@TwitterLinkExpanderBot` or click here: https://t.me/twitterlinkexpanderbot
 2. Add it to your group chat.
-3. Send a message that includes a tweet or instagram URL.
+3. Send a message that includes a tweet, TikTok, or Instagram URL.
 4. Click "Yes" or "No" when the bot replies to your message.
 
 <img width="253" alt="image" src="https://user-images.githubusercontent.com/6843656/181651653-a6421462-2321-4344-8605-f5f32edc5047.png">
@@ -39,5 +43,5 @@ While it is technically possible through the Bot API, I simply do not have the t
 
 This bot wouldn't be possible without the following people and projects. Huge thanks to:
 
-- [@dylanpdx](https://github.com/dylanpdx) for creating [BetterTwitFix](https://github.com/dylanpdx/BetterTwitFix) / [vxtwitter.com](https://vxtwitter.com)
+- [@dylanpdx](https://github.com/dylanpdx) for creating [BetterTwitFix](https://github.com/dylanpdx/BetterTwitFix) / [vxtwitter.com](https://vxtwitter.com) and [vxtiktok.com](https://vxtiktok.com)
 - [@Wikidepia](https://github.com/Wikidepia) for creating [InstaFix](https://github.com/Wikidepia/InstaFix) / [ddinstagram.com](https://ddinstagram.com)
