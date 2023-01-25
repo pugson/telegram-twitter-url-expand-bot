@@ -1,7 +1,7 @@
 {
   "name": "telegram-twitter-url-expand-bot",
-  "version": "2.0.2",
-  "description": "Replaces Twitter & Instagram links in Telegram chats with an expanded preview.",
+  "version": "3.0.0",
+  "description": "Replaces Twitter, Instagram, and TikTok links in Telegram chats with an expanded preview and inline video.",
   "main": "index.js",
   "repository": "https://github.com/pugson/telegram-twitter-url-expand-bot.git",
   "author": "pugson <hi@wojtek.im>",
