@@ -5,7 +5,7 @@ import { fetchTweet } from "./tweet-parser.js";
 dotenv.config();
 
 const TWITTER_INSTAGRAM_TIKTOK_URL =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)|tiktok\.com\/@(\w+)\/video\/(\d+))/gim;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)|tiktok\.com\/@(\w+)\/video\/(\d+)|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+))/gim
 
 const bot = new Tgfancy(process.env.BOT_TOKEN, { polling: true });
 
