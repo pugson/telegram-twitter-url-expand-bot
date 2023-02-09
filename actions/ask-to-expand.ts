@@ -1,4 +1,4 @@
-import { bot } from "../helpers/bot";
+import { bot } from "..";
 
 export const askToExpand = async (msg: any, chatId: string, link: string, isInstagram: boolean) => {
   const platform = isInstagram ? "Instagram post" : "Tweet";

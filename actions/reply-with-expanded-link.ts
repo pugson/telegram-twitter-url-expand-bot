@@ -1,6 +1,6 @@
+import { bot } from "..";
 import { trackEvent } from "../helpers/analytics";
-import { bot } from "../helpers/bot";
-import { isInstagram } from "../helpers/services";
+import { isInstagram } from "../helpers/platforms";
 
 export const expandLink = (url: string, chatId: string, msgId: number) => {
   const instagram = isInstagram(url);

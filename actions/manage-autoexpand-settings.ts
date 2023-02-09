@@ -1,8 +1,35 @@
+import { bot } from "..";
 import { trackEvent } from "../helpers/analytics";
 import { createSettings, getSettings, updateSettings } from "../helpers/api";
-import { bot } from "../helpers/bot";
+import { notifyAdmin } from "../helpers/notifier";
+import { deleteMessage } from "./delete-message";
 
 // Handle settings
+bot.onText(/^\/autoexpand/, async (msg: any) => {
+  // Get the current Chat ID
+  const chatId = msg.chat.id;
+  // const settings = await getSettings(chatId).then((data) => data);
+
+  try {
+    const settings = await getSettings(chatId);
+    console.log(settings);
+
+    // deleteMessage(msg, chatId);
+    bot.sendMessage(chatId, `✅ expand me daddy`);
+  } catch (error: any) {
+    console.error(error);
+    notifyAdmin(error);
+  }
+
+  // if (settings) {
+  //   if (!settings.autoexpand) {
+  //     updateSettings(settings.id, true);
+  //   }
+  // } else {
+  //   createSettings(chatId, true);
+  // }
+});
+
 bot.onText(/^\/autoexpandon/, async (msg: any) => {
   // Get the current Chat ID
   const chatId = msg.chat.id;

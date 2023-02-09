@@ -1,12 +1,16 @@
-// Generated with CLI
+import fetch from "isomorphic-unfetch";
 import { getXataClient } from "./xata";
+
+// @ts-ignore
+globalThis.fetch = fetch;
+
 const xata = getXataClient();
 
-export const getSettings = async (chatId: string) => {
+export const getSettings = async (chatId: number) => {
   try {
     const record = await xata.db.chats
       .filter({
-        chat_id: chatId,
+        chat_id: chatId.toString(),
       })
       .getMany();
     console.log(record);

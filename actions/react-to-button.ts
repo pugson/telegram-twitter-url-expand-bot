@@ -1,5 +1,5 @@
+import { bot } from "..";
 import { trackEvent } from "../helpers/analytics";
-import { bot } from "../helpers/bot";
 import { fetchTweet } from "../helpers/tweet-parser";
 import { expandLink } from "./reply-with-expanded-link";
 
@@ -45,4 +45,8 @@ bot.on("callback_query", async (answer: any) => {
         expandLink(newLink, chatId, msgId);
       });
   }
+
+  bot.answerCallbackQuery(msgId, {
+    text: "Link just got expanded mate...",
+  });
 });

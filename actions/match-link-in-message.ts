@@ -1,6 +1,6 @@
+import { bot } from "..";
 import { trackEvent } from "../helpers/analytics";
 import { getSettings, createSettings } from "../helpers/api";
-import { bot } from "../helpers/bot";
 import { LINK_REGEX } from "../helpers/link-regex";
 import { askToExpand } from "./ask-to-expand";
 import { showBotActivity } from "./show-bot-activity";
