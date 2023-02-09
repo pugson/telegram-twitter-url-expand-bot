@@ -2,7 +2,7 @@ import { trackEvent } from "../helpers/analytics";
 import { bot } from "../helpers/bot";
 import { isInstagram } from "../helpers/services";
 
-export const expandLink = (url, chatId, msgId) => {
+export const expandLink = (url: string, chatId: string, msgId: number) => {
   const instagram = isInstagram(url);
   // TODO: if autoexpand is enabled, do not include undo option and don’t reply to a deleted message
   // reply_to_message_id: null ??

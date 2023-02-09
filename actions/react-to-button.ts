@@ -1,10 +1,10 @@
 import { trackEvent } from "../helpers/analytics";
 import { bot } from "../helpers/bot";
 import { fetchTweet } from "../helpers/tweet-parser";
-import { expandLink } from "./4-reply-with-expanded-link";
+import { expandLink } from "./reply-with-expanded-link";
 
 // React to inline keyboard reply
-bot.on("callback_query", async (answer) => {
+bot.on("callback_query", async (answer: any) => {
   const chatId = answer.message.chat.id;
   const msgId = answer.message.message_id;
   const link = answer.data;

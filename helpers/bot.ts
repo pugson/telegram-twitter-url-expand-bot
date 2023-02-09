@@ -1,4 +1,7 @@
-import Tgfancy from "tgfancy";
+import TelegramBot from "node-telegram-bot-api";
 
-export const bot = new Tgfancy(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
-export const sendMessage = (bot.sendMessage as Function) || (() => {});
+if (!process.env.TELEGRAM_BOT_TOKEN) {
+  throw new Error("TELEGRAM_BOT_TOKEN env variable is not defined");
+}
+
+export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });

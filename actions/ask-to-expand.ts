@@ -1,9 +1,9 @@
-import { sendMessage } from "../helpers/bot";
+import { bot } from "../helpers/bot";
 
-export const askToExpand = async (msg, chatId, link, isInstagram) => {
+export const askToExpand = async (msg: any, chatId: string, link: string, isInstagram: boolean) => {
   const platform = isInstagram ? "Instagram post" : "Tweet";
 
-  sendMessage(chatId, `Expand this ${platform}?`, {
+  bot.sendMessage(chatId, `Expand this ${platform}?`, {
     reply_to_message_id: msg.message_id,
     reply_markup: {
       inline_keyboard: [
