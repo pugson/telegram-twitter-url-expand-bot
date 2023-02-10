@@ -8,7 +8,6 @@ bot.on("callback_query", async (answer: any) => {
   const chatId = answer.message.chat.id;
   const msgId = answer.message.message_id;
 
-  console.log("react-to-button");
   // const link = answer.data;
   // const isInstagram = link.includes("instagram");
 

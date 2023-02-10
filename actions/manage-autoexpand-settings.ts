@@ -1,4 +1,4 @@
-import { ChatsRecord } from "../helpers/xata";
+import { getMemberCount } from "./get-member-count";
 import { Message } from "node-telegram-bot-api";
 import { bot } from "..";
 import { showBotActivity } from "./show-bot-activity";
@@ -79,6 +79,8 @@ bot.on("callback_query", async (answer: any) => {
   const chatId = answer.message.chat.id;
   const messageId = answer.message.message_id;
   const data = answer.data;
+
+  getMemberCount(chatId);
 
   if (data.includes("autoexpand:done")) {
     deleteMessage(chatId, messageId);

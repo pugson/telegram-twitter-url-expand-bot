@@ -44,7 +44,4 @@ bot.onText(LINK_REGEX, async (msg: any) => {
   //   // Iterate through all matched links in the message
   //   askToExpandAllLinksInMessage();
   // }
-
-  // delete later ↓
-  return;
 });

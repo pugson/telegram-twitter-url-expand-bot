@@ -1,5 +1,5 @@
 import fetch from "isomorphic-unfetch";
-import { Chats, ChatsRecord, getXataClient } from "./xata";
+import { Chats, getXataClient } from "./xata";
 
 // @ts-ignore
 globalThis.fetch = fetch;

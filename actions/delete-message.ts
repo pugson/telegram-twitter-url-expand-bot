@@ -1,4 +1,4 @@
-import { ChatId, MessageId } from "node-telegram-bot-api";
+import { ChatId } from "node-telegram-bot-api";
 import { bot } from "..";
 
 export const deleteMessage = async (chatId: ChatId, msgId: number) => {

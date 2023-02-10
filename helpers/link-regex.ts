@@ -1,4 +1,5 @@
-/** LINK_REGEX will match the following URL structures:
+/** This regex will match the following URL structures:
+ * 
  * Twitter status URLs, in the format:
     - https://www.twitter.com/username/status/status_id
     - https://twitter.com/username/status/status_id
@@ -23,6 +24,5 @@
     - https://en.tiktok.com/video_id
     - https://mobile.tiktok.com/@username/video/video_id
  */
-
 export const LINK_REGEX: RegExp =
   /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)|tiktok\.com\/@(\w+)\/video\/(\d+)|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+))/gim;
