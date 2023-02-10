@@ -1,9 +1,12 @@
-import axios from "axios";
+import { createEvent } from "./api";
 
 export const trackEvent = async (event: string, note?: string) => {
-  // axios
-  //   .get(`https://qckm.io?m=${event}&v=1&k=${process.env.QUICKMETRICS_TOKEN}`)
-  //   .catch((error) => console.error(error));
+  try {
+    const timestamp = new Date().toISOString();
+    const record = await createEvent(event, timestamp, note);
 
-  return;
+    return record;
+  } catch (error) {
+    console.error(error);
+  }
 };

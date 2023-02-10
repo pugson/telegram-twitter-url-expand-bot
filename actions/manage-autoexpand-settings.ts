@@ -1,71 +1,139 @@
+import { ChatsRecord } from "../helpers/xata";
+import { Message } from "node-telegram-bot-api";
 import { bot } from "..";
+import { showBotActivity } from "./show-bot-activity";
 import { trackEvent } from "../helpers/analytics";
 import { createSettings, getSettings, updateSettings } from "../helpers/api";
 import { notifyAdmin } from "../helpers/notifier";
+import { autoexpandMessageTemplate } from "../helpers/templates";
 import { deleteMessage } from "./delete-message";
 
-// Handle settings
-bot.onText(/^\/autoexpand/, async (msg: any) => {
-  // Get the current Chat ID
+const FIELD_NAME = "autoexpand";
+
+/**
+ * Manage autoexpand settings
+ */
+bot.onText(/^\/autoexpand/, async (msg: Message) => {
   const chatId = msg.chat.id;
-  // const settings = await getSettings(chatId).then((data) => data);
+  showBotActivity(chatId);
 
   try {
+    // Get autoexpand settings for this chat
     const settings = await getSettings(chatId);
-    console.log(settings);
 
-    // deleteMessage(msg, chatId);
-    bot.sendMessage(chatId, `✅ expand me daddy`);
+    if (settings) {
+      deleteMessage(chatId, msg.message_id);
+      // Reply with template and buttons to control autoexpand settings
+      bot.sendMessage(chatId, autoexpandMessageTemplate(settings.autoexpand), {
+        parse_mode: "MarkdownV2",
+        disable_notification: true,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: settings.autoexpand ? "❌ Disable" : "✅ Enable",
+                callback_data: `autoexpand:${settings.autoexpand ? "off" : "on"}`,
+              },
+              {
+                text: "✨ Done",
+                callback_data: "autoexpand:done",
+              },
+            ],
+          ],
+        },
+      });
+    } else {
+      deleteMessage(chatId, msg.message_id);
+      // Create default settings for this chat
+      createSettings(chatId, true);
+      // Reply with template and buttons to control autoexpand settings (default: on)
+      bot.sendMessage(chatId, autoexpandMessageTemplate(true), {
+        parse_mode: "MarkdownV2",
+        disable_notification: true,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "❌ Disable",
+                callback_data: `autoexpand:off`,
+              },
+              {
+                text: "✨ Done",
+                callback_data: "autoexpand:done",
+              },
+            ],
+          ],
+        },
+      });
+    }
   } catch (error: any) {
     console.error(error);
     notifyAdmin(error);
   }
-
-  // if (settings) {
-  //   if (!settings.autoexpand) {
-  //     updateSettings(settings.id, true);
-  //   }
-  // } else {
-  //   createSettings(chatId, true);
-  // }
 });
 
-bot.onText(/^\/autoexpandon/, async (msg: any) => {
-  // Get the current Chat ID
-  const chatId = msg.chat.id;
-  // const settings = await getSettings(chatId).then((data) => data);
+/**
+ * Handle button responses to /autoexpand
+ */
+bot.on("callback_query", async (answer: any) => {
+  const chatId = answer.message.chat.id;
+  const messageId = answer.message.message_id;
+  const data = answer.data;
 
-  // if (settings) {
-  //   if (!settings.autoexpand) {
-  //     updateSettings(settings.id, true);
-  //   }
-  // } else {
-  //   createSettings(chatId, true);
-  // }
+  if (data.includes("autoexpand:done")) {
+    deleteMessage(chatId, messageId);
+    return;
+  }
 
-  bot.sendMessage(chatId, `✅ I will auto-expand Twitter & Instagram links in this chat.`, {
-    reply_to_message_id: msg.message_id,
-  });
+  if (data.includes("autoexpand:off")) {
+    updateSettings(chatId, FIELD_NAME, false);
+    bot.editMessageText(autoexpandMessageTemplate(false), {
+      chat_id: chatId,
+      message_id: messageId,
+      parse_mode: "MarkdownV2",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "✅ Enable",
+              callback_data: `autoexpand:on`,
+            },
+            {
+              text: "✨ Done",
+              callback_data: "autoexpand:done",
+            },
+          ],
+        ],
+      },
+    });
+    trackEvent("settings.autoexpand.disable");
 
-  trackEvent("command.autoexpand.on");
-});
+    return;
+  }
 
-bot.onText(/^\/autoexpandoff/, async (msg: any) => {
-  // Get the current Chat ID
-  const chatId = msg.chat.id;
-  // const settings = await getSettings(chatId).then((data) => data);
+  if (data.includes("autoexpand:on")) {
+    updateSettings(chatId, FIELD_NAME, true);
+    bot.editMessageText(autoexpandMessageTemplate(true), {
+      chat_id: chatId,
+      message_id: messageId,
+      parse_mode: "MarkdownV2",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "❌ Disable",
+              callback_data: `autoexpand:off`,
+            },
+            {
+              text: "✨ Done",
+              callback_data: "autoexpand:done",
+            },
+          ],
+        ],
+      },
+    });
+    trackEvent("settings.autoexpand.enable");
 
-  // if (settings) {
-  //   if (settings.autoexpand) {
-  //     updateSettings(settings.id, false);
-  //   }
-  // } else {
-  //   createSettings(chatId, false);
-  // }
-
-  bot.sendMessage(chatId, `❌ I will no longer auto-expand Twitter & Instagram links in this chat.`, {
-    reply_to_message_id: msg.message_id,
-  });
-
-  trackEvent("command.autoexpand.off");
+    return;
+  }
 });

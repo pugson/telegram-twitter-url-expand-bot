@@ -25,9 +25,9 @@ const tables = [
   {
     name: "events",
     columns: [
-      { name: "name", type: "string", unique: true },
       { name: "timestamp", type: "datetime" },
       { name: "note", type: "string" },
+      { name: "name", type: "string", notNull: true, defaultValue: "" },
     ],
   },
 ] as const;

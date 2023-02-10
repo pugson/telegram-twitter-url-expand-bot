@@ -1,5 +1,5 @@
 import fetch from "isomorphic-unfetch";
-import { getXataClient } from "./xata";
+import { Chats, ChatsRecord, getXataClient } from "./xata";
 
 // @ts-ignore
 globalThis.fetch = fetch;
@@ -12,34 +12,55 @@ export const getSettings = async (chatId: number) => {
       .filter({
         chat_id: chatId.toString(),
       })
-      .getMany();
-    console.log(record);
+      .getFirst();
+
     return record;
   } catch (error) {
     console.error(error);
   }
 };
 
-export const createSettings = async (chatId: string, status: boolean) => {
+export const createSettings = async (chatId: number, status: boolean) => {
   try {
     const record = await xata.db.chats.create({
-      chat_id: chatId,
+      chat_id: chatId.toString(),
       autoexpand: status,
       release_notes_notification: false,
     });
-    console.log(record);
+
     return record;
   } catch (error) {
     console.error(error);
   }
 };
 
-export const updateSettings = async (id: string, status: boolean) => {
+export const updateSettings = async (id: number, property: keyof Chats, value: Chats[keyof Chats]) => {
   try {
-    const record = await xata.db.chats.update(id, {
-      autoexpand: status,
+    const record = await xata.db.chats
+      .filter({ chat_id: id.toString() })
+      .getFirst()
+      .then((record) => {
+        if (record) {
+          record.update({
+            [`${property}`]: value,
+          });
+        }
+      });
+
+    return record;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createEvent = async (name: string, timestamp: string, note?: string) => {
+  try {
+    const record = await xata.db.events.create({
+      name,
+      timestamp,
+      note,
     });
-    console.log(record);
+
     return record;
   } catch (error) {
     console.error(error);

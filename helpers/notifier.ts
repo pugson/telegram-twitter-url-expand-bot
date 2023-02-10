@@ -5,7 +5,7 @@ export const notifyAdmin = async (message: any): Promise<void> => {
   try {
     await axios.post(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       chat_id: process.env.ADMIN_TELEGRAM_ID,
-      text: message,
+      text: JSON.stringify(message),
     });
   } catch (error) {
     console.error(error);

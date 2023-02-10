@@ -10,4 +10,5 @@ export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: tr
 
 console.log("Bot started...");
 
+import "./actions/react-to-button";
 import "./actions/manage-autoexpand-settings";
