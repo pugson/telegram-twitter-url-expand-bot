@@ -1,4 +1,4 @@
-import "./admin";
+import "./permissions";
 import "./autoexpand";
-// import "./news";
-import "./source-code";
+// import "./changelog";
+import "./source";

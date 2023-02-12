@@ -2,9 +2,10 @@ import { Context } from "grammy";
 import { bot } from "../..";
 import { trackEvent } from "../../helpers/analytics";
 import { updateSettings } from "../../helpers/api";
-import { autoexpandMessageTemplate, permissionToDeleteMessageTemplate } from "../../helpers/templates";
+import { autoexpandMessageTemplate } from "../../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { getMemberCount } from "../actions/get-member-count";
+import { handleMissingPermissions } from "../actions/missing-permissions";
 
 const FIELD_NAME = "autoexpand";
 
@@ -72,8 +73,7 @@ bot.on("callback_query", async (ctx: Context) => {
       },
     });
 
-    // TODO: if bot does not have permission to delete message, reply with template
-    await ctx.reply(permissionToDeleteMessageTemplate);
+    handleMissingPermissions(ctx);
 
     trackEvent("settings.autoexpand.enable");
 

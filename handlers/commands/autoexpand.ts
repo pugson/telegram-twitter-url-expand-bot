@@ -2,9 +2,10 @@ import { bot } from "../..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../../helpers/api";
 import { notifyAdmin } from "../../helpers/notifier";
-import { autoexpandMessageTemplate, permissionToDeleteMessageTemplate } from "../../helpers/templates";
+import { autoexpandMessageTemplate } from "../../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
+import { handleMissingPermissions } from "../actions/missing-permissions";
 
 /**
  * Manage autoexpand settings
@@ -44,6 +45,10 @@ bot.command("autoexpand", async (ctx: Context) => {
           ],
         },
       });
+
+      if (settings.autoexpand) {
+        handleMissingPermissions(ctx);
+      }
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
@@ -68,8 +73,7 @@ bot.command("autoexpand", async (ctx: Context) => {
         },
       });
 
-      // TODO: if bot does not have permission to delete messages
-      await ctx.reply(permissionToDeleteMessageTemplate);
+      handleMissingPermissions(ctx);
     }
   } catch (error: any) {
     console.error(error);

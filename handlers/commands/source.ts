@@ -11,7 +11,7 @@ bot.command("source", async (ctx: Context) => {
   const msgId = ctx?.msg?.message_id;
 
   showBotActivity(chatId);
-  deleteMessage(msgId, chatId);
+  deleteMessage(chatId, msgId);
   ctx.reply(`This bot’s source code is available on GitHub: https://github.com/pugson/telegram-twitter-url-expand-bot`);
 
   trackEvent("command.sourceCode");
