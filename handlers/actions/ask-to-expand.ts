@@ -7,7 +7,7 @@ export const askToExpand = async (msg: any, chatId: string, link: string) => {
   const tiktok = isTikTok(link);
   const platform = insta ? "instagram" : tiktok ? "tiktok" : "twitter";
 
-  bot.sendMessage(chatId, manuallyExpandMessageTemplate(link), {
+  await bot.api.sendMessage(chatId, manuallyExpandMessageTemplate(link), {
     reply_to_message_id: msg.message_id,
     reply_markup: {
       inline_keyboard: [
