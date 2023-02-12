@@ -9,7 +9,7 @@ if (!process.env.TELEGRAM_BOT_TOKEN) {
 export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 
 import "./handlers/commands";
-import "./handlers/listeners";
+import "./handlers/callbacks";
 
 bot.start();
 console.info("Bot started...");

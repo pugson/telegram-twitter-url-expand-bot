@@ -2,7 +2,7 @@ import { bot } from "../..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../../helpers/api";
 import { notifyAdmin } from "../../helpers/notifier";
-import { autoexpandMessageTemplate } from "../../helpers/templates";
+import { autoexpandMessageTemplate, permissionToDeleteMessageTemplate } from "../../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 
@@ -67,6 +67,9 @@ bot.command("autoexpand", async (ctx: Context) => {
           ],
         },
       });
+
+      // TODO: if bot does not have permission to delete messages
+      await ctx.reply(permissionToDeleteMessageTemplate);
     }
   } catch (error: any) {
     console.error(error);

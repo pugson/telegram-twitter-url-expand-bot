@@ -29,3 +29,5 @@ export const manuallyExpandMessageTemplate = (link: string) => {
 
   return `Expand this Tweet?`;
 };
+
+export const permissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
