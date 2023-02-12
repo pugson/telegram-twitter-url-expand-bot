@@ -17,7 +17,9 @@ export const getSettings = async (chatId: number) => {
       .filter({
         chat_id: chatId.toString(),
       })
-      .getFirst();
+      .getFirst({
+        // cache: 1 * 60 * 1000, // TTL: 1 minute
+      });
 
     return record;
   } catch (error) {

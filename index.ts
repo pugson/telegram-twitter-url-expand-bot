@@ -1,4 +1,4 @@
-import TelegramBot from "node-telegram-bot-api";
+import { Bot as TelegramBot } from "grammy";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -6,9 +6,10 @@ if (!process.env.TELEGRAM_BOT_TOKEN) {
   throw new Error("TELEGRAM_BOT_TOKEN env variable is not defined");
 }
 
-export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
+export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 
-console.log("Bot started...");
+import "./handlers/commands";
+import "./handlers/listeners";
 
-import "./actions/react-to-button";
-import "./actions/manage-autoexpand-settings";
+bot.start();
+console.info("Bot started...");
