@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { bot } from "../..";
 import { trackEvent } from "../../helpers/analytics";
-import { updateSettings } from "../../helpers/api";
+import { updateSettings, __updateSettings } from "../../helpers/api";
 import { autoexpandMessageTemplate } from "../../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { getMemberCount } from "../actions/get-member-count";
@@ -17,6 +17,7 @@ bot.on("callback_query", async (ctx: Context) => {
   const chatId = answer?.message?.chat.id;
   const messageId = answer?.message?.message_id;
   const data = answer?.data;
+  const privateChat = answer?.message?.chat.type === "private";
 
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) return;
@@ -30,7 +31,7 @@ bot.on("callback_query", async (ctx: Context) => {
   }
 
   if (data.includes("autoexpand:off")) {
-    updateSettings(chatId, FIELD_NAME, false);
+    __updateSettings(chatId, FIELD_NAME, false);
     await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(false), {
       parse_mode: "MarkdownV2",
       reply_markup: {
@@ -48,13 +49,14 @@ bot.on("callback_query", async (ctx: Context) => {
         ],
       },
     });
+
     trackEvent("settings.autoexpand.disable");
 
     return;
   }
 
   if (data.includes("autoexpand:on")) {
-    updateSettings(chatId, FIELD_NAME, true);
+    __updateSettings(chatId, FIELD_NAME, true);
     await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(true), {
       parse_mode: "MarkdownV2",
       reply_markup: {
@@ -73,7 +75,7 @@ bot.on("callback_query", async (ctx: Context) => {
       },
     });
 
-    handleMissingPermissions(ctx);
+    if (!privateChat) handleMissingPermissions(ctx);
 
     trackEvent("settings.autoexpand.enable");
 

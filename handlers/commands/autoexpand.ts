@@ -14,6 +14,7 @@ bot.command("autoexpand", async (ctx: Context) => {
   const msg = ctx.update.message;
   const msgId = msg?.message_id;
   const chatId = msg?.chat.id;
+  const privateChat = msg?.chat.type === "private";
 
   // Discard malformed messages
   if (!msgId || !chatId) return;
@@ -46,7 +47,7 @@ bot.command("autoexpand", async (ctx: Context) => {
         },
       });
 
-      if (settings.autoexpand) {
+      if (settings.autoexpand && !privateChat) {
         handleMissingPermissions(ctx);
       }
     } else {
@@ -73,7 +74,7 @@ bot.command("autoexpand", async (ctx: Context) => {
         },
       });
 
-      handleMissingPermissions(ctx);
+      if (!privateChat) handleMissingPermissions(ctx);
     }
   } catch (error: any) {
     console.error(error);

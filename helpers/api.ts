@@ -18,7 +18,7 @@ export const getSettings = async (chatId: number) => {
         chat_id: chatId.toString(),
       })
       .getFirst({
-        // cache: 1 * 60 * 1000, // TTL: 1 minute
+        cache: 1 * 60 * 1000, // TTL: 1 minute
       });
 
     return record;
@@ -66,6 +66,18 @@ export const updateSettings = async (id: number, property: keyof Chats, value: C
           });
         }
       });
+
+    return record;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const __updateSettings = async (id: number, property: keyof Chats, value: Chats[keyof Chats]) => {
+  try {
+    const record = await xata.db.chats.update("rec_cfirgjka71mbp97dlnk0", {
+      [`${property}`]: value,
+    });
 
     return record;
   } catch (error) {
