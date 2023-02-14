@@ -31,7 +31,7 @@ bot.on("callback_query", async (ctx: Context) => {
   }
 
   if (data.includes("autoexpand:off")) {
-    __updateSettings(chatId, FIELD_NAME, false);
+    updateSettings(chatId, FIELD_NAME, false);
     await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(false), {
       parse_mode: "MarkdownV2",
       reply_markup: {
@@ -56,7 +56,7 @@ bot.on("callback_query", async (ctx: Context) => {
   }
 
   if (data.includes("autoexpand:on")) {
-    __updateSettings(chatId, FIELD_NAME, true);
+    updateSettings(chatId, FIELD_NAME, true);
     await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(true), {
       parse_mode: "MarkdownV2",
       reply_markup: {
