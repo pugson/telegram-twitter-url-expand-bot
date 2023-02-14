@@ -47,6 +47,13 @@ export const createSettings = async (chatId: number, status: boolean) => {
   }
 };
 
+/**
+ * Update settings for this chat in the database.
+ * @param id Telegram Chat ID
+ * @param property Column name
+ * @param value New value
+ * @returns
+ */
 export const updateSettings = async (id: number, property: keyof Chats, value: Chats[keyof Chats]) => {
   try {
     const record = await xata.db.chats
