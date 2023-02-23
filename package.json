@@ -16,8 +16,8 @@
   },
   "scripts": {
     "start": "ts-node index.ts",
-    "dev": "ts-node-dev --respawn index.ts",
-    "dev:debug": "DEBUG=\"grammy*\" yarn dev"
+    "dev": "DEV=true ts-node-dev --respawn index.ts",
+    "dev:debug": "DEV=true DEBUG=\"grammy*\" yarn dev"
   },
   "devDependencies": {
     "@grammyjs/types": "^2.12.1",

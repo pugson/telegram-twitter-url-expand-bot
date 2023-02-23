@@ -30,15 +30,16 @@ export const getSettings = async (chatId: number) => {
 /**
  * Create a new chat settings record in the database.
  * @param chatId Telegram Chat ID
- * @param status Autoexpand value boolean
+ * @param autoexpandValue Autoexpand value boolean
+ * @param changelogValue Changelog value boolean
  * @returns Chat settings record
  */
-export const createSettings = async (chatId: number, status: boolean) => {
+export const createSettings = async (chatId: number, autoexpandValue: boolean, changelogValue: boolean) => {
   try {
     const record = await xata.db.chats.create({
       chat_id: chatId.toString(),
-      autoexpand: status,
-      changelog: true,
+      autoexpand: autoexpandValue,
+      changelog: changelogValue,
     });
 
     return record;
@@ -81,11 +82,13 @@ export const updateSettings = async (id: number, property: keyof Chats, value: C
  * @returns Event record
  */
 export const createEvent = async (name: string, timestamp: string, note?: string) => {
+  const isDev = process.env.DEV;
+
   try {
     const record = await xata.db.events.create({
       name,
       timestamp,
-      note,
+      note: isDev ? "DEV" : note,
     });
 
     return record;

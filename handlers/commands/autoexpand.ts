@@ -53,7 +53,7 @@ bot.command("autoexpand", async (ctx: Context) => {
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
-      createSettings(chatId, true);
+      createSettings(chatId, true, true);
       // Reply with template and buttons to control autoexpand settings (default: on)
       await ctx.api.sendMessage(chatId, autoexpandMessageTemplate(true), {
         parse_mode: "MarkdownV2",

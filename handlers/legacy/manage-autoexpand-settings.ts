@@ -45,7 +45,7 @@ bot.onText(/^\/autoexpand/, async (msg: Message) => {
     } else {
       deleteMessage(chatId, msg.message_id);
       // Create default settings for this chat
-      createSettings(chatId, true);
+      createSettings(chatId, true, true);
       // Reply with template and buttons to control autoexpand settings (default: on)
       bot.sendMessage(chatId, autoexpandMessageTemplate(true), {
         parse_mode: "MarkdownV2",

@@ -47,7 +47,7 @@ bot.command("changelog", async (ctx: Context) => {
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
-      createSettings(chatId, true);
+      createSettings(chatId, false, true);
       // Reply with template and buttons to control changelog settings (default: on)
       await ctx.api.sendMessage(chatId, changelogMessageTemplate(true), {
         parse_mode: "MarkdownV2",
