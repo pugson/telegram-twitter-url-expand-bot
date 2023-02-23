@@ -19,10 +19,11 @@
  * TikTok video URLs, in the format:
     - https://www.tiktok.com/@username/video/video_id
     - https://tiktok.com/@username/video/video_id
+    - https://www.tiktok.com/t/video_id
     - https://vm.tiktok.com/video_id
     - https://id.tiktok.com/video_id
     - https://en.tiktok.com/video_id
     - https://mobile.tiktok.com/@username/video/video_id
  */
 export const LINK_REGEX: RegExp =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)|tiktok\.com\/@(\w+)\/video\/(\d+)|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+))/gim;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)|tiktok\.com\/(?:@|v\/)?(\w+)\/(video\/)?(\d+)|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+)|www\.tiktok\.com\/t\/([A-Za-z0-9-_]+))/gim;
