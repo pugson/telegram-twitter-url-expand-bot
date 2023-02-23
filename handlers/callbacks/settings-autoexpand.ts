@@ -3,7 +3,6 @@ import { trackEvent } from "../../helpers/analytics";
 import { updateSettings } from "../../helpers/api";
 import { autoexpandMessageTemplate } from "../../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
-import { getMemberCount } from "../actions/get-member-count";
 import { handleMissingPermissions } from "../actions/missing-permissions";
 
 const FIELD_NAME = "autoexpand";
@@ -21,9 +20,6 @@ export async function handleAutoexpandSettings(ctx: Context) {
 
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) return;
-
-  // Save chat member count to database
-  getMemberCount(chatId);
 
   if (data.includes("autoexpand:done")) {
     deleteMessage(chatId, messageId);
