@@ -1,7 +1,6 @@
 import { Context } from "grammy";
-import { bot } from "../..";
 import { trackEvent } from "../../helpers/analytics";
-import { updateSettings, __updateSettings } from "../../helpers/api";
+import { updateSettings } from "../../helpers/api";
 import { autoexpandMessageTemplate } from "../../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { getMemberCount } from "../actions/get-member-count";
@@ -11,8 +10,9 @@ const FIELD_NAME = "autoexpand";
 
 /**
  * Handle button responses to /autoexpand
+ * @param ctx Telegram context
  */
-bot.on("callback_query", async (ctx: Context) => {
+export async function handleAutoexpandSettings(ctx: Context) {
   const answer = ctx.update?.callback_query;
   const chatId = answer?.message?.chat.id;
   const messageId = answer?.message?.message_id;
@@ -81,4 +81,4 @@ bot.on("callback_query", async (ctx: Context) => {
 
     return;
   }
-});
+}

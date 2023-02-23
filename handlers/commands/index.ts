@@ -1,4 +1,4 @@
 import "./permissions";
 import "./autoexpand";
-// import "./changelog";
+import "./changelog";
 import "./source";

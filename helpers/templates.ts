@@ -1,7 +1,7 @@
 // Indentation and line breaks need to be preserved
 // to display properly in Telegram
 
-import { isInstagram, isTikTok, isTweet } from "./platforms";
+import { isInstagram, isTikTok } from "./platforms";
 
 export const autoexpandMessageTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
@@ -32,3 +32,14 @@ export const manuallyExpandMessageTemplate = (link: string) => {
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
+
+export const changelogMessageTemplate = (enabled: boolean) => {
+  return `This chat is ${enabled ? "✅ *subscribed* to" : "❌ *unsubscribed* from"} changelog messages\\. 
+
+${
+  enabled
+    ? "When a new version is released, I will post about it here\\."
+    : "I will not post any release notes in here\\."
+}
+`;
+};

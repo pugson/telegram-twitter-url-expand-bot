@@ -27,6 +27,7 @@ bot.api.setMyCommands([
   },
 ]);
 
+// Import all handlers from their index files
 import "./handlers/commands";
 import "./handlers/callbacks";
 

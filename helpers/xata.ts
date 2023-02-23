@@ -17,13 +17,8 @@ const tables = [
         notNull: true,
         defaultValue: "false",
       },
-      {
-        name: "release_notes_notification",
-        type: "bool",
-        notNull: true,
-        defaultValue: "false",
-      },
       { name: "chat_size", type: "int" },
+      { name: "changelog", type: "bool", notNull: true, defaultValue: "true" },
     ],
   },
   {
