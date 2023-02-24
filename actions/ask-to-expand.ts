@@ -1,6 +1,6 @@
-import { bot } from "../..";
-import { isInstagram, isTikTok } from "../../helpers/platforms";
-import { manuallyExpandMessageTemplate } from "../../helpers/templates";
+import { bot } from "..";
+import { isInstagram, isTikTok } from "../helpers/platforms";
+import { manuallyExpandMessageTemplate } from "../helpers/templates";
 
 export const askToExpand = async (msg: any, chatId: string, link: string) => {
   const insta = isInstagram(link);

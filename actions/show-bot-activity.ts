@@ -1,4 +1,4 @@
-import { bot } from "../..";
+import { bot } from "..";
 
 /**
  * Displays the "is typing..." animated indicator inside Telegram.

@@ -1,5 +1,5 @@
 import { Context } from "grammy";
-import { bot } from "../..";
+import { bot } from "..";
 import { getMemberCount } from "../actions/get-member-count";
 import { handleAutoexpandSettings } from "./settings-autoexpand";
 import { handleChangelogSettings } from "./settings-changelog";

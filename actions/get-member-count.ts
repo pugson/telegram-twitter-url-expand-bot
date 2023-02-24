@@ -1,5 +1,5 @@
-import { bot } from "../..";
-import { updateSettings } from "../../helpers/api";
+import { bot } from "..";
+import { updateSettings } from "../helpers/api";
 
 export const getMemberCount = async (chatId: number) => {
   await bot.api.getChatMemberCount(chatId).then((count: number) => {

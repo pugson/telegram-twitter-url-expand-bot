@@ -1,4 +1,4 @@
-import { bot } from "../..";
+import { bot } from "..";
 
 /**
  * Delete a Telegram message in chat.

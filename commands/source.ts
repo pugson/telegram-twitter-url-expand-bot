@@ -1,11 +1,10 @@
-import { bot } from "../..";
+import { bot } from "..";
 import { Context } from "grammy";
-import { trackEvent } from "../../helpers/analytics";
+import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
-import { handleMissingPermissions } from "../actions/missing-permissions";
 
-bot.command("permissions", async (ctx: Context) => {
+bot.command("source", async (ctx: Context) => {
   if (!ctx.msg) return;
 
   const chatId = ctx?.msg?.chat.id;
@@ -13,7 +12,7 @@ bot.command("permissions", async (ctx: Context) => {
 
   showBotActivity(chatId);
   deleteMessage(chatId, msgId);
-  handleMissingPermissions(ctx, true);
+  ctx.reply(`This bot’s source code is available on GitHub: https://github.com/pugson/telegram-twitter-url-expand-bot`);
 
-  trackEvent("command.permissions");
+  trackEvent("command.sourceCode");
 });

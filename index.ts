@@ -28,8 +28,8 @@ bot.api.setMyCommands([
 ]);
 
 // Import all handlers from their index files
-import "./handlers/commands";
-import "./handlers/callbacks";
+import "./commands";
+import "./callbacks";
 
 bot.start();
 console.info("[ Bot started... ]");

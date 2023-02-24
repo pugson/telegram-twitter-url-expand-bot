@@ -1,8 +1,8 @@
-import { bot } from "../..";
+import { bot } from "..";
 import { showBotActivity } from "../actions/show-bot-activity";
-import { createSettings, getSettings } from "../../helpers/api";
-import { notifyAdmin } from "../../helpers/notifier";
-import { changelogMessageTemplate } from "../../helpers/templates";
+import { createSettings, getSettings } from "../helpers/api";
+import { notifyAdmin } from "../helpers/notifier";
+import { changelogMessageTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 

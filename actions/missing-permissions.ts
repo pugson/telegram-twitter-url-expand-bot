@@ -1,9 +1,6 @@
 import { Context } from "grammy";
-import { notifyAdmin } from "../../helpers/notifier";
-import {
-  hasPermissionToDeleteMessageTemplate,
-  missingPermissionToDeleteMessageTemplate,
-} from "../../helpers/templates";
+import { notifyAdmin } from "../helpers/notifier";
+import { hasPermissionToDeleteMessageTemplate, missingPermissionToDeleteMessageTemplate } from "../helpers/templates";
 
 /**
  * Check if bot has permission to delete messages and send a message if it doesn’t.

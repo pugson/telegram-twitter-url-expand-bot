@@ -1,7 +1,7 @@
 import { Context } from "grammy";
-import { trackEvent } from "../../helpers/analytics";
-import { updateSettings } from "../../helpers/api";
-import { autoexpandMessageTemplate } from "../../helpers/templates";
+import { trackEvent } from "../helpers/analytics";
+import { updateSettings } from "../helpers/api";
+import { autoexpandMessageTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { handleMissingPermissions } from "../actions/missing-permissions";
 
