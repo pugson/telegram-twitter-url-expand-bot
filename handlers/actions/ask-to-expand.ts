@@ -14,9 +14,10 @@ export const askToExpand = async (msg: any, chatId: string, link: string) => {
         [
           {
             text: "✅ Yes",
-            callback_data: link.replace("mobile.", ""),
+            callback_data: link.replace("mobile.", "").replace("https://www.", "").replace("https://", ""),
             // callback_data has a 64 byte limit!!!
             // `mobile.` needs to be stripped because it adds an extra 7 bytes
+            // `https://www.` needs to be stripped because it adds an extra 12 bytes
             // for no real benefit, because the link will still work without it
           },
           {
