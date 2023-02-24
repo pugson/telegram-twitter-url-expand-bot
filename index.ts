@@ -27,7 +27,8 @@ bot.api.setMyCommands([
   },
 ]);
 
-// Import all handlers from their index files
+// Import all listeners from their index files
+import "./match-link-in-message";
 import "./commands";
 import "./callbacks";
 
