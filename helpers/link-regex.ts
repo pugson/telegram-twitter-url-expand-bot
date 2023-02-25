@@ -26,4 +26,4 @@
     - https://mobile.tiktok.com/@username/video/video_id
  */
 export const LINK_REGEX: RegExp =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)|tiktok\.com\/(?:@|v\/)?(\w+)\/(video\/)?(\d+)|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+)|www\.tiktok\.com\/t\/([A-Za-z0-9-_]+))/gim;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)|tiktok\.com\/(?:@|v\/)?(\w+)\/(video\/)?(\d+)|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+)|www\.tiktok\.com\/t\/([A-Za-z0-9-_]+))/im;
