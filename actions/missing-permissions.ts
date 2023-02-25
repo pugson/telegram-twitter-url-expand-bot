@@ -11,42 +11,18 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
   try {
     const adminRights = await ctx.api.getMyDefaultAdministratorRights();
 
-    if (fromCommand) {
-      if (adminRights.can_delete_messages) {
-        await ctx.reply(hasPermissionToDeleteMessageTemplate, {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: "✨ Done",
-                  callback_data: "autoexpand:done",
-                },
-              ],
-            ],
-          },
-        });
-      } else {
-        await ctx.reply(missingPermissionToDeleteMessageTemplate, {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: "✨ Done",
-                  callback_data: "autoexpand:done",
-                },
-              ],
-            ],
-          },
-        });
-      }
-
-      return;
-    }
-
-    if (!adminRights.can_delete_messages) {
-      await ctx.reply(missingPermissionToDeleteMessageTemplate, {
+    const replyWithMessageAboutPermissions = async (
+      template: typeof hasPermissionToDeleteMessageTemplate | typeof missingPermissionToDeleteMessageTemplate
+    ) => {
+      await ctx.reply(template, {
         reply_markup: {
           inline_keyboard: [
+            [
+              {
+                text: "🙅‍♀️ Disable future warnings",
+                callback_data: "permissions:disable-warning",
+              },
+            ],
             [
               {
                 text: "✨ Done",
@@ -56,6 +32,20 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
           ],
         },
       });
+    };
+
+    if (fromCommand) {
+      if (adminRights.can_delete_messages) {
+        await replyWithMessageAboutPermissions(hasPermissionToDeleteMessageTemplate);
+      } else {
+        await replyWithMessageAboutPermissions(missingPermissionToDeleteMessageTemplate);
+      }
+
+      return;
+    }
+
+    if (!adminRights.can_delete_messages) {
+      await replyWithMessageAboutPermissions(missingPermissionToDeleteMessageTemplate);
     }
   } catch (error: any) {
     console.error(error);
