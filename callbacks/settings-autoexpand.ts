@@ -22,12 +22,14 @@ export async function handleAutoexpandSettings(ctx: Context) {
   if (!answer || !chatId || !messageId || !data) return;
 
   if (data.includes("autoexpand:done")) {
+    await ctx.answerCallbackQuery();
     deleteMessage(chatId, messageId);
     return;
   }
 
   if (data.includes("autoexpand:off")) {
     updateSettings(chatId, FIELD_NAME, false);
+    await ctx.answerCallbackQuery();
     await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(false), {
       parse_mode: "MarkdownV2",
       reply_markup: {
@@ -53,6 +55,7 @@ export async function handleAutoexpandSettings(ctx: Context) {
 
   if (data.includes("autoexpand:on")) {
     updateSettings(chatId, FIELD_NAME, true);
+    await ctx.answerCallbackQuery();
     await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(true), {
       parse_mode: "MarkdownV2",
       reply_markup: {

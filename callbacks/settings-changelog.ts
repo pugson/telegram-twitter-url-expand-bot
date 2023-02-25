@@ -20,12 +20,14 @@ export async function handleChangelogSettings(ctx: Context) {
   if (!answer || !chatId || !messageId || !data) return;
 
   if (data.includes("changelog:done")) {
+    await ctx.answerCallbackQuery();
     deleteMessage(chatId, messageId);
     return;
   }
 
   if (data.includes("changelog:off")) {
     updateSettings(chatId, FIELD_NAME, false);
+    await ctx.answerCallbackQuery();
     await ctx.api.editMessageText(chatId, messageId, changelogMessageTemplate(false), {
       parse_mode: "MarkdownV2",
       reply_markup: {
@@ -51,6 +53,7 @@ export async function handleChangelogSettings(ctx: Context) {
 
   if (data.includes("changelog:on")) {
     updateSettings(chatId, FIELD_NAME, true);
+    await ctx.answerCallbackQuery();
     await ctx.api.editMessageText(chatId, messageId, changelogMessageTemplate(true), {
       parse_mode: "MarkdownV2",
       reply_markup: {
