@@ -1,9 +1,10 @@
+// ⚠️⚠️⚠️ IMPORTANT ⚠️⚠️⚠️
 // Indentation and line breaks need to be preserved
 // to display properly in Telegram
 
 import { isInstagram, isTikTok } from "./platforms";
 
-export const autoexpandMessageTemplate = (enabled: boolean) => {
+export const autoexpandSettingsTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
 I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, and TikTok links\\.
@@ -15,7 +16,21 @@ ${
 }`;
 };
 
-export const manuallyExpandMessageTemplate = (link: string) => {
+export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete messages when expanding links.`;
+export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
+
+export const changelogSettingsTemplate = (enabled: boolean) => {
+  return `This chat is ${enabled ? "✅ *subscribed* to" : "❌ *unsubscribed* from"} changelog messages\\. 
+
+${
+  enabled
+    ? "When a new version is released, I will post about it here\\."
+    : "I will not post any release notes in here\\."
+}
+`;
+};
+
+export const askToExpandTemplate = (link: string) => {
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
 
@@ -30,16 +45,34 @@ export const manuallyExpandMessageTemplate = (link: string) => {
   return `Expand this Tweet?`;
 };
 
-export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete messages when expanding links.`;
-export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
+/**
+ * This is what gets sent in a bot message when a user
+ * clicks the expand button or the links are autoexpanded.
+ */
+export const expandedMessageTemplate = (
+  username?: string,
+  userId?: number,
+  firstName?: string,
+  lastName?: string,
+  text?: string,
+  link?: string
+) => {
+  if (username) {
+    // [@username]: message text
+    //
+    // https://twitter.com/username/status/1234567890
+    return `@${username}: ${text}
 
-export const changelogMessageTemplate = (enabled: boolean) => {
-  return `This chat is ${enabled ? "✅ *subscribed* to" : "❌ *unsubscribed* from"} changelog messages\\. 
+${link}`;
+  } else {
+    const bothNames = firstName && lastName;
+    const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
 
-${
-  enabled
-    ? "When a new version is released, I will post about it here\\."
-    : "I will not post any release notes in here\\."
-}
-`;
+    // [firstName? lastName?]: message text
+    //
+    // https://twitter.com/username/status/1234567890
+    return `<a href="tg://user?id=${userId}">${nameTemplate}</a>: ${text}
+
+${link}`;
+  }
 };
