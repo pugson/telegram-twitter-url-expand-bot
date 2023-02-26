@@ -1,6 +1,7 @@
 import { Context } from "grammy";
 import { bot } from "..";
 import { getMemberCount } from "../actions/get-member-count";
+import { handleManualExpand } from "./manual-expand";
 import { handleAutoexpandSettings } from "./settings-autoexpand";
 import { handleChangelogSettings } from "./settings-changelog";
 
@@ -14,6 +15,7 @@ bot.on("callback_query", async (ctx: Context) => {
   if (!chatId) return;
 
   // Handle specific callbacks / button presses
+  handleManualExpand(ctx);
   handleAutoexpandSettings(ctx);
   handleChangelogSettings(ctx);
 

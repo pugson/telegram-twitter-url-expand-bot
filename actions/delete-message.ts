@@ -5,6 +5,6 @@ import { bot } from "..";
  * @param chatId
  * @param msgId
  */
-export const deleteMessage = async (chatId: number, msgId: number) => {
+export const deleteMessage = async (chatId: string | number, msgId: number) => {
   await bot.api.deleteMessage(chatId, msgId);
 };
