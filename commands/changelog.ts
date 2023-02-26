@@ -2,7 +2,7 @@ import { bot } from "..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../helpers/api";
 import { notifyAdmin } from "../helpers/notifier";
-import { changelogMessageTemplate } from "../helpers/templates";
+import { changelogSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 
@@ -26,7 +26,7 @@ bot.command("changelog", async (ctx: Context) => {
     if (settings) {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control changelog settings
-      await bot.api.sendMessage(chatId, changelogMessageTemplate(settings.changelog), {
+      await bot.api.sendMessage(chatId, changelogSettingsTemplate(settings.changelog), {
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {
@@ -49,7 +49,7 @@ bot.command("changelog", async (ctx: Context) => {
       // Create default settings for this chat
       createSettings(chatId, false, true);
       // Reply with template and buttons to control changelog settings (default: on)
-      await ctx.api.sendMessage(chatId, changelogMessageTemplate(true), {
+      await ctx.api.sendMessage(chatId, changelogSettingsTemplate(true), {
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {

@@ -2,7 +2,7 @@ import { bot } from "..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../helpers/api";
 import { notifyAdmin } from "../helpers/notifier";
-import { autoexpandMessageTemplate } from "../helpers/templates";
+import { autoexpandSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { handleMissingPermissions } from "../actions/missing-permissions";
@@ -28,7 +28,7 @@ bot.command("autoexpand", async (ctx: Context) => {
     if (settings) {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control autoexpand settings
-      await bot.api.sendMessage(chatId, autoexpandMessageTemplate(settings.autoexpand), {
+      await bot.api.sendMessage(chatId, autoexpandSettingsTemplate(settings.autoexpand), {
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {
@@ -55,7 +55,7 @@ bot.command("autoexpand", async (ctx: Context) => {
       // Create default settings for this chat
       createSettings(chatId, true, true);
       // Reply with template and buttons to control autoexpand settings (default: on)
-      await ctx.api.sendMessage(chatId, autoexpandMessageTemplate(true), {
+      await ctx.api.sendMessage(chatId, autoexpandSettingsTemplate(true), {
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {
