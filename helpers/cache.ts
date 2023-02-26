@@ -45,3 +45,11 @@ export async function saveToCache(key: string, value: Context) {
 export async function getFromCache(key: string) {
   return memoryCache.take(key);
 }
+
+/**
+ * Delete message from in-memory cache immediately.
+ * @param key Unique identifier for the message (chatId:messageId)
+ */
+export async function deleteFromCache(key: string) {
+  return memoryCache.del(key);
+}
