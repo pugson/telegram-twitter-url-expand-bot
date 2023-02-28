@@ -61,12 +61,14 @@ bot.on("callback_query", async (answer) => {
   if (link.startsWith("no.")) {
     // Delete the bot reply so it doesn’t spam the chat
     bot.deleteMessage(chatId, msgId);
+    bot.answerCallbackQuery(answer.id);
     return;
   }
 
   if (link.startsWith("undo.")) {
     // Undo the link expansion and delete the bot reply
     bot.deleteMessage(chatId, msgId);
+    bot.answerCallbackQuery(answer.id);
     return;
   }
 
@@ -86,6 +88,7 @@ bot.on("callback_query", async (answer) => {
         ],
       },
     });
+    bot.answerCallbackQuery(answer.id);
   };
 
   if (isInstagram) {
