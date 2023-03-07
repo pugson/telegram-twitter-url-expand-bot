@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { updateSettings } from "../helpers/api";
-import { changelogMessageTemplate } from "../helpers/templates";
+import { changelogSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 
 const FIELD_NAME = "changelog";
@@ -28,7 +28,7 @@ export async function handleChangelogSettings(ctx: Context) {
   if (data.includes("changelog:off")) {
     updateSettings(chatId, FIELD_NAME, false);
     await ctx.answerCallbackQuery();
-    await ctx.api.editMessageText(chatId, messageId, changelogMessageTemplate(false), {
+    await ctx.api.editMessageText(chatId, messageId, changelogSettingsTemplate(false), {
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
@@ -54,7 +54,7 @@ export async function handleChangelogSettings(ctx: Context) {
   if (data.includes("changelog:on")) {
     updateSettings(chatId, FIELD_NAME, true);
     await ctx.answerCallbackQuery();
-    await ctx.api.editMessageText(chatId, messageId, changelogMessageTemplate(true), {
+    await ctx.api.editMessageText(chatId, messageId, changelogSettingsTemplate(true), {
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [

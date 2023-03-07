@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { updateSettings } from "../helpers/api";
-import { autoexpandMessageTemplate } from "../helpers/templates";
+import { autoexpandSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { handleMissingPermissions } from "../actions/missing-permissions";
 
@@ -30,7 +30,7 @@ export async function handleAutoexpandSettings(ctx: Context) {
   if (data.includes("autoexpand:off")) {
     updateSettings(chatId, FIELD_NAME, false);
     await ctx.answerCallbackQuery();
-    await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(false), {
+    await ctx.api.editMessageText(chatId, messageId, autoexpandSettingsTemplate(false), {
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
@@ -56,7 +56,7 @@ export async function handleAutoexpandSettings(ctx: Context) {
   if (data.includes("autoexpand:on")) {
     updateSettings(chatId, FIELD_NAME, true);
     await ctx.answerCallbackQuery();
-    await ctx.api.editMessageText(chatId, messageId, autoexpandMessageTemplate(true), {
+    await ctx.api.editMessageText(chatId, messageId, autoexpandSettingsTemplate(true), {
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
