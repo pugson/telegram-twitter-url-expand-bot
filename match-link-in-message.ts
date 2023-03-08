@@ -5,9 +5,6 @@ import { saveToCache } from "./helpers/cache";
 import { LINK_REGEX } from "./helpers/link-regex";
 import { expandedMessageTemplate } from "./helpers/templates";
 
-// TODO:
-// delete message only if it’s a text message
-// do not delete photos, videos, etc.
 bot.on("message::url", async (ctx: Context) => {
   if (!ctx.msg) return;
   // User context
@@ -24,13 +21,13 @@ bot.on("message::url", async (ctx: Context) => {
   const justTextMessage = entities.reduce((msg, entity) => msg.replace(entity.text, ""), message);
 
   // Loop through all links in message
-  entities.forEach(async (entity) => {
+  entities.forEach(async (entity, index) => {
     const url = entity.text;
     const matchingLink = LINK_REGEX.test(url);
 
     if (!matchingLink) return;
 
-    const identifier = `${ctx.msg?.chat?.id}:${ctx.msg?.message_id}`;
+    const identifier = `${ctx.msg?.chat?.id}:${ctx.msg?.message_id}:${index}`;
     saveToCache(identifier, ctx);
 
     // TODO: figure out if we need to ask user to expand

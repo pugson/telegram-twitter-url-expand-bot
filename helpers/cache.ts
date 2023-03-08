@@ -30,7 +30,7 @@ const memoryCache = new NodeCache({
  * - Cache is not persisted to disk.
  * - Your data is private and secure.
  *
- * @param key Unique identifier for the message (chatId:messageId)
+ * @param key Unique identifier for the message (chatId:messageId:linkIndex)
  * @param value Telegram Context
  */
 export async function saveToCache(key: string, value: Context) {
@@ -39,7 +39,7 @@ export async function saveToCache(key: string, value: Context) {
 
 /**
  * Read message from in-memory cache for processing.
- * @param key Unique identifier for the message (chatId:messageId)
+ * @param key Unique identifier for the message (chatId:messageId:linkIndex)
  * @returns Telegram Context
  */
 export async function getFromCache(key: string) {
@@ -48,8 +48,17 @@ export async function getFromCache(key: string) {
 
 /**
  * Delete message from in-memory cache immediately.
- * @param key Unique identifier for the message (chatId:messageId)
+ * @param key Unique identifier for the message (chatId:messageId:linkIndex)
  */
 export async function deleteFromCache(key: string) {
   return memoryCache.del(key);
+}
+
+/**
+ * Check if message exists inside in-memory cache.
+ * @param key Unique identifier for the message (chatId:messageId:linkIndex)
+ * @returns boolean
+ */
+export async function checkIfCached(key: string) {
+  return memoryCache.has(key);
 }
