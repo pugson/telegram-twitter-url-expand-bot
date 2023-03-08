@@ -56,7 +56,13 @@ export async function handleManualExpand(ctx: Context) {
       // When multiple links are in the message the bot will send a reply for each link.
       // Delete the original message only if it's the last link in the message.
       if (!hasPrevLink && !hasNextLink) {
-        deleteMessage(originalChatId, Number(originalMessageId));
+        try {
+          // Gotta await try/catch this because the original message might have been deleted already
+          // and the bot will crash if it tries to delete a message that does not exist.
+          await deleteMessage(originalChatId, Number(originalMessageId));
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       // TODO: temp reply
