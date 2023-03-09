@@ -36,11 +36,12 @@ export async function handleManualExpand(ctx: Context) {
   }
 
   if (data.includes("expand:yes")) {
-    const properties = data.split(":"); // expand:yes:chatId:messageId:linkIndex:platform
+    const properties = data.split(":"); // expand:yes:chatId:messageId:linkIndex:platform:isDeletable
     const originalChatId = properties[2];
     const originalMessageId = properties[3];
     const linkIndex = Number(properties[4]);
     const platform = properties[5];
+    const isDeletable = properties[6] === "true";
     const identifier = `${originalChatId}:${originalMessageId}:${linkIndex}`;
     const prevLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex - 1}`;
     const nextLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex + 1}`;
@@ -48,10 +49,10 @@ export async function handleManualExpand(ctx: Context) {
     const hasNextLink: boolean = await checkIfCached(nextLinkIdentifier);
     const messageFromCache: any = await getFromCache(identifier);
 
+    // Only expand when a message has been cached, otherwise ignore the callback
+    // because it will throw an error when trying to delete the message.
     if (messageFromCache) {
-      // TODO: handle expand logic here
-      // do it in another action because there's gonna be some settings checks
-      deleteMessage(chatId, messageId); // with buttons
+      deleteMessage(chatId, messageId); // bot’s message with buttons
 
       // When multiple links are in the message the bot will send a reply for each link.
       // Delete the original message only if it's the last link in the message.
@@ -59,14 +60,19 @@ export async function handleManualExpand(ctx: Context) {
         try {
           // Gotta await try/catch this because the original message might have been deleted already
           // and the bot will crash if it tries to delete a message that does not exist.
-          await deleteMessage(originalChatId, Number(originalMessageId));
+          if (isDeletable) await deleteMessage(originalChatId, Number(originalMessageId));
         } catch (error) {
           console.error(error);
         }
       }
 
       // TODO: temp reply
-      ctx.reply(messageFromCache.update.message.text); // reduce to only include the right link index
+      // ctx.reply(messageFromCache.update.message.text); // reduce to only include the right link index
+
+      //
+      // expand-link.ts here with all needed params
+      //
+
       trackEvent(`expand.yes.${platform}`);
     }
 

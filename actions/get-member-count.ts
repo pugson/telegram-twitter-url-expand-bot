@@ -1,6 +1,10 @@
 import { bot } from "..";
 import { updateSettings } from "../helpers/api";
 
+/**
+ * Save group chat size to database for anonymous analytics.
+ * @param chatId Telegram Chat ID
+ */
 export const getMemberCount = async (chatId: number) => {
   await bot.api.getChatMemberCount(chatId).then((count: number) => {
     // Set count as 0 if there are 2 or less members in the chat

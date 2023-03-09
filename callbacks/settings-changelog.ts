@@ -47,7 +47,6 @@ export async function handleChangelogSettings(ctx: Context) {
     });
 
     trackEvent("settings.changelog.disable");
-
     return;
   }
 
@@ -73,7 +72,6 @@ export async function handleChangelogSettings(ctx: Context) {
     });
 
     trackEvent("settings.changelog.enable");
-
     return;
   }
 }
