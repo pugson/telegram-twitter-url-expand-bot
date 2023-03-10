@@ -24,10 +24,11 @@ https://user-images.githubusercontent.com/6843656/182036672-5b566200-cba4-462d-b
 
 ## How to use this bot?
 
-1. Find it on Telegram as `@TwitterLinkExpanderBot` or click here: https://t.me/twitterlinkexpanderbot
+1. Find it on Telegram as `@TwitterLinkExpanderBot` or click here: https://t.me/twitterlinkexpanderbot?start=start
 2. Add it to your group chat.
 3. Send a message that includes a tweet, TikTok, or Instagram URL.
 4. Click "Yes" or "No" when the bot replies to your message.
+5. Configure automatically expanding links in your group chat by sending `/autoexpand` and changing your settings.
 
 <img width="253" alt="image" src="https://user-images.githubusercontent.com/6843656/181651653-a6421462-2321-4344-8605-f5f32edc5047.png">
 
