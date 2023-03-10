@@ -26,7 +26,7 @@ Configure receiving changelog updates with /changelog
               [
                 {
                   text: "Add me to your group",
-                  url: "tg://resolve?domain=BotAPITesterBot&startgroup&admin=delete_messages&custom_title=bot",
+                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages&custom_title=bot",
                 },
               ],
             ],

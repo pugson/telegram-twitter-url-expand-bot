@@ -30,7 +30,7 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
             [
               {
                 text: "👮 Admin Only: Grant permissions",
-                url: "tg://resolve?domain=BotAPITesterBot&startgroup&admin=delete_messages",
+                url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages",
               },
             ],
             [
