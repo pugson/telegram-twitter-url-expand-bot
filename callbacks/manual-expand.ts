@@ -46,39 +46,44 @@ export async function handleManualExpand(ctx: Context) {
     const identifier = `${originalChatId}:${originalMessageId}:${linkIndex}`;
     const prevLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex - 1}`;
     const nextLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex + 1}`;
-    const hasPrevLink: boolean = await checkIfCached(prevLinkIdentifier);
-    const hasNextLink: boolean = await checkIfCached(nextLinkIdentifier);
-    const contextFromCache: any = await getFromCache(identifier);
-    const cachedMessage = contextFromCache?.update?.message;
-    const urlOffset: number = cachedMessage?.entities?.[linkIndex].offset;
-    const urlLength: number = cachedMessage?.entities?.[linkIndex].length;
-    const url: string = cachedMessage?.text.slice(urlOffset, urlOffset + urlLength);
-    const entities = contextFromCache.entities();
-    const message = cachedMessage?.text ?? cachedMessage?.caption ?? "";
-    const messageWithNoLinks = entities.reduce(
-      (msg: string, entity: { text: any }) => msg.replace(entity.text, ""),
-      message
-    );
 
-    // Only expand when a message has been cached, otherwise ignore the callback
-    // because it will throw an error when trying to delete the message.
-    if (contextFromCache) {
-      const userInfo = {
-        username: cachedMessage.from?.username,
-        firstName: cachedMessage.from?.first_name,
-        lastName: cachedMessage.from?.last_name,
-        userId: cachedMessage.from?.id,
-      };
+    try {
+      const hasPrevLink: boolean = await checkIfCached(prevLinkIdentifier);
+      const hasNextLink: boolean = await checkIfCached(nextLinkIdentifier);
+      const contextFromCache: any = await getFromCache(identifier);
+      const cachedMessage = contextFromCache?.update?.message;
+      const urlOffset: number = cachedMessage?.entities?.[linkIndex].offset;
+      const urlLength: number = cachedMessage?.entities?.[linkIndex].length;
+      const url: string = cachedMessage?.text.slice(urlOffset, urlOffset + urlLength);
+      const entities = contextFromCache.entities();
+      const message = cachedMessage?.text ?? cachedMessage?.caption ?? "";
+      const messageWithNoLinks = entities.reduce(
+        (msg: string, entity: { text: any }) => msg.replace(entity.text, ""),
+        message
+      );
 
-      showBotActivity(chatId);
-      await expandLink(ctx, url, messageWithNoLinks, userInfo);
-      deleteMessage(chatId, messageId); // bot’s [yes][no] message
+      // Only expand when a message has been cached, otherwise ignore the callback
+      // because it will throw an error when trying to delete the message.
+      if (contextFromCache) {
+        const userInfo = {
+          username: cachedMessage.from?.username,
+          firstName: cachedMessage.from?.first_name,
+          lastName: cachedMessage.from?.last_name,
+          userId: cachedMessage.from?.id,
+        };
 
-      // When multiple links are in the message the bot will send a reply for each link.
-      // Delete the original message only if it's the last link in the message.
-      if (!hasPrevLink && !hasNextLink) {
-        if (isDeletable) await deleteMessage(originalChatId, Number(originalMessageId), ctx);
+        showBotActivity(chatId);
+        await expandLink(ctx, url, messageWithNoLinks, userInfo);
+        deleteMessage(chatId, messageId); // bot’s [yes][no] message
+
+        // When multiple links are in the message the bot will send a reply for each link.
+        // Delete the original message only if it's the last link in the message.
+        if (!hasPrevLink && !hasNextLink) {
+          if (isDeletable) await deleteMessage(originalChatId, Number(originalMessageId), ctx);
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
 
     await ctx.answerCallbackQuery();
