@@ -19,6 +19,12 @@ const tables = [
       },
       { name: "chat_size", type: "int" },
       { name: "changelog", type: "bool", notNull: true, defaultValue: "true" },
+      {
+        name: "ignore_permissions_warning",
+        type: "bool",
+        notNull: true,
+        defaultValue: "false",
+      },
     ],
   },
   {
