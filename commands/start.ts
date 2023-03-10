@@ -25,8 +25,14 @@ Configure receiving changelog updates with /changelog
             inline_keyboard: [
               [
                 {
-                  text: "Add me to your group",
-                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages&custom_title=bot",
+                  text: "Add me to your group (if you’re an admin)",
+                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages",
+                },
+              ],
+              [
+                {
+                  text: "Add me to your group (if you’re a member)",
+                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup",
                 },
               ],
             ],
