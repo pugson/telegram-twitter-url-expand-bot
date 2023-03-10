@@ -13,6 +13,7 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
 
   try {
     const adminRights: any = await ctx.getChatMember(ctx.me.id);
+    const privateChat = ctx?.msg?.chat.type === "private";
 
     const replyWithMessageAboutPermissions = async (
       template: typeof hasPermissionToDeleteMessageTemplate | typeof missingPermissionToDeleteMessageTemplate
@@ -22,7 +23,6 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
           inline_keyboard: [
             [
               {
-                // TODO: implement this setting in the database
                 text: "🙅‍♀️ Disable future warnings",
                 callback_data: "permissions:disable-warning",
               },
@@ -57,7 +57,7 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
     if (!adminRights.can_delete_messages) {
       try {
         const settings = await getSettings(ctx.chat.id);
-        if (settings?.ignore_permissions_warning) return;
+        if (settings?.ignore_permissions_warning || privateChat) return;
 
         await replyWithMessageAboutPermissions(missingPermissionToDeleteMessageTemplate);
       } catch (error) {
