@@ -14,12 +14,12 @@ bot.api.setMyCommands([
     description: "Manage link autoexpand settings for this chat.",
   },
   {
-    command: "permissions",
-    description: "Check if the bot has required permissions.",
-  },
-  {
     command: "changelog",
     description: "Manage changelog settings for this chat.",
+  },
+  {
+    command: "permissions",
+    description: "Check if the bot has needed permissions.",
   },
   {
     command: "source",
@@ -28,7 +28,7 @@ bot.api.setMyCommands([
 ]);
 
 // Import all listeners from their index files
-import "./match-link-in-message";
+import "./link-listener";
 import "./commands";
 import "./callbacks";
 
