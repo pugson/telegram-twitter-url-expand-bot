@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://pugson-3k9p63.us-east-1.xata.sh/db/linkbot",
+  "codegen": {
+    "output": "helpers/xata.ts"
+  }
+}
