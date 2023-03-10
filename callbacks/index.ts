@@ -4,6 +4,7 @@ import { getMemberCount } from "../actions/get-member-count";
 import { handleManualExpand } from "./manual-expand";
 import { handleAutoexpandSettings } from "./settings-autoexpand";
 import { handleChangelogSettings } from "./settings-changelog";
+import { handlePermissionsSettings } from "./settings-permissions";
 
 // Multiple bot.on("callback_query") functions cannot run in parallel.
 // The bot will only register the first one and ignore the rest.
@@ -18,6 +19,7 @@ bot.on("callback_query", async (ctx: Context) => {
   handleManualExpand(ctx);
   handleAutoexpandSettings(ctx);
   handleChangelogSettings(ctx);
+  handlePermissionsSettings(ctx);
 
   // Save chat member count to database
   getMemberCount(chatId);
