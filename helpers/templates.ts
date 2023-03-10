@@ -4,6 +4,14 @@
 
 import { isInstagram, isTikTok } from "./platforms";
 
+export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
+export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
+
+/**
+ * Message sent when a user sends the /autoexpand command.
+ * @param enabled
+ * @returns
+ */
 export const autoexpandSettingsTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
@@ -16,9 +24,10 @@ ${
 }`;
 };
 
-export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
-export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
-
+/**
+ * Message sent when a user sends the /changelog command.
+ * @param enabled
+ */
 export const changelogSettingsTemplate = (enabled: boolean) => {
   return `This chat is ${enabled ? "*subscribed* ✅ to" : "*unsubscribed* ❌ from"} changelog messages\\. 
 
@@ -30,6 +39,11 @@ ${
 `;
 };
 
+/**
+ * Message sent when a link is detected in chat but autoexpand is disabled.
+ * @param link
+ * @returns Expand this (platform)?
+ */
 export const askToExpandTemplate = (link: string) => {
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
@@ -57,10 +71,10 @@ export const expandedMessageTemplate = (
   text?: string,
   link?: string
 ) => {
+  // If the user has a username, use that instead of their name.
   if (username) {
     // [@username]: message text
-    //
-    // https://twitter.com/username/status/1234567890
+    // https://expanded-link.com
     return `@${username}: ${text}
 
 ${link}`;
@@ -69,8 +83,7 @@ ${link}`;
     const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
 
     // [firstName? lastName?]: message text
-    //
-    // https://twitter.com/username/status/1234567890
+    // https://expanded-link.com
     return `<a href="tg://user?id=${userId}">${nameTemplate}</a>: ${text}
 
 ${link}`;

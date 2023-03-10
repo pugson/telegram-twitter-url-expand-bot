@@ -1,6 +1,7 @@
 import { Context } from "grammy";
 import { deleteMessage } from "../actions/delete-message";
 import { updateSettings } from "../helpers/api";
+import { trackEvent } from "../helpers/analytics";
 
 /**
  * Handle button responses to /permissions
@@ -25,6 +26,7 @@ export async function handlePermissionsSettings(ctx: Context) {
     await ctx.answerCallbackQuery();
     deleteMessage(chatId, messageId);
     updateSettings(chatId, "ignore_permissions_warning", true);
+    trackEvent("settings.permissions.disable-warning");
     return;
   }
 }

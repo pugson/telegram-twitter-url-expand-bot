@@ -1,17 +1,14 @@
-export const isTweet = (link: string, returnPlatform?: boolean) => {
+export const isTweet = (link: string) => {
   const isMatch = link.includes("twitter.com");
-
-  return returnPlatform ? { isMatch, platform: "twitter" } : isMatch;
+  return isMatch;
 };
 
-export const isInstagram = (link: string, returnPlatform?: boolean) => {
+export const isInstagram = (link: string) => {
   const isMatch = link.includes("instagram.com");
-
-  return returnPlatform ? { isMatch, platform: "instagram" } : isMatch;
+  return isMatch;
 };
 
-export const isTikTok = (link: string, returnPlatform?: boolean) => {
+export const isTikTok = (link: string) => {
   const isMatch = link.includes("tiktok.com");
-
-  return returnPlatform ? { isMatch, platform: "tiktok" } : isMatch;
+  return isMatch;
 };

@@ -24,12 +24,10 @@ export async function expandLink(ctx: Context, link: string, messageText: string
 
   if (isInstagram(link)) {
     expandedLink = link.replace("instagram.com", "ddinstagram.com");
-    trackEvent("expand.platform.instagram"); // TODO: choose better event name scheme for this
   }
 
   if (isTikTok(link)) {
     expandedLink = link.replace("tiktok.com", "vxtiktok.com");
-    trackEvent("expand.platform.tiktok"); // TODO: choose better event name scheme for this
   }
 
   if (isTweet(link)) {
@@ -37,10 +35,9 @@ export async function expandLink(ctx: Context, link: string, messageText: string
 
     if (hasImages) {
       expandedLink = link.replace("twitter.com", "c.vxtwitter.com");
-      trackEvent("expand.platform.twitter.multipleImages"); // TODO: choose better event name scheme for this
+      trackEvent("expand.platform.twitter.multipleImages");
     } else {
       expandedLink = link.replace("twitter.com", "vxtwitter.com");
-      trackEvent("expand.platform.twitter"); // TODO: choose better event name scheme for this
     }
   }
 

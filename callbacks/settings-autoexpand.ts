@@ -49,7 +49,6 @@ export async function handleAutoexpandSettings(ctx: Context) {
     });
 
     trackEvent("settings.autoexpand.disable");
-
     return;
   }
 
@@ -77,7 +76,6 @@ export async function handleAutoexpandSettings(ctx: Context) {
     if (!privateChat) handleMissingPermissions(ctx);
 
     trackEvent("settings.autoexpand.enable");
-
     return;
   }
 }

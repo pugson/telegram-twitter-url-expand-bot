@@ -6,6 +6,7 @@ import { autoexpandSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { handleMissingPermissions } from "../actions/missing-permissions";
+import { trackEvent } from "../helpers/analytics";
 
 /**
  * Manage autoexpand settings
@@ -80,4 +81,6 @@ bot.command("autoexpand", async (ctx: Context) => {
     console.error(error);
     notifyAdmin(error);
   }
+
+  trackEvent("command.autoexpand");
 });

@@ -3,6 +3,7 @@ import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
 import { checkIfCached, deleteFromCache, getFromCache } from "../helpers/cache";
 import { expandLink } from "../actions/expand-link";
+import { showBotActivity } from "../actions/show-bot-activity";
 
 /**
  * Handle Yes/No button responses to expand links
@@ -32,7 +33,6 @@ export async function handleManualExpand(ctx: Context) {
     deleteMessage(chatId, messageId);
     deleteFromCache(identifier);
     trackEvent(`expand.no.${platform}`);
-
     return;
   }
 
@@ -63,8 +63,6 @@ export async function handleManualExpand(ctx: Context) {
     // Only expand when a message has been cached, otherwise ignore the callback
     // because it will throw an error when trying to delete the message.
     if (contextFromCache) {
-      deleteMessage(chatId, messageId); // bot’s [yes][no] message
-
       const userInfo = {
         username: cachedMessage.from?.username,
         firstName: cachedMessage.from?.first_name,
@@ -72,9 +70,9 @@ export async function handleManualExpand(ctx: Context) {
         userId: cachedMessage.from?.id,
       };
 
+      showBotActivity(chatId);
       await expandLink(ctx, url, messageWithNoLinks, userInfo);
-
-      trackEvent(`expand.yes.${platform}`);
+      deleteMessage(chatId, messageId); // bot’s [yes][no] message
 
       // When multiple links are in the message the bot will send a reply for each link.
       // Delete the original message only if it's the last link in the message.
@@ -84,7 +82,7 @@ export async function handleManualExpand(ctx: Context) {
     }
 
     await ctx.answerCallbackQuery();
-
+    trackEvent(`expand.yes.${platform}`);
     return;
   }
 }

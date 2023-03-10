@@ -5,6 +5,7 @@ import { notifyAdmin } from "../helpers/notifier";
 import { changelogSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
+import { trackEvent } from "../helpers/analytics";
 
 /**
  * Manage changelog settings
@@ -72,4 +73,6 @@ bot.command("changelog", async (ctx: Context) => {
     console.error(error);
     notifyAdmin(error);
   }
+
+  trackEvent("command.changelog");
 });
