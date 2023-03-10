@@ -1,6 +1,6 @@
-// ⚠️⚠️⚠️ IMPORTANT ⚠️⚠️⚠️
-// Indentation and line breaks need to be preserved
-// to display properly in Telegram
+//! IMPORTANT !
+//! Indentation and line breaks need to be preserved
+//! to display properly in Telegram
 
 import { isInstagram, isTikTok } from "./platforms";
 
@@ -16,15 +16,15 @@ ${
 }`;
 };
 
-export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete messages when expanding links.`;
+export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
 
 export const changelogSettingsTemplate = (enabled: boolean) => {
-  return `This chat is ${enabled ? "✅ *subscribed* to" : "❌ *unsubscribed* from"} changelog messages\\. 
+  return `This chat is ${enabled ? "*subscribed* ✅ to" : "*unsubscribed* ❌ from"} changelog messages\\. 
 
 ${
   enabled
-    ? "When a new version is released, I will post about it here\\."
+    ? "When a major update is released, I will post about it here\\."
     : "I will not post any release notes in here\\."
 }
 `;

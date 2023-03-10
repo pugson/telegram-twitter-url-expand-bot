@@ -3,9 +3,9 @@ import { bot } from ".";
 import { askToExpand } from "./actions/ask-to-expand";
 import { saveToCache } from "./helpers/cache";
 import { LINK_REGEX } from "./helpers/link-regex";
-import { expandedMessageTemplate } from "./helpers/templates";
 import { createSettings, getSettings } from "./helpers/api";
 import { expandLink } from "./actions/expand-link";
+import { deleteMessage } from "./actions/delete-message";
 
 bot.on("message::url", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -36,24 +36,24 @@ bot.on("message::url", async (ctx: Context) => {
     if (!matchingLink) return;
 
     const identifier = `${ctx.msg?.chat?.id}:${ctx.msg?.message_id}:${index}`;
-    await saveToCache(identifier, ctx);
 
     if (settings) {
       if (autoexpand) {
-        expandLink(ctx, chatId, msgId, identifier, url, messageWithNoLinks, isDeletable, userInfo);
+        // Expand link automatically with provided context
+        await expandLink(ctx, url, messageWithNoLinks, userInfo);
+        // Delete message if it’s not a caption
+        if (isDeletable) deleteMessage(chatId, msgId, ctx);
       } else {
+        // Save message context to cache then ask to expand
+        await saveToCache(identifier, ctx);
         askToExpand(chatId, msgId, identifier, url, isDeletable);
       }
     } else {
       // Create default settings for this chat
-      createSettings(chatId, false, true);
+      await createSettings(chatId, false, true);
+      // Save message context to cache then ask to expand
+      await saveToCache(identifier, ctx);
       askToExpand(chatId, msgId, identifier, url, isDeletable);
     }
-
-    // no undo anymore
-    // when user clicks expand, we expand and delete the message
-    // no going back
-
-    // ctx.reply(expandedMessageTemplate(username, userId, firstName, lastName, justTextMessage, url));
   });
 });
