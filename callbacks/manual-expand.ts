@@ -54,16 +54,17 @@ export async function handleManualExpand(ctx: Context) {
       const urlOffset: number = cachedMessage?.entities?.[linkIndex].offset;
       const urlLength: number = cachedMessage?.entities?.[linkIndex].length;
       const url: string = cachedMessage?.text.slice(urlOffset, urlOffset + urlLength);
-      const entities = contextFromCache.entities();
-      const message = cachedMessage?.text ?? cachedMessage?.caption ?? "";
-      const messageWithNoLinks = entities.reduce(
-        (msg: string, entity: { text: any }) => msg.replace(entity.text, ""),
-        message
-      );
 
       // Only expand when a message has been cached, otherwise ignore the callback
       // because it will throw an error when trying to delete the message.
       if (contextFromCache) {
+        const entities = contextFromCache.entities();
+        const message = cachedMessage?.text ?? cachedMessage?.caption ?? "";
+        const messageWithNoLinks = entities.reduce(
+          (msg: string, entity: { text: any }) => msg.replace(entity.text, ""),
+          message
+        );
+
         const userInfo = {
           username: cachedMessage.from?.username,
           firstName: cachedMessage.from?.first_name,
