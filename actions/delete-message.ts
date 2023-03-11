@@ -14,6 +14,10 @@ export const deleteMessage = async (chatId: string | number, msgId: number, ctx?
   try {
     await bot.api.deleteMessage(chatId, msgId);
   } catch (error) {
-    if (ctx) await handleMissingPermissions(ctx);
+    console.error({
+      message: "Error deleting message",
+      error: error,
+    });
+    // if (ctx) await handleMissingPermissions(ctx);
   }
 };
