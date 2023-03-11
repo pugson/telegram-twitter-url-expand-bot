@@ -37,17 +37,16 @@ export async function handleManualExpand(ctx: Context) {
   }
 
   if (data.includes("expand:yes")) {
-    const properties = data.split(":"); // expand:yes:chatId:messageId:linkIndex:platform:isDeletable
-    const originalChatId: string = properties[2];
-    const originalMessageId: string = properties[3];
-    const linkIndex: number = Number(properties[4]);
-    const platform: string = properties[5];
-    const isDeletable: boolean = properties[6] === "true";
-    const identifier = `${originalChatId}:${originalMessageId}:${linkIndex}`;
-    const prevLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex - 1}`;
-    const nextLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex + 1}`;
-
     try {
+      const properties = data.split(":"); // expand:yes:chatId:messageId:linkIndex:platform:isDeletable
+      const originalChatId: string = properties[2];
+      const originalMessageId: string = properties[3];
+      const linkIndex: number = Number(properties[4]);
+      const platform: string = properties[5];
+      const isDeletable: boolean = properties[6] === "true";
+      const identifier = `${originalChatId}:${originalMessageId}:${linkIndex}`;
+      const prevLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex - 1}`;
+      const nextLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex + 1}`;
       const hasPrevLink: boolean = await checkIfCached(prevLinkIdentifier);
       const hasNextLink: boolean = await checkIfCached(nextLinkIdentifier);
       const contextFromCache: any = await getFromCache(identifier);
@@ -82,12 +81,13 @@ export async function handleManualExpand(ctx: Context) {
           if (isDeletable) await deleteMessage(originalChatId, Number(originalMessageId), ctx);
         }
       }
+
+      trackEvent(`expand.yes.${platform}`);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
     await ctx.answerCallbackQuery();
-    trackEvent(`expand.yes.${platform}`);
     return;
   }
 }
