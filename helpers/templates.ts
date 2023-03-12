@@ -19,7 +19,7 @@ I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, and TikTok links\\
       
 ${
   enabled
-    ? "Original messages will be automatically deleted after expanding\\. If you write any text in the original message it will be included in my reply\\."
+    ? "Original messages will be automatically deleted after expanding if you gave me admin permissions to delete messages\\. If you write any text in the original message it will be included in my reply\\."
     : "Someone will have to click a button to expand each link\\."
 }`;
 };
