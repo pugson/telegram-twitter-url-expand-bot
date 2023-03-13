@@ -16,8 +16,11 @@ bot.command("start", async (ctx: Context) => {
   ctx.reply(
     `👋 Hello! I’m a bot that expands Twitter, Instagram, and TikTok URLs. Send me a link and I’ll expand it for you. 🔗🖼️
 
-Configure link expanding with /autoexpand
-Configure receiving changelog updates with /changelog
+Commands:
+/autoexpand - Configure link expanding
+/changelog - Configure receiving changelog updates
+
+You can also add me to your channel and I will edit messages with links to expand them automatically.
 `,
     privateChat
       ? {
@@ -33,6 +36,12 @@ Configure receiving changelog updates with /changelog
                 {
                   text: "Add me to your group (if you’re a member)",
                   url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup",
+                },
+              ],
+              [
+                {
+                  text: "Add me to your channel",
+                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startchannel&admin=edit_messages",
                 },
               ],
             ],
