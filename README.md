@@ -1,10 +1,14 @@
-# Twitter Link Expander — Telegram Bot
+# Link Expander — Telegram Bot for expanding Twitter, Instagram, and TikTok links.
 
 ![banner-4 1@1x](https://user-images.githubusercontent.com/6843656/214646426-db3bf292-afc4-4729-8e16-64ed687127aa.png)
 
 Some Twitter links stopped expanding inside Telegram which made it extremely annoying when you wanted to send a banger tweet to your homies in the group chat. This bot replies with an alternative [vxtwitter.com](https://vxtwitter.com) URL which has a working embed for multiple photos and even includes inline video.
 
-## ✨🆕✨ Also supports TikTok!
+## ✨🆕✨ Bot now works in Telegram Channels!
+
+When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [vxtwitter.com](https://vxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [vxtiktok.com](https://vxtiktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
+
+## Also supports TikTok!
 
 The bot can now expand TikTok videos inside Telegram. It will reply with a link to [vxtiktok.com](https://vxtiktok.com) which has a working embed for TikTok videos so you can see them play inline inside Telegram.
 
@@ -23,6 +27,14 @@ You can now expand Instagram links inside Telegram with this bot. It will reply 
 https://user-images.githubusercontent.com/6843656/182036672-5b566200-cba4-462d-ba5c-4c043e032b06.mp4
 
 ## How to use this bot?
+
+### Channels
+
+1. Find it on Telegram as `@TwitterLinkExpanderBot` or click here: https://t.me/twitterlinkexpanderbot?start=start
+2. Add it to your channel as admin with the `Edit messages of others` permission.
+3. Send a message that includes a tweet, TikTok, or Instagram URL.
+
+### Groups or DMs
 
 1. Find it on Telegram as `@TwitterLinkExpanderBot` or click here: https://t.me/twitterlinkexpanderbot?start=start
 2. Add it to your group chat.
