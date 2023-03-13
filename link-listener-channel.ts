@@ -17,15 +17,19 @@ bot.on("channel_post::url", async (ctx: Context) => {
     .replace("instagram.com/", "ddinstagram.com/")
     .replace("tiktok.com/", "vxtiktok.com/");
 
-  if (caption) {
-    await ctx.editMessageCaption({
-      caption: expandedLinksMessage,
-    });
-    trackEvent(`edit.channel.caption`);
-  } else {
-    await ctx.editMessageText(expandedLinksMessage);
-    trackEvent(`edit.channel.message`);
-  }
+  try {
+    if (caption) {
+      await ctx.editMessageCaption({
+        caption: expandedLinksMessage,
+      });
+      trackEvent(`edit.channel.caption`);
+    } else {
+      await ctx.editMessageText(expandedLinksMessage);
+      trackEvent(`edit.channel.message`);
+    }
 
-  trackEvent(`expand.channel.${platform}`);
+    trackEvent(`expand.channel.${platform}`);
+  } catch (error) {
+    console.log(error);
+  }
 });
