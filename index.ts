@@ -29,6 +29,7 @@ bot.api.setMyCommands([
 
 // Import all listeners from their index files
 import "./link-listener";
+import "./link-listener-channel";
 import "./commands";
 import "./callbacks";
 
