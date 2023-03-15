@@ -49,7 +49,7 @@ bot.on("message::url", async (ctx: Context) => {
 
     if (autoexpand) {
       // Expand link automatically with provided context
-      await expandLink(ctx, url, messageWithNoLinks, userInfo);
+      await expandLink(ctx, url, messageWithNoLinks, userInfo, "auto");
       // Delete message if it’s not a caption
       if (isDeletable) deleteMessage(chatId, msgId, ctx);
 
