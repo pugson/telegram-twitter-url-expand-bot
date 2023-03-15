@@ -5,5 +5,10 @@ import { bot } from "..";
  * @param chatId ID of current chat.
  */
 export const showBotActivity = async (chatId: number) => {
-  bot.api.sendChatAction(chatId, "typing");
+  try {
+    bot.api.sendChatAction(chatId, "typing");
+  } catch (error) {
+    console.error(`[Error] Could not display bot activity indicator.`);
+    console.error(error.message);
+  }
 };

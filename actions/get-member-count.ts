@@ -16,6 +16,7 @@ export const getMemberCount = async (chatId: number) => {
       updateSettings(chatId, "chat_size", memberCount);
     });
   } catch (error) {
-    console.error(error);
+    console.error(`[Error] Could not get member count.`);
+    console.error(error.message);
   }
 };

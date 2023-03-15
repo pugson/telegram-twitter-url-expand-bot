@@ -30,6 +30,6 @@ bot.on("channel_post::url", async (ctx: Context) => {
 
     trackEvent(`expand.channel.${platform}`);
   } catch (error) {
-    console.log(error);
+    console.error("[Error] Channel message cannot be edited.");
   }
 });

@@ -41,19 +41,24 @@ export async function expandLink(ctx: Context, link: string, messageText: string
     }
   }
 
-  await ctx.reply(
-    expandedMessageTemplate(
-      userInfo.username,
-      userInfo.userId,
-      userInfo.firstName,
-      userInfo.lastName,
-      messageText,
-      expandedLink
-    ),
-    {
-      // Use HTML parse mode if the user does not have a username,
-      // otherwise the bot will not be able to mention the user.
-      parse_mode: userInfo.username ? undefined : "HTML",
-    }
-  );
+  try {
+    await ctx.reply(
+      expandedMessageTemplate(
+        userInfo.username,
+        userInfo.userId,
+        userInfo.firstName,
+        userInfo.lastName,
+        messageText,
+        expandedLink
+      ),
+      {
+        // Use HTML parse mode if the user does not have a username,
+        // otherwise the bot will not be able to mention the user.
+        parse_mode: userInfo.username ? undefined : "HTML",
+      }
+    );
+  } catch (error) {
+    console.error("[Error] Could not reply with an expanded link.");
+    console.error(error.message);
+  }
 }
