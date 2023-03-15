@@ -9,6 +9,7 @@ export const showBotActivity = async (chatId: number) => {
     bot.api.sendChatAction(chatId, "typing");
   } catch (error) {
     console.error(`[Error] Could not display bot activity indicator.`);
+    // @ts-ignore
     console.error(error.message);
   }
 };

@@ -59,6 +59,7 @@ export async function expandLink(ctx: Context, link: string, messageText: string
     );
   } catch (error) {
     console.error("[Error] Could not reply with an expanded link.");
+    // @ts-ignore
     console.error(error.message);
   }
 }
