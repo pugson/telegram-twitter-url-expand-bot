@@ -5,6 +5,7 @@ import { handleManualExpand } from "./manual-expand";
 import { handleAutoexpandSettings } from "./settings-autoexpand";
 import { handleChangelogSettings } from "./settings-changelog";
 import { handlePermissionsSettings } from "./settings-permissions";
+import { handleExpandedLinkDestruction } from "./destruct-expanded-link";
 
 // Multiple bot.on("callback_query") functions cannot run in parallel.
 // The bot will only register the first one and ignore the rest.
@@ -18,6 +19,7 @@ bot.on("callback_query", async (ctx: Context) => {
   // Handle specific callbacks / button presses
   handleManualExpand(ctx);
   handleAutoexpandSettings(ctx);
+  handleExpandedLinkDestruction(ctx);
   handleChangelogSettings(ctx);
   handlePermissionsSettings(ctx);
 
