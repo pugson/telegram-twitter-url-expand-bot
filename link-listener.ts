@@ -44,7 +44,7 @@ bot.on("message::url", async (ctx: Context) => {
     // Ignore if not a link from supported sites
     if (!matchingLink) return;
 
-    showBotActivity(chatId);
+    showBotActivity(ctx, chatId);
     const identifier = `${ctx.msg?.chat?.id}:${ctx.msg?.message_id}:${index}`;
 
     if (autoexpand) {
@@ -61,7 +61,7 @@ bot.on("message::url", async (ctx: Context) => {
     } else {
       // Save message context to cache then ask to expand
       await saveToCache(identifier, ctx);
-      await askToExpand(chatId, msgId, identifier, url, isDeletable);
+      await askToExpand(ctx, identifier, url, isDeletable);
     }
   });
 });

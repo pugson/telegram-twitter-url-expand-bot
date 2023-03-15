@@ -7,14 +7,18 @@ import { showBotActivity } from "../actions/show-bot-activity";
 bot.command("start", async (ctx: Context) => {
   if (!ctx.msg) return;
 
-  const chatId = ctx?.msg?.chat.id;
-  const msgId = ctx?.msg?.message_id;
-  const privateChat = ctx?.msg?.chat.type === "private";
+  try {
+    // This needs to be wrapped in try/catch because someone can block the bot
+    // and it will throw an error that prevents the bot from starting since it’s the entry command.
+    const chatId = ctx?.msg?.chat.id;
+    const msgId = ctx?.msg?.message_id;
+    const privateChat = ctx?.msg?.chat.type === "private";
+    const topicId = ctx.msg?.message_thread_id;
 
-  showBotActivity(chatId);
-  deleteMessage(chatId, msgId);
-  ctx.reply(
-    `👋 Hello! I’m a bot that expands Twitter, Instagram, and TikTok URLs. Send me a link and I’ll expand it for you. 🔗🖼️
+    showBotActivity(ctx, chatId);
+    deleteMessage(chatId, msgId);
+    ctx.reply(
+      `👋 Hello! I’m a bot that expands Twitter, Instagram, and TikTok URLs. Send me a link and I’ll expand it for you. 🔗🖼️
 
 Commands:
 /autoexpand - Configure link expanding
@@ -22,33 +26,42 @@ Commands:
 
 You can also add me to your channel and I will edit messages with links to expand them automatically.
 `,
-    privateChat
-      ? {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: "Add me to your group (if you’re an admin)",
-                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages",
-                },
+      privateChat
+        ? {
+            message_thread_id: topicId ?? undefined,
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Add me to your group (if you’re an admin)",
+                    url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages",
+                  },
+                ],
+                [
+                  {
+                    text: "Add me to your group (if you’re a member)",
+                    url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup",
+                  },
+                ],
+                [
+                  {
+                    text: "Add me to your channel",
+                    url: "tg://resolve?domain=TwitterLinkExpanderBot&startchannel&admin=edit_messages",
+                  },
+                ],
               ],
-              [
-                {
-                  text: "Add me to your group (if you’re a member)",
-                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup",
-                },
-              ],
-              [
-                {
-                  text: "Add me to your channel",
-                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startchannel&admin=edit_messages",
-                },
-              ],
-            ],
-          },
-        }
-      : undefined
-  );
+            },
+          }
+        : {
+            message_thread_id: topicId ?? undefined,
+          }
+    );
 
-  trackEvent("command.start");
+    trackEvent("command.start");
+  } catch (error) {
+    console.error({
+      message: "Error replying to the start command",
+      error,
+    });
+  }
 });

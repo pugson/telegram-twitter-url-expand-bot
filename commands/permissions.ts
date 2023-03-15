@@ -11,7 +11,7 @@ bot.command("permissions", async (ctx: Context) => {
   const chatId = ctx?.msg?.chat.id;
   const msgId = ctx?.msg?.message_id;
 
-  showBotActivity(chatId);
+  showBotActivity(ctx, chatId);
   deleteMessage(chatId, msgId);
   handleMissingPermissions(ctx, true);
 

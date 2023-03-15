@@ -9,10 +9,19 @@ bot.command("source", async (ctx: Context) => {
 
   const chatId = ctx?.msg?.chat.id;
   const msgId = ctx?.msg?.message_id;
+  const topicId = ctx.msg?.message_thread_id;
 
-  showBotActivity(chatId);
+  showBotActivity(ctx, chatId);
   deleteMessage(chatId, msgId);
-  ctx.reply(`This bot’s source code is available on GitHub: https://github.com/pugson/telegram-twitter-url-expand-bot`);
+  ctx.reply(
+    `This bot’s source code is available here: https://github.com/pugson/telegram-twitter-url-expand-bot
+
+For feature requests and bug reports please open an issue on GitHub.
+    `,
+    {
+      message_thread_id: topicId ?? undefined,
+    }
+  );
 
   trackEvent("command.sourceCode");
 });

@@ -74,7 +74,7 @@ export async function handleManualExpand(ctx: Context) {
           userId: cachedMessage.from?.id,
         };
 
-        showBotActivity(chatId);
+        showBotActivity(ctx, chatId);
         await expandLink(ctx, url, messageWithNoLinks, userInfo, "manual");
         deleteMessage(chatId, messageId); // bot’s [yes][no] message
         deleteFromCache(identifier);

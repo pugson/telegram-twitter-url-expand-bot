@@ -18,7 +18,9 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
     const replyWithMessageAboutPermissions = async (
       template: typeof hasPermissionToDeleteMessageTemplate | typeof missingPermissionToDeleteMessageTemplate
     ) => {
+      const topicId = ctx.msg?.message_thread_id;
       await ctx.reply(template, {
+        message_thread_id: topicId ?? undefined,
         reply_markup: {
           inline_keyboard: [
             [
