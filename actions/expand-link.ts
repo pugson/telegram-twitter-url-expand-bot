@@ -50,6 +50,7 @@ export async function expandLink(
   }
 
   try {
+    const topicId = ctx.msg?.message_thread_id;
     const botReply = await ctx.reply(
       expandedMessageTemplate(
         userInfo.username,
@@ -60,6 +61,7 @@ export async function expandLink(
         expandedLink
       ),
       {
+        message_thread_id: topicId ?? undefined,
         // Use HTML parse mode if the user does not have a username,
         // otherwise the bot will not be able to mention the user.
         parse_mode: userInfo.username ? undefined : "HTML",

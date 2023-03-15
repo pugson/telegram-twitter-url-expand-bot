@@ -16,11 +16,12 @@ bot.command("autoexpand", async (ctx: Context) => {
   const msgId = msg?.message_id;
   const chatId = msg?.chat.id;
   const privateChat = msg?.chat.type === "private";
+  const topicId = ctx.msg?.message_thread_id;
 
   // Discard malformed messages
   if (!msgId || !chatId) return;
 
-  showBotActivity(chatId);
+  showBotActivity(ctx, chatId);
 
   try {
     // Get autoexpand settings for this chat
@@ -30,6 +31,7 @@ bot.command("autoexpand", async (ctx: Context) => {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control autoexpand settings
       await bot.api.sendMessage(chatId, autoexpandSettingsTemplate(settings.autoexpand), {
+        message_thread_id: topicId ?? undefined,
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {
@@ -57,6 +59,7 @@ bot.command("autoexpand", async (ctx: Context) => {
       createSettings(chatId, true, true);
       // Reply with template and buttons to control autoexpand settings (default: on)
       await ctx.api.sendMessage(chatId, autoexpandSettingsTemplate(true), {
+        message_thread_id: topicId ?? undefined,
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {

@@ -1,12 +1,16 @@
+import { Context } from "grammy";
 import { bot } from "..";
 
 /**
  * Displays the "is typing..." animated indicator inside Telegram.
  * @param chatId ID of current chat.
  */
-export const showBotActivity = async (chatId: number) => {
+export const showBotActivity = async (ctx: Context, chatId: number) => {
   try {
-    bot.api.sendChatAction(chatId, "typing");
+    const topicId = ctx.msg?.message_thread_id;
+    bot.api.sendChatAction(chatId, "typing", {
+      message_thread_id: topicId ?? undefined,
+    });
   } catch (error) {
     console.error(`[Error] Could not display bot activity indicator.`);
     // @ts-ignore

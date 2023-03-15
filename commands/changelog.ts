@@ -14,11 +14,12 @@ bot.command("changelog", async (ctx: Context) => {
   const msg = ctx.update.message;
   const msgId = msg?.message_id;
   const chatId = msg?.chat.id;
+  const topicId = ctx.msg?.message_thread_id;
 
   // Discard malformed messages
   if (!msgId || !chatId) return;
 
-  showBotActivity(chatId);
+  showBotActivity(ctx, chatId);
 
   try {
     // Get changelog settings for this chat
@@ -28,6 +29,7 @@ bot.command("changelog", async (ctx: Context) => {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control changelog settings
       await bot.api.sendMessage(chatId, changelogSettingsTemplate(settings.changelog), {
+        message_thread_id: topicId ?? undefined,
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {
@@ -51,6 +53,7 @@ bot.command("changelog", async (ctx: Context) => {
       createSettings(chatId, false, true);
       // Reply with template and buttons to control changelog settings (default: on)
       await ctx.api.sendMessage(chatId, changelogSettingsTemplate(true), {
+        message_thread_id: topicId ?? undefined,
         parse_mode: "MarkdownV2",
         disable_notification: true,
         reply_markup: {
