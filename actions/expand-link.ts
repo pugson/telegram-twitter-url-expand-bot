@@ -78,6 +78,10 @@ export async function expandLink(
       }
     );
 
+    if (topicId) {
+      trackEvent(`expand.${expansionType}.inside-topic`);
+    }
+
     // Countdown the destruct timer under message
     if (botReply) {
       async function editDestructTimer(time: number) {
