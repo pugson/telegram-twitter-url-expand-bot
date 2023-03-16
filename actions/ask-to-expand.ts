@@ -38,9 +38,11 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
       },
     });
   } catch (error) {
+    // @ts-ignore
     console.error({
       message: "Error sending ask-to-expand message",
-      error,
+      // @ts-ignore
+      error: error.message,
     });
   }
 };

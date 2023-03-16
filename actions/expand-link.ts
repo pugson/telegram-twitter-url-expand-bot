@@ -127,6 +127,8 @@ export async function expandLink(
       }, 15000);
     }
   } catch (error) {
+    // @ts-ignore
+    if (error.message === "Call to 'sendMessage' failed! (400: Bad Request: message thread not found)") return;
     console.error("[Error] Could not reply with an expanded link.");
     // @ts-ignore
     console.error(error.message);
