@@ -23,9 +23,10 @@ export async function expandLink(
   link: string,
   messageText: string,
   userInfo: UserInfoType,
-  expansionType: "auto" | "manual"
+  expansionType: "auto" | "manual",
+  replyId?: number
 ) {
-  if (!ctx) return;
+  if (!ctx || !ctx.chat?.id) return;
   let expandedLink: string = "";
 
   if (isInstagram(link)) {
@@ -50,8 +51,21 @@ export async function expandLink(
   }
 
   try {
+    const chatId = ctx.chat?.id;
     const topicId = ctx.msg?.message_thread_id;
-    const botReply = await ctx.reply(
+    const replyTo = replyId || ctx.update?.message?.reply_to_message?.message_id;
+    // Very complicated bullshit to handle replying to a message inside a thread
+    // and replying to a message outside a thread, because the way these topics are set up is annoying.
+    const sameId = replyTo === topicId;
+    const threadOptions = replyId ? { message_thread_id: topicId } : null;
+    const threadId = sameId ? null : threadOptions;
+    const replyOptions = {
+      reply_to_message_id: replyTo,
+      ...threadId,
+    };
+
+    const botReply = await ctx.api.sendMessage(
+      chatId,
       expandedMessageTemplate(
         userInfo.username,
         userInfo.userId,
@@ -61,7 +75,7 @@ export async function expandLink(
         expandedLink
       ),
       {
-        message_thread_id: topicId ?? undefined,
+        ...replyOptions,
         // Use HTML parse mode if the user does not have a username,
         // otherwise the bot will not be able to mention the user.
         parse_mode: userInfo.username ? undefined : "HTML",
@@ -128,9 +142,8 @@ export async function expandLink(
     }
   } catch (error) {
     // @ts-ignore
-    if (error.message === "Call to 'sendMessage' failed! (400: Bad Request: message thread not found)") return;
-    console.error("[Error] Could not reply with an expanded link.");
+    console.error("[Error: expand-link.ts] Could not reply with an expanded link.");
     // @ts-ignore
-    console.error(error.message);
+    // console.error(error);
   }
 }

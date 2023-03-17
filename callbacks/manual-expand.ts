@@ -43,7 +43,8 @@ export async function handleManualExpand(ctx: Context) {
       const originalMessageId: string = properties[3];
       const linkIndex: number = Number(properties[4]);
       const platform: string = properties[5];
-      const isDeletable: boolean = properties[6] === "true";
+      const replyId: number = Number(properties[6]);
+      const isDeletable: boolean = properties[7] === "true";
       const identifier = `${originalChatId}:${originalMessageId}:${linkIndex}`;
       const prevLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex - 1}`;
       const nextLinkIdentifier = `${originalChatId}:${originalMessageId}:${linkIndex + 1}`;
@@ -75,7 +76,7 @@ export async function handleManualExpand(ctx: Context) {
         };
 
         showBotActivity(ctx, chatId);
-        await expandLink(ctx, url, messageWithNoLinks, userInfo, "manual");
+        await expandLink(ctx, url, messageWithNoLinks, userInfo, "manual", replyId);
         deleteMessage(chatId, messageId); // bot’s [yes][no] message
         deleteFromCache(identifier);
 

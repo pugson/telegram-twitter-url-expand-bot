@@ -12,21 +12,23 @@ import { askToExpandTemplate } from "../helpers/templates";
  * @param isDeletable Whether the original message can be deleted
  */
 export const askToExpand = async (ctx: Context, identifier: string, link: string, isDeletable: boolean) => {
+  if (!ctx || !ctx.chat?.id) return;
+
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
   const platform = insta ? "instagram" : tiktok ? "tiktok" : "twitter";
 
   try {
-    const topicId = ctx.msg?.message_thread_id;
+    const originalReplyId = ctx.update?.message?.reply_to_message?.message_id;
+
     await ctx.reply(askToExpandTemplate(link), {
-      message_thread_id: topicId ?? undefined,
       reply_to_message_id: ctx.msg?.message_id,
       reply_markup: {
         inline_keyboard: [
           [
             {
               text: "✅ Yes",
-              callback_data: `expand:yes:${identifier}:${platform}:${isDeletable}`,
+              callback_data: `expand:yes:${identifier}:${platform}:${originalReplyId}:${isDeletable}`,
               // callback_data has a 64 byte limit!!!
             },
             {
