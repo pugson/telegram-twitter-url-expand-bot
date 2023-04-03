@@ -12,8 +12,6 @@ export const fetchTweet = async (url: string): Promise<boolean> => {
   } catch (error) {
     // @ts-ignore
     console.error(url, error.message);
-    // @ts-ignore
-    notifyAdmin(`url: ${url}, message: ${error.message}`);
   }
 
   return hasImages;
