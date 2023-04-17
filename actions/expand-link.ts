@@ -67,6 +67,7 @@ export async function expandLink(
     const botReply = await ctx.api.sendMessage(
       chatId,
       expandedMessageTemplate(
+        ctx,
         userInfo.username,
         userInfo.userId,
         userInfo.firstName,
@@ -78,7 +79,7 @@ export async function expandLink(
         ...replyOptions,
         // Use HTML parse mode if the user does not have a username,
         // otherwise the bot will not be able to mention the user.
-        parse_mode: userInfo.username ? undefined : "HTML",
+        parse_mode: "HTML",
         reply_markup: {
           inline_keyboard: [
             [
