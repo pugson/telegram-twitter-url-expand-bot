@@ -63,10 +63,12 @@ export async function handleManualExpand(ctx: Context) {
       // because it will throw an error when trying to delete the message.
       if (contextFromCache) {
         const entities = contextFromCache.entities() || contextFromCache.caption_entities();
-        const messageWithNoLinks = entities.reduce(
-          (msg: string, entity: { text: any }) => msg.replace(entity.text, ""),
-          message
-        );
+        const messageWithNoLinks = entities.reduce((msg: string, entity: { type: string; text: any }) => {
+          if (entity.type === "url") {
+            return msg.replace(entity.text, "");
+          }
+          return msg;
+        }, message);
 
         const userInfo = {
           username: cachedMessage.from?.username,

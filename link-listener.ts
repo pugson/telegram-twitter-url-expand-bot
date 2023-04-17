@@ -25,7 +25,12 @@ bot.on("message::url", async (ctx: Context) => {
   const isDeletable = !ctx.msg?.caption; // deletable if not a caption of media
   const entities = ctx.entities(); // all links in message
   const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
-  const messageWithNoLinks = entities.reduce((msg, entity) => msg.replace(entity.text, ""), message);
+  const messageWithNoLinks = entities.reduce((msg, entity) => {
+    if (entity.type === "url") {
+      return msg.replace(entity.text, "");
+    }
+    return msg;
+  }, message);
 
   // Get autoexpand settings for this chat
   const settings = await getSettings(chatId);
