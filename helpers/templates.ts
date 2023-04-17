@@ -2,6 +2,7 @@
 //! Indentation and line breaks need to be preserved
 //! to display properly in Telegram
 
+import { Context } from "grammy";
 import { isInstagram, isTikTok } from "./platforms";
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
@@ -64,6 +65,7 @@ export const askToExpandTemplate = (link: string) => {
  * clicks the expand button or the links are autoexpanded.
  */
 export const expandedMessageTemplate = (
+  ctx: Context,
   username?: string,
   userId?: number,
   firstName?: string,
@@ -71,21 +73,67 @@ export const expandedMessageTemplate = (
   text?: string,
   link?: string
 ) => {
-  // If the user has a username, use that instead of their name.
-  if (username) {
-    // [@username]: message text
-    // https://expanded-link.com
-    return `@${username}: ${text}
+  // TODO: this function is a clusterfuck of ugly template literals. refactor in the future.
+  const bothNames = firstName && lastName;
+  const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
+  const usernameOrFullNameTag = username ? `@${username}` : `<a href="tg://user?id=${userId}">${nameTemplate}</a>`;
+
+  // Check if the original author of the message has a public profile.
+  if (ctx.msg?.forward_from) {
+    const forwardUserId = ctx.msg?.forward_from?.id;
+    const forwardUsername = ctx.msg?.forward_from?.username;
+    const forwardFirstName = ctx.msg?.forward_from?.first_name;
+    const forwardLastName = ctx.msg?.forward_from?.last_name;
+    const bothNames = forwardFirstName && forwardLastName;
+    const nameTemplate = bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName;
+
+    // Link to the original author by username if they have one.
+    if (forwardUsername) {
+      return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
+${text}
 
 ${link}`;
-  } else {
-    const bothNames = firstName && lastName;
-    const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
+    }
 
-    // [firstName? lastName?]: message text
-    // https://expanded-link.com
-    return `<a href="tg://user?id=${userId}">${nameTemplate}</a>: ${text}
+    // Link to the original author by ID if they don’t have a username.
+    return `<u>Forwarded from <a href="tg://user?id=${forwardUserId}">${nameTemplate}</a> by ${usernameOrFullNameTag}</u> 
+${text}
 
 ${link}`;
   }
+
+  // Check if the original author of the message has a private profile.
+  if (ctx.msg?.forward_sender_name) {
+    return `<u>Forwarded from <i>${ctx.msg?.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
+${text}
+
+${link}`;
+  }
+
+  // Check if the original author of the message is a channel.
+  if (ctx.msg?.forward_from_chat) {
+    // @ts-ignore
+    const forwardName = ctx.msg?.forward_from_chat?.title;
+    // @ts-ignore
+    const forwardUsername = ctx.msg?.forward_from_chat?.username;
+
+    // Link to the original channel by username if they have one.
+    if (forwardUsername) {
+      return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
+${text}
+
+${link}`;
+    }
+
+    // Make the channel name italic if they don’t have a username.
+    return `<u>Forwarded from <i>${forwardName}</i> by ${usernameOrFullNameTag}</u>
+${text}
+
+${link}`;
+  }
+
+  // If the message was not forwarded, handle it normally.
+  return `${usernameOrFullNameTag} 💬 ${text}
+
+${link}`;
 };
