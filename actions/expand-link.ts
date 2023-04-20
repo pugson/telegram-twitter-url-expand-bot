@@ -1,21 +1,105 @@
-import { Context } from "grammy";
+import { Api, Context } from "grammy";
 import { expandedMessageTemplate } from "../helpers/templates";
 import { isInstagram, isTikTok, isTweet } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
+import { Message } from "grammy/types";
 
 type UserInfoType = {
-  username: string | undefined;
-  firstName: string | undefined;
-  lastName: string | undefined;
-  userId: number | undefined;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  userId?: number;
 };
 
 /**
- *
+ * Handle expanding the link based on the platform.
+ * @param link URL to expand
+ * @returns Expanded URL with the right domain
+ */
+function expandLinkPlatform(link: string): string {
+  switch (true) {
+    case isInstagram(link):
+      return link.replace("instagram.com", "ddinstagram.com");
+    case isTikTok(link):
+      return link.replace("tiktok.com", "vxtiktok.com");
+    case isTweet(link):
+      return link.replace("twitter.com", "fxtwitter.com");
+    default:
+      return link;
+  }
+}
+
+/**
+ * Handles the thread for topics and replies in chat.
  * @param ctx Telegram Context
- * @param link Link to expand
- * @param messageText Text of the message without URLs
- * @param userInfo Object with user details for creating the message template
+ * @param replyId
+ * @returns Reply ID or Thread ID
+ */
+function getThreadId(ctx: Context, replyId?: number) {
+  const topicId = ctx?.msg?.message_thread_id;
+  const replyTo = replyId || ctx?.update?.message?.reply_to_message?.message_id;
+  const sameId = replyTo === topicId;
+  const threadOptions = replyId ? { message_thread_id: topicId } : null;
+  return sameId ? null : threadOptions;
+}
+
+/**
+ * Get the message template with the expanded link.
+ * @param ctx Telegram Context
+ * @param userInfo User that sent or forwarded the message
+ * @param messageText Message text without links
+ * @param expandedLink URL
+ * @returns Message template with the expanded link
+ */
+function getExpandedMessageTemplate(ctx: Context, userInfo: UserInfoType, messageText: string, expandedLink: string) {
+  const { username, userId, firstName, lastName } = userInfo;
+  return expandedMessageTemplate(ctx, username, userId, firstName, lastName, messageText, expandedLink);
+}
+
+/**
+ * Handles the countdown for the destruct button.
+ * @param api Telegram Bot API
+ * @param botReply Message Context that was sent by the bot with the expanded link
+ * @param userInfo Object with user details of the person that sent or forwareded the message
+ * @param expansionType Can be "auto" or "manual"
+ */
+function startDestructTimer(api: Api, botReply: Message, userInfo: UserInfoType, expansionType: "auto" | "manual") {
+  // Template for editing the destruct button timer
+  async function editDestructTimer(time: number) {
+    try {
+      await api.editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: `❌ Delete — ${time}s`,
+                callback_data: `destruct:${userInfo.userId}:${expansionType}`,
+              },
+            ],
+          ],
+        },
+      });
+    } catch (error) {
+      console.error("[Error] Could not edit destruct timer.", error);
+    }
+  }
+
+  setTimeout(() => editDestructTimer(10), 5000); // change to 10s after 5s
+  setTimeout(() => editDestructTimer(5), 10000); // change to 5s after 10s
+  setTimeout(
+    () => api.editMessageReplyMarkup(botReply.chat.id, botReply.message_id, { reply_markup: undefined }),
+    15000
+  ); // remove button after 15s
+}
+
+/**
+ * Handle expanding the link and sending the message in the chat.
+ * @param ctx Telegram Context
+ * @param link URL to expand
+ * @param messageText Message text without links
+ * @param userInfo User that sent or forwarded the message
+ * @param expansionType
+ * @param replyId
  */
 export async function expandLink(
   ctx: Context,
@@ -25,50 +109,23 @@ export async function expandLink(
   expansionType: "auto" | "manual",
   replyId?: number
 ) {
-  if (!ctx || !ctx.chat?.id) return;
-  let expandedLink: string = "";
+  const chatId = ctx?.chat?.id;
+  if (!chatId) return;
 
-  if (isInstagram(link)) {
-    expandedLink = link.replace("instagram.com", "ddinstagram.com");
-  }
-
-  if (isTikTok(link)) {
-    expandedLink = link.replace("tiktok.com", "vxtiktok.com");
-  }
-
-  if (isTweet(link)) {
-    expandedLink = link.replace("twitter.com", "fxtwitter.com");
-  }
+  // Return correct link based on platform
+  let expandedLink = expandLinkPlatform(link);
 
   try {
-    const chatId = ctx.chat?.id;
-    const topicId = ctx.msg?.message_thread_id;
-    const replyTo = replyId || ctx.update?.message?.reply_to_message?.message_id;
-    // Very complicated bullshit to handle replying to a message inside a thread
-    // and replying to a message outside a thread, because the way these topics are set up is annoying.
-    const sameId = replyTo === topicId;
-    const threadOptions = replyId ? { message_thread_id: topicId } : null;
-    const threadId = sameId ? null : threadOptions;
-    const replyOptions = {
-      reply_to_message_id: replyTo,
-      ...threadId,
-    };
+    const replyTo = replyId || ctx?.update?.message?.reply_to_message?.message_id;
+    const threadId = getThreadId(ctx, replyId);
 
+    // Send the message with the expanded link
     const botReply = await ctx.api.sendMessage(
       chatId,
-      expandedMessageTemplate(
-        ctx,
-        userInfo.username,
-        userInfo.userId,
-        userInfo.firstName,
-        userInfo.lastName,
-        messageText,
-        expandedLink
-      ),
+      getExpandedMessageTemplate(ctx, userInfo, messageText, expandedLink),
       {
-        ...replyOptions,
-        // Use HTML parse mode if the user does not have a username,
-        // otherwise the bot will not be able to mention the user.
+        reply_to_message_id: replyTo,
+        ...threadId,
         parse_mode: "HTML",
         reply_markup: {
           inline_keyboard: [
@@ -83,58 +140,14 @@ export async function expandLink(
       }
     );
 
-    if (topicId) {
+    // Track if the message was sent inside a topic
+    if (ctx?.msg?.message_thread_id) {
       trackEvent(`expand.${expansionType}.inside-topic`);
     }
 
-    // Countdown the destruct timer under message
-    if (botReply) {
-      async function editDestructTimer(time: number) {
-        try {
-          await ctx.api.editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: `❌ Delete — ${time}s`,
-                    callback_data: `destruct:${userInfo.userId}:${expansionType}`,
-                  },
-                ],
-              ],
-            },
-          });
-        } catch (error) {
-          // console.error("[Error] Could not edit destruct timer.");
-          // @ts-ignore
-          // console.error(error.message);
-        }
-      }
-
-      // edit timer to 10s
-      setTimeout(async () => {
-        editDestructTimer(10);
-      }, 5000);
-
-      // edit timer to 5s
-      setTimeout(async () => {
-        editDestructTimer(5);
-      }, 10000);
-
-      // clear buttons after 15s
-      setTimeout(async () => {
-        try {
-          await ctx.api.editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
-            reply_markup: undefined,
-          });
-        } catch (error) {
-          // do nothing
-        }
-      }, 15000);
-    }
+    // Start the timer for allowing the author to delete the message with a button
+    startDestructTimer(ctx.api, botReply, userInfo, expansionType);
   } catch (error) {
-    // @ts-ignore
-    console.error("[Error: expand-link.ts] Could not reply with an expanded link.");
-    // @ts-ignore
-    // console.error(error);
+    console.error("[Error: expand-link.ts] Could not reply with an expanded link.", error);
   }
 }
