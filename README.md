@@ -2,11 +2,11 @@
 
 ![banner-4 1@1x](https://user-images.githubusercontent.com/6843656/214646426-db3bf292-afc4-4729-8e16-64ed687127aa.png)
 
-Some Twitter links stopped expanding inside Telegram which made it extremely annoying when you wanted to send a banger tweet to your homies in the group chat. This bot replies with an alternative [vxtwitter.com](https://vxtwitter.com) URL which has a working embed for multiple photos and even includes inline video.
+Some Twitter links stopped expanding inside Telegram which made it extremely annoying when you wanted to send a banger tweet to your homies in the group chat. This bot replies with an alternative [fxtwitter.com](https://fxtwitter.com) URL which has a working embed for multiple photos and even includes inline video.
 
 ## ✨🆕✨ Bot now works in Telegram Channels!
 
-When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [vxtwitter.com](https://vxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [vxtiktok.com](https://vxtiktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
+When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [fxtwitter.com](https://fxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [vxtiktok.com](https://vxtiktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
 
 ## Also supports TikTok!
 
@@ -58,3 +58,4 @@ This bot wouldn't be possible without the following people and projects. Huge th
 
 - [@dylanpdx](https://github.com/dylanpdx) for creating [BetterTwitFix](https://github.com/dylanpdx/BetterTwitFix) / [vxtwitter.com](https://vxtwitter.com) and [vxtiktok.com](https://vxtiktok.com)
 - [@Wikidepia](https://github.com/Wikidepia) for creating [InstaFix](https://github.com/Wikidepia/InstaFix) / [ddinstagram.com](https://ddinstagram.com)
+- [fxtwitter.com](https://fxtwitter.com) / [FixTweet](https://github.com/FixTweet/FixTweet)

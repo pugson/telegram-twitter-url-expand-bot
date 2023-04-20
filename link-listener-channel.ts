@@ -13,7 +13,7 @@ bot.on("channel_post::url", async (ctx: Context) => {
 
   const platform = isInstagram(message) ? "instagram" : isTikTok(message) ? "tiktok" : "twitter";
   const expandedLinksMessage = message
-    .replace("twitter.com/", "vxtwitter.com/")
+    .replace("twitter.com/", "fxtwitter.com/")
     .replace("instagram.com/", "ddinstagram.com/")
     .replace("tiktok.com/", "vxtiktok.com/");
 

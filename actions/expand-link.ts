@@ -1,7 +1,6 @@
 import { Context } from "grammy";
 import { expandedMessageTemplate } from "../helpers/templates";
 import { isInstagram, isTikTok, isTweet } from "../helpers/platforms";
-import { fetchTweet } from "../helpers/tweet-parser";
 import { trackEvent } from "../helpers/analytics";
 
 type UserInfoType = {
@@ -38,16 +37,7 @@ export async function expandLink(
   }
 
   if (isTweet(link)) {
-    const hasImages = await fetchTweet(link);
-
-    if (hasImages) {
-      expandedLink = link.replace("twitter.com", "c.vxtwitter.com");
-
-      const isManuallyExpanded = expansionType === "manual";
-      trackEvent(`expand.${isManuallyExpanded ? "yes" : "auto"}.twitter.multipleImages`);
-    } else {
-      expandedLink = link.replace("twitter.com", "vxtwitter.com");
-    }
+    expandedLink = link.replace("twitter.com", "fxtwitter.com");
   }
 
   try {
