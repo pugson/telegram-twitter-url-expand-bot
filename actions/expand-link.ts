@@ -11,7 +11,25 @@ type UserInfoType = {
 };
 
 /**
- *
+ * Handle expanding the link based on the platform.
+ * @param link URL to expand
+ * @returns Expanded URL with the right domain
+ */
+function handleExpandedLinkDomain(link: string): string {
+  switch (true) {
+    case isInstagram(link):
+      return link.replace("instagram.com", "ddinstagram.com");
+    case isTikTok(link):
+      return link.replace("tiktok.com", "vxtiktok.com");
+    case isTweet(link):
+      return link.replace("twitter.com", "fxtwitter.com");
+    default:
+      return link;
+  }
+}
+
+/**
+ * Handles link expansion and sending the message with the correct template and destruct button.
  * @param ctx Telegram Context
  * @param link Link to expand
  * @param messageText Text of the message without URLs
@@ -26,19 +44,8 @@ export async function expandLink(
   replyId?: number
 ) {
   if (!ctx || !ctx.chat?.id) return;
-  let expandedLink: string = "";
-
-  if (isInstagram(link)) {
-    expandedLink = link.replace("instagram.com", "ddinstagram.com");
-  }
-
-  if (isTikTok(link)) {
-    expandedLink = link.replace("tiktok.com", "vxtiktok.com");
-  }
-
-  if (isTweet(link)) {
-    expandedLink = link.replace("twitter.com", "fxtwitter.com");
-  }
+  // Return correct link based on platform
+  const expandedLink = handleExpandedLinkDomain(link);
 
   try {
     const chatId = ctx.chat?.id;
@@ -127,13 +134,11 @@ export async function expandLink(
             reply_markup: undefined,
           });
         } catch (error) {
-          // do nothing
           console.error("[Error] Could not clear destruct timer. Message was probably deleted.");
         }
       }, 15000);
     }
   } catch (error) {
-    // @ts-ignore
     console.error("[Error: expand-link.ts] Could not reply with an expanded link.");
     // @ts-ignore
     // console.error(error);
