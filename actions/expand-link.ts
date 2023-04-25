@@ -111,7 +111,7 @@ export async function expandLink(
             },
           });
         } catch (error) {
-          console.error("[Error] Could not edit destruct timer. Message was probably deleted.");
+          // console.error("[Error] Could not edit destruct timer. Message was probably deleted.");
           // @ts-ignore
           // console.error(error.message);
         }
@@ -134,7 +134,7 @@ export async function expandLink(
             reply_markup: undefined,
           });
         } catch (error) {
-          console.error("[Error] Could not clear destruct timer. Message was probably deleted.");
+          // console.error("[Error] Could not clear destruct timer. Message was probably deleted.");
         }
       }, 15000);
     }
