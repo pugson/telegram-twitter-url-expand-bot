@@ -12,7 +12,9 @@ export const deleteMessage = async (chatId: string | number, msgId: number, ctx?
   // Gotta await try/catch this because the original message might have been deleted already, or the bot might not have permission to delete it.
   // Bot will crash if it tries to delete a message that it cannot delete.
   try {
-    await bot.api.deleteMessage(chatId, msgId);
+    await bot.api.deleteMessage(chatId, msgId).catch(() => {
+      console.error(`[Error] Could not delete message.`);
+    });
   } catch (error) {
     // console.error({
     //   message: "Error deleting message",

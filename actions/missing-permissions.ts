@@ -19,31 +19,35 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
       template: typeof hasPermissionToDeleteMessageTemplate | typeof missingPermissionToDeleteMessageTemplate
     ) => {
       const topicId = ctx.msg?.message_thread_id;
-      await ctx.reply(template, {
-        message_thread_id: topicId ?? undefined,
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "🙅‍♀️ Disable future warnings",
-                callback_data: "permissions:disable-warning",
-              },
+      await ctx
+        .reply(template, {
+          message_thread_id: topicId ?? undefined,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "🙅‍♀️ Disable future warnings",
+                  callback_data: "permissions:disable-warning",
+                },
+              ],
+              [
+                {
+                  text: "👮 Admin Only: Grant permissions",
+                  url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages",
+                },
+              ],
+              [
+                {
+                  text: "✨ Done",
+                  callback_data: "permissions:done",
+                },
+              ],
             ],
-            [
-              {
-                text: "👮 Admin Only: Grant permissions",
-                url: "tg://resolve?domain=TwitterLinkExpanderBot&startgroup&admin=delete_messages",
-              },
-            ],
-            [
-              {
-                text: "✨ Done",
-                callback_data: "permissions:done",
-              },
-            ],
-          ],
-        },
-      });
+          },
+        })
+        .catch(() => {
+          console.error(`[Error] [missing-permissions.ts:49] Failed to send permissions warning template.`);
+        });
     };
 
     if (fromCommand) {
