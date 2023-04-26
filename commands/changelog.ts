@@ -19,9 +19,8 @@ bot.command("changelog", async (ctx: Context) => {
   // Discard malformed messages
   if (!msgId || !chatId) return;
 
-  showBotActivity(ctx, chatId);
-
   try {
+    showBotActivity(ctx, chatId);
     // Get changelog settings for this chat
     const settings = await getSettings(chatId);
 

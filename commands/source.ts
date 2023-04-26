@@ -5,9 +5,9 @@ import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
 
 bot.command("source", async (ctx: Context) => {
-  try {
-    if (!ctx.msg) return;
+  if (!ctx.msg) return;
 
+  try {
     const chatId = ctx?.msg?.chat.id;
     const msgId = ctx?.msg?.message_id;
     const topicId = ctx.msg?.message_thread_id;
@@ -23,9 +23,9 @@ For feature requests and bug reports please open an issue on GitHub.
         message_thread_id: topicId ?? undefined,
       }
     );
-
-    trackEvent("command.sourceCode");
   } catch (error) {
     console.error(`[Error] Cannot send source message.`, error);
   }
+
+  trackEvent("command.sourceCode");
 });

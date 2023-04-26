@@ -21,9 +21,8 @@ bot.command("autoexpand", async (ctx: Context) => {
   // Discard malformed messages
   if (!msgId || !chatId) return;
 
-  showBotActivity(ctx, chatId);
-
   try {
+    showBotActivity(ctx, chatId);
     // Get autoexpand settings for this chat
     const settings = await getSettings(chatId);
 
