@@ -5,23 +5,27 @@ import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
 
 bot.command("source", async (ctx: Context) => {
-  if (!ctx.msg) return;
+  try {
+    if (!ctx.msg) return;
 
-  const chatId = ctx?.msg?.chat.id;
-  const msgId = ctx?.msg?.message_id;
-  const topicId = ctx.msg?.message_thread_id;
+    const chatId = ctx?.msg?.chat.id;
+    const msgId = ctx?.msg?.message_id;
+    const topicId = ctx.msg?.message_thread_id;
 
-  showBotActivity(ctx, chatId);
-  deleteMessage(chatId, msgId);
-  ctx.reply(
-    `This bot’s source code is available here: https://github.com/pugson/telegram-twitter-url-expand-bot
+    showBotActivity(ctx, chatId);
+    deleteMessage(chatId, msgId);
+    ctx.reply(
+      `This bot’s source code is available here: https://github.com/pugson/telegram-twitter-url-expand-bot
 
 For feature requests and bug reports please open an issue on GitHub.
     `,
-    {
-      message_thread_id: topicId ?? undefined,
-    }
-  );
+      {
+        message_thread_id: topicId ?? undefined,
+      }
+    );
 
-  trackEvent("command.sourceCode");
+    trackEvent("command.sourceCode");
+  } catch (error) {
+    console.error(`[Error] Cannot send source message.`, error);
+  }
 });
