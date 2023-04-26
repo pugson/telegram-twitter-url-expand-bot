@@ -89,6 +89,11 @@ export async function expandLink(
         },
       }
     );
+    // .catch(() => {
+    //   console.error(
+    //     "[Error] [expand-link.ts:88] Could not reply with an expanded link. Message was probably deleted."
+    //   );
+    // });
 
     if (topicId) {
       trackEvent(`expand.${expansionType}.inside-topic`);
@@ -98,18 +103,24 @@ export async function expandLink(
     if (botReply) {
       async function editDestructTimer(time: number) {
         try {
-          await ctx.api.editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: `❌ Delete — ${time}s`,
-                    callback_data: `destruct:${userInfo.userId}:${expansionType}`,
-                  },
+          await ctx.api
+            .editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: `❌ Delete — ${time}s`,
+                      callback_data: `destruct:${userInfo.userId}:${expansionType}`,
+                    },
+                  ],
                 ],
-              ],
-            },
-          });
+              },
+            })
+            .catch(() => {
+              console.error(
+                "[Error] [expand-link.ts:113] Could not edit destruct timer. Message was probably deleted."
+              );
+            });
         } catch (error) {
           // console.error("[Error] Could not edit destruct timer. Message was probably deleted.");
           // @ts-ignore
@@ -130,9 +141,15 @@ export async function expandLink(
       // clear buttons after 15s
       setTimeout(async () => {
         try {
-          await ctx.api.editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
-            reply_markup: undefined,
-          });
+          await ctx.api
+            .editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
+              reply_markup: undefined,
+            })
+            .catch(() => {
+              console.error(
+                "[Error] [expand-link.ts:144] Could not clear destruct timer. Message was probably deleted."
+              );
+            });
         } catch (error) {
           // console.error("[Error] Could not clear destruct timer. Message was probably deleted.");
         }

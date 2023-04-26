@@ -21,24 +21,29 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
   try {
     const originalReplyId = ctx.update?.message?.reply_to_message?.message_id;
 
-    await ctx.reply(askToExpandTemplate(link), {
-      reply_to_message_id: ctx.msg?.message_id,
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "✅ Yes",
-              callback_data: `expand:yes:${identifier}:${platform}:${originalReplyId}:${isDeletable}`,
-              // callback_data has a 64 byte limit!!!
-            },
-            {
-              text: "❌ No",
-              callback_data: `expand:no:${identifier}:${platform}`,
-            },
+    await ctx
+      .reply(askToExpandTemplate(link), {
+        reply_to_message_id: ctx.msg?.message_id,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "✅ Yes",
+                callback_data: `expand:yes:${identifier}:${platform}:${originalReplyId}:${isDeletable}`,
+                // callback_data has a 64 byte limit!!!
+              },
+              {
+                text: "❌ No",
+                callback_data: `expand:no:${identifier}:${platform}`,
+              },
+            ],
           ],
-        ],
-      },
-    });
+        },
+      })
+      .catch((error) => {
+        console.error(`[Error] Could not send ask-to-expand message.`);
+        console.error(error);
+      });
   } catch (error) {
     // @ts-ignore
     console.error({

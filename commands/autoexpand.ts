@@ -29,25 +29,29 @@ bot.command("autoexpand", async (ctx: Context) => {
     if (settings) {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control autoexpand settings
-      await bot.api.sendMessage(chatId, autoexpandSettingsTemplate(settings.autoexpand), {
-        message_thread_id: topicId ?? undefined,
-        parse_mode: "MarkdownV2",
-        disable_notification: true,
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: settings.autoexpand ? "❌ Disable" : "✅ Enable",
-                callback_data: `autoexpand:${settings.autoexpand ? "off" : "on"}`,
-              },
-              {
-                text: "✨ Done",
-                callback_data: "autoexpand:done",
-              },
+      await bot.api
+        .sendMessage(chatId, autoexpandSettingsTemplate(settings.autoexpand), {
+          message_thread_id: topicId ?? undefined,
+          parse_mode: "MarkdownV2",
+          disable_notification: true,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: settings.autoexpand ? "❌ Disable" : "✅ Enable",
+                  callback_data: `autoexpand:${settings.autoexpand ? "off" : "on"}`,
+                },
+                {
+                  text: "✨ Done",
+                  callback_data: "autoexpand:done",
+                },
+              ],
             ],
-          ],
-        },
-      });
+          },
+        })
+        .catch(() => {
+          console.error(`[Error] [autoexpand.ts:51] Failed to send autoexpand settings template.`);
+        });
 
       if (settings.autoexpand && !privateChat) {
         handleMissingPermissions(ctx);
@@ -57,25 +61,29 @@ bot.command("autoexpand", async (ctx: Context) => {
       // Create default settings for this chat
       createSettings(chatId, true, true);
       // Reply with template and buttons to control autoexpand settings (default: on)
-      await ctx.api.sendMessage(chatId, autoexpandSettingsTemplate(true), {
-        message_thread_id: topicId ?? undefined,
-        parse_mode: "MarkdownV2",
-        disable_notification: true,
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "❌ Disable",
-                callback_data: `autoexpand:off`,
-              },
-              {
-                text: "✨ Done",
-                callback_data: "autoexpand:done",
-              },
+      await ctx.api
+        .sendMessage(chatId, autoexpandSettingsTemplate(true), {
+          message_thread_id: topicId ?? undefined,
+          parse_mode: "MarkdownV2",
+          disable_notification: true,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "❌ Disable",
+                  callback_data: `autoexpand:off`,
+                },
+                {
+                  text: "✨ Done",
+                  callback_data: "autoexpand:done",
+                },
+              ],
             ],
-          ],
-        },
-      });
+          },
+        })
+        .catch(() => {
+          console.error(`[Error] [autoexpand.ts:85] Failed to send autoexpand settings template.`);
+        });
 
       if (!privateChat) handleMissingPermissions(ctx);
     }
