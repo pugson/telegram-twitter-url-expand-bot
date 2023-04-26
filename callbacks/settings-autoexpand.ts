@@ -22,31 +22,42 @@ export async function handleAutoexpandSettings(ctx: Context) {
   if (!answer || !chatId || !messageId || !data) return;
 
   if (data.includes("autoexpand:done")) {
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
+    });
     deleteMessage(chatId, messageId);
     return;
   }
 
   if (data.includes("autoexpand:off")) {
     updateSettings(chatId, FIELD_NAME, false);
-    await ctx.answerCallbackQuery();
-    await ctx.api.editMessageText(chatId, messageId, autoexpandSettingsTemplate(false), {
-      parse_mode: "MarkdownV2",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "✅ Enable",
-              callback_data: `autoexpand:on`,
-            },
-            {
-              text: "✨ Done",
-              callback_data: "autoexpand:done",
-            },
-          ],
-        ],
-      },
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
     });
+    await ctx.api
+      .editMessageText(chatId, messageId, autoexpandSettingsTemplate(false), {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "✅ Enable",
+                callback_data: `autoexpand:on`,
+              },
+              {
+                text: "✨ Done",
+                callback_data: "autoexpand:done",
+              },
+            ],
+          ],
+        },
+      })
+      .catch(() => {
+        console.error(`[Error1]`);
+        return;
+      });
 
     trackEvent("settings.autoexpand.disable");
     return;
@@ -54,24 +65,32 @@ export async function handleAutoexpandSettings(ctx: Context) {
 
   if (data.includes("autoexpand:on")) {
     updateSettings(chatId, FIELD_NAME, true);
-    await ctx.answerCallbackQuery();
-    await ctx.api.editMessageText(chatId, messageId, autoexpandSettingsTemplate(true), {
-      parse_mode: "MarkdownV2",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "❌ Disable",
-              callback_data: `autoexpand:off`,
-            },
-            {
-              text: "✨ Done",
-              callback_data: "autoexpand:done",
-            },
-          ],
-        ],
-      },
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
     });
+    await ctx.api
+      .editMessageText(chatId, messageId, autoexpandSettingsTemplate(true), {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "❌ Disable",
+                callback_data: `autoexpand:off`,
+              },
+              {
+                text: "✨ Done",
+                callback_data: "autoexpand:done",
+              },
+            ],
+          ],
+        },
+      })
+      .catch(() => {
+        console.error(`[Error] Cannot edit settings.`);
+        return;
+      });
 
     if (!privateChat) handleMissingPermissions(ctx);
 

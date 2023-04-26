@@ -19,17 +19,26 @@ bot.on("channel_post::url", async (ctx: Context) => {
 
   try {
     if (caption) {
-      await ctx.editMessageCaption({
-        caption: expandedLinksMessage,
-      });
+      await ctx
+        .editMessageCaption({
+          caption: expandedLinksMessage,
+        })
+        .catch(() => {
+          console.error("[Error1] Channel message cannot be edited.");
+          return;
+        });
       trackEvent(`edit.channel.caption`);
     } else {
-      await ctx.editMessageText(expandedLinksMessage);
+      await ctx.editMessageText(expandedLinksMessage).catch(() => {
+        console.error("[Error2] Channel message cannot be edited.");
+        return;
+      });
       trackEvent(`edit.channel.message`);
     }
 
     trackEvent(`expand.channel.${platform}`);
   } catch (error) {
     console.error("[Error] Channel message cannot be edited.");
+    return;
   }
 });

@@ -43,6 +43,7 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
       .catch((error) => {
         console.error(`[Error] Could not send ask-to-expand message.`);
         console.error(error);
+        return;
       });
   } catch (error) {
     // @ts-ignore
@@ -51,5 +52,6 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
       // @ts-ignore
       error: error.message,
     });
+    return;
   }
 };

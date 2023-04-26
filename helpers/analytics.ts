@@ -11,5 +11,6 @@ export const trackEvent = async (event: string, note?: string) => {
     await createEvent(event, timestamp, note);
   } catch (error) {
     console.error(error);
+    return;
   }
 };

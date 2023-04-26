@@ -15,8 +15,10 @@ export const showBotActivity = async (ctx: Context, chatId: number) => {
       .catch((error) => {
         console.error(`[Error] Could not display bot activity indicator.`);
         console.error(error);
+        return;
       });
   } catch (error) {
     console.error(`[Error] Could not display bot activity indicator.`);
+    return;
   }
 };

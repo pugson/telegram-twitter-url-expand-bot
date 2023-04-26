@@ -49,6 +49,7 @@ bot.command("changelog", async (ctx: Context) => {
         })
         .catch(() => {
           console.error(`[Error] [changelog.ts:51] Failed to send changelog settings template.`);
+          return;
         });
     } else {
       deleteMessage(chatId, msgId);
@@ -77,11 +78,13 @@ bot.command("changelog", async (ctx: Context) => {
         })
         .catch(() => {
           console.error(`[Error] [changelog.ts:79] Failed to send changelog settings template.`);
+          return;
         });
     }
   } catch (error: any) {
     console.error(error);
     notifyAdmin(error);
+    return;
   }
 
   trackEvent("command.changelog");

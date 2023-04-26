@@ -17,13 +17,19 @@ export async function handlePermissionsSettings(ctx: Context) {
   if (!answer || !chatId || !messageId || !data) return;
 
   if (data.includes("permissions:done")) {
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
+    });
     deleteMessage(chatId, messageId);
     return;
   }
 
   if (data.includes("permissions:disable-warning")) {
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
+    });
     deleteMessage(chatId, messageId);
     updateSettings(chatId, "ignore_permissions_warning", true);
     trackEvent("settings.permissions.disable-warning");

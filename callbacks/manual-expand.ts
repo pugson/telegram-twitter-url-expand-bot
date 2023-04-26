@@ -26,7 +26,9 @@ export async function handleManualExpand(ctx: Context) {
     const platform: string = properties[5];
     const identifier = `${originalChatId}:${originalMessageId}:${linkIndex}`;
 
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+    });
     // Delete message with buttons
     // Wipe it from cache
     // Track the event
@@ -92,9 +94,12 @@ export async function handleManualExpand(ctx: Context) {
       trackEvent(`expand.yes.${platform}`);
     } catch (error) {
       console.error(error);
+      return;
     }
 
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+    });
     return;
   }
 }

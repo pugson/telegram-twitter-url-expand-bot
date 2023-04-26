@@ -39,5 +39,10 @@ import "./link-listener-channel";
 import "./commands";
 import "./callbacks";
 
-bot.start();
+bot.start().catch((error) => {
+  console.error("[Error] Could not start bot.", error);
+  notifyAdmin(error);
+});
+
 console.info("[ Bot started... ]");
+notifyAdmin(`[ Bot started... ]`);

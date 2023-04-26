@@ -17,6 +17,7 @@ bot.command("permissions", async (ctx: Context) => {
     handleMissingPermissions(ctx, true);
   } catch (error) {
     console.error(`[Error] Cannot send permissions message.`, error);
+    return;
   }
 
   trackEvent("command.permissions");

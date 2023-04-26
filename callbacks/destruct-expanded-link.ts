@@ -22,17 +22,25 @@ export async function handleExpandedLinkDestruction(ctx: Context) {
     const answerGiverId = answer?.from?.id;
 
     if (answerGiverId !== originalAuthorId) {
-      await ctx.answerCallbackQuery({
-        text: "This message can only be deleted by its original author.",
-        show_alert: true,
-      });
+      await ctx
+        .answerCallbackQuery({
+          text: "This message can only be deleted by its original author.",
+          show_alert: true,
+        })
+        .catch(() => {
+          console.error(`[Error] Cannot answer callback query.`);
+          return;
+        });
 
       trackEvent(`destruct.${expansionType}.not-author-alert`);
       return;
     }
 
     deleteMessage(chatId, messageId);
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
+    });
     trackEvent(`destruct.${expansionType}.author`);
     return;
   }

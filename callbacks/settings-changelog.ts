@@ -20,14 +20,20 @@ export async function handleChangelogSettings(ctx: Context) {
   if (!answer || !chatId || !messageId || !data) return;
 
   if (data.includes("changelog:done")) {
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
+    });
     deleteMessage(chatId, messageId);
     return;
   }
 
   if (data.includes("changelog:off")) {
     updateSettings(chatId, FIELD_NAME, false);
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
+    });
     await ctx.api.editMessageText(chatId, messageId, changelogSettingsTemplate(false), {
       parse_mode: "MarkdownV2",
       reply_markup: {
@@ -52,24 +58,32 @@ export async function handleChangelogSettings(ctx: Context) {
 
   if (data.includes("changelog:on")) {
     updateSettings(chatId, FIELD_NAME, true);
-    await ctx.answerCallbackQuery();
-    await ctx.api.editMessageText(chatId, messageId, changelogSettingsTemplate(true), {
-      parse_mode: "MarkdownV2",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "❌ Disable",
-              callback_data: `changelog:off`,
-            },
-            {
-              text: "✨ Done",
-              callback_data: "changelog:done",
-            },
-          ],
-        ],
-      },
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
     });
+    await ctx.api
+      .editMessageText(chatId, messageId, changelogSettingsTemplate(true), {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "❌ Disable",
+                callback_data: `changelog:off`,
+              },
+              {
+                text: "✨ Done",
+                callback_data: "changelog:done",
+              },
+            ],
+          ],
+        },
+      })
+      .catch(() => {
+        console.error(`[Error] Cannot edit chanegelog settings.`);
+        return;
+      });
 
     trackEvent("settings.changelog.enable");
     return;

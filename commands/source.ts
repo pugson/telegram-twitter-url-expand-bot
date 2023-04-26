@@ -25,6 +25,7 @@ For feature requests and bug reports please open an issue on GitHub.
     );
   } catch (error) {
     console.error(`[Error] Cannot send source message.`, error);
+    return;
   }
 
   trackEvent("command.sourceCode");

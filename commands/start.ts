@@ -59,6 +59,7 @@ You can also add me to your channel and I will edit messages with links to expan
       )
       .catch(() => {
         console.error(`[Error] [start.ts:61] Failed to send start message.`);
+        return;
       });
 
     trackEvent("command.start");
@@ -67,5 +68,6 @@ You can also add me to your channel and I will edit messages with links to expan
       message: "Error replying to the start command",
       error,
     });
+    return;
   }
 });

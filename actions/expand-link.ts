@@ -89,11 +89,6 @@ export async function expandLink(
         },
       }
     );
-    // .catch(() => {
-    //   console.error(
-    //     "[Error] [expand-link.ts:88] Could not reply with an expanded link. Message was probably deleted."
-    //   );
-    // });
 
     if (topicId) {
       trackEvent(`expand.${expansionType}.inside-topic`);
@@ -120,11 +115,13 @@ export async function expandLink(
               console.error(
                 "[Error] [expand-link.ts:113] Could not edit destruct timer. Message was probably deleted."
               );
+              return;
             });
         } catch (error) {
           // console.error("[Error] Could not edit destruct timer. Message was probably deleted.");
           // @ts-ignore
           // console.error(error.message);
+          return;
         }
       }
 
@@ -152,6 +149,7 @@ export async function expandLink(
             });
         } catch (error) {
           // console.error("[Error] Could not clear destruct timer. Message was probably deleted.");
+          return;
         }
       }, 15000);
     }
@@ -159,5 +157,6 @@ export async function expandLink(
     console.error("[Error: expand-link.ts] Could not reply with an expanded link.");
     // @ts-ignore
     // console.error(error);
+    return;
   }
 }

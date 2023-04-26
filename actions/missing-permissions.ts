@@ -47,6 +47,7 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
         })
         .catch(() => {
           console.error(`[Error] [missing-permissions.ts:49] Failed to send permissions warning template.`);
+          return;
         });
     };
 
@@ -74,5 +75,6 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
   } catch (error: any) {
     console.error(error);
     notifyAdmin(error);
+    return;
   }
 };

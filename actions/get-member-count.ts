@@ -24,5 +24,6 @@ export const getMemberCount = async (chatId: number) => {
     console.error(`[Error] Could not get member count.`);
     // @ts-ignore
     console.error(error.message);
+    return;
   }
 };

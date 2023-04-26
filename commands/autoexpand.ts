@@ -51,6 +51,7 @@ bot.command("autoexpand", async (ctx: Context) => {
         })
         .catch(() => {
           console.error(`[Error] [autoexpand.ts:51] Failed to send autoexpand settings template.`);
+          return;
         });
 
       if (settings.autoexpand && !privateChat) {
@@ -83,6 +84,7 @@ bot.command("autoexpand", async (ctx: Context) => {
         })
         .catch(() => {
           console.error(`[Error] [autoexpand.ts:85] Failed to send autoexpand settings template.`);
+          return;
         });
 
       if (!privateChat) handleMissingPermissions(ctx);
