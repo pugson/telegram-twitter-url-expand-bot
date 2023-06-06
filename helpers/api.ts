@@ -73,26 +73,3 @@ export const updateSettings = async (id: number, property: keyof Chats, value: C
     console.error(error);
   }
 };
-
-/**
- * Create a new anonymous event record in the database.
- * @param name String to identify the event
- * @param timestamp Current date and time
- * @param note Optional note to add to the event
- * @returns Event record
- */
-export const createEvent = async (name: string, timestamp: string, note?: string) => {
-  const isDev = process.env.DEV;
-
-  try {
-    const record = await xata.db.events.create({
-      name,
-      timestamp,
-      note: isDev ? "DEV" : note,
-    });
-
-    return record;
-  } catch (error) {
-    console.error(error);
-  }
-};

@@ -1,4 +1,20 @@
-import { createEvent } from "./api";
+import axios from "axios";
+
+async function createEvent(event: string, timestamp: string, note?: string) {
+  await axios.post(
+    process.env.ANALYTICS_ENDPOINT!,
+    {
+      event,
+      timestamp,
+      note,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.ANALYTICS_KEY}`,
+      },
+    }
+  );
+}
 
 /**
  * Sends an anonymous event to the server.
@@ -6,9 +22,12 @@ import { createEvent } from "./api";
  * @param note Optional note to add to the event
  */
 export const trackEvent = async (event: string, note?: string) => {
+  const isDev = process.env.DEV;
+  const extraNote = isDev ? "DEV" : note;
+
   try {
     const timestamp = new Date().toISOString();
-    await createEvent(event, timestamp, note);
+    await createEvent(event, timestamp, extraNote);
   } catch (error) {
     console.error(error);
     return;
