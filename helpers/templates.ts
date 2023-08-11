@@ -3,7 +3,7 @@
 //! to display properly in Telegram
 
 import { Context } from "grammy";
-import { isInstagram, isTikTok } from "./platforms";
+import { isInstagram, isPosts, isTikTok } from "./platforms";
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
@@ -16,7 +16,7 @@ export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this c
 export const autoexpandSettingsTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
-I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, and TikTok links\\.
+I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, TikTok, and Posts.cv links\\.
       
 ${
   enabled
@@ -48,6 +48,7 @@ ${
 export const askToExpandTemplate = (link: string) => {
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
+  const posts = isPosts(link);
 
   if (insta) {
     return `Expand this Instagram post?`;
@@ -55,6 +56,10 @@ export const askToExpandTemplate = (link: string) => {
 
   if (tiktok) {
     return `Expand this TikTok?`;
+  }
+
+  if (posts) {
+    return `Expand this Post?`;
   }
 
   return `Expand this Tweet?`;

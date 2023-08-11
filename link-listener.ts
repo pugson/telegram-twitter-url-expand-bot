@@ -6,7 +6,7 @@ import { LINK_REGEX } from "./helpers/link-regex";
 import { createSettings, getSettings } from "./helpers/api";
 import { expandLink } from "./actions/expand-link";
 import { deleteMessage } from "./actions/delete-message";
-import { isInstagram, isTikTok } from "./helpers/platforms";
+import { isInstagram, isPosts, isTikTok } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
 
@@ -61,7 +61,8 @@ bot.on("message::url", async (ctx: Context) => {
       // Track autoexpand event and platform
       const insta = isInstagram(url);
       const tiktok = isTikTok(url);
-      const platform = insta ? "instagram" : tiktok ? "tiktok" : "twitter";
+      const posts = isPosts(url);
+      const platform = insta ? "instagram" : tiktok ? "tiktok" : posts ? "posts" : "twitter";
       trackEvent(`expand.auto.${platform}`);
     } else {
       // Save message context to cache then ask to expand
