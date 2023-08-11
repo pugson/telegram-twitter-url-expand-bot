@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { bot } from ".";
 import { LINK_REGEX } from "./helpers/link-regex";
-import { isInstagram, isTikTok } from "./helpers/platforms";
+import { isInstagram, isPosts, isTikTok } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 
 bot.on("channel_post::url", async (ctx: Context) => {
@@ -11,11 +11,18 @@ bot.on("channel_post::url", async (ctx: Context) => {
 
   if (!LINK_REGEX.test(message)) return;
 
-  const platform = isInstagram(message) ? "instagram" : isTikTok(message) ? "tiktok" : "twitter";
+  const platform = isInstagram(message)
+    ? "instagram"
+    : isTikTok(message)
+    ? "tiktok"
+    : isPosts(message)
+    ? "posts"
+    : "twitter";
   const expandedLinksMessage = message
     .replace("twitter.com/", "fxtwitter.com/")
     .replace("instagram.com/", "ddinstagram.com/")
-    .replace("tiktok.com/", "vxtiktok.com/");
+    .replace("tiktok.com/", "vxtiktok.com/")
+    .replace("posts.cv/", "postscv.com/");
 
   try {
     if (caption) {

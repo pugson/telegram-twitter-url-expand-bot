@@ -8,6 +8,10 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 
 When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [fxtwitter.com](https://fxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [vxtiktok.com](https://vxtiktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
 
+## Also supports Posts.cv!
+
+The bot will expand posts.cv links inside Telegram. It will reply with a link to [postscv.com](https://postscv.com) which has a working embed for posts.cv posts so you can see them play inline inside Telegram.
+
 ## Also supports TikTok!
 
 The bot can now expand TikTok videos inside Telegram. It will reply with a link to [vxtiktok.com](https://vxtiktok.com) which has a working embed for TikTok videos so you can see them play inline inside Telegram.

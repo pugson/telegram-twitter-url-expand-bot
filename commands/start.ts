@@ -19,7 +19,7 @@ bot.command("start", async (ctx: Context) => {
     deleteMessage(chatId, msgId);
     ctx
       .reply(
-        `👋 Hello! I’m a bot that expands Twitter, Instagram, and TikTok URLs. Send me a link and I’ll expand it for you. 🔗🖼️
+        `👋 Hello! I’m a bot that expands Twitter, Instagram, TikTok, and Posts.cv URLs. Send me a link and I’ll expand it for you. 🔗🖼️
 
 Commands:
 /autoexpand - Configure link expanding
