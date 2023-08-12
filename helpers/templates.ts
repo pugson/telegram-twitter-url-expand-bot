@@ -16,7 +16,7 @@ export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this c
 export const autoexpandSettingsTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
-I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, TikTok, and Posts.cv links\\.
+I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, TikTok, and Posts․cv links\\.
       
 ${
   enabled
