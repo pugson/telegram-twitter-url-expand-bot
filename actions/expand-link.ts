@@ -24,7 +24,7 @@ function handleExpandedLinkDomain(link: string): string {
     case isPosts(link):
       return link.replace("posts.cv", "postscv.com");
     case isTweet(link):
-      return link.replace("twitter.com", "fxtwitter.com");
+      return link.replace("twitter.com", "fxtwitter.com").replace("x.com", "fxtwitter.com");
     default:
       return link;
   }

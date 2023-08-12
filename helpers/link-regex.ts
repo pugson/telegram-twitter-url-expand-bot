@@ -1,6 +1,6 @@
 /** This regex will match the following URL structures:
  * 
- * Twitter status URLs, in the format:
+ * Twitter (and x.com) status URLs, in the format:
     - https://www.twitter.com/username/status/status_id
     - https://twitter.com/username/status/status_id
     - https://mobile.twitter.com/username/status/status_id
@@ -29,4 +29,4 @@
     - https://posts.cv/username/post_id
  */
 export const LINK_REGEX: RegExp =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)(?:\?.*)?|tiktok\.com\/(?:@|v\/)?(\w+)\/(video\/)?(\d+)(?:\?.*)?|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+)(?:\?.*)?|www\.tiktok\.com\/(@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?)/im;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel)\/([A-Za-z0-9-_]+)(?:\?.*)?|tiktok\.com\/(?:@|v\/)?(\w+)\/(video\/)?(\d+)(?:\?.*)?|(?:vm\.|id\.|en\.)tiktok\.com\/([A-Za-z0-9-_]+)(?:\?.*)?|www\.tiktok\.com\/(@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?)/im;

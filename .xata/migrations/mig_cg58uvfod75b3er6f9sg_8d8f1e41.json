@@ -1,0 +1,18 @@
+{
+  "id": "mig_cg58uvfod75b3er6f9sg",
+  "parentID": "mig_cfrrdm6krlkpj2ia7n50",
+  "checksum": "1:8d8f1e418563dcc3b59b06de55e6cc902c6a1b75116767bdb8ce3395f42e1ecf",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "ignore_permissions_warning",
+          "type": "bool",
+          "notNull": true,
+          "defaultValue": "false"
+        },
+        "table": "chats"
+      }
+    }
+  ]
+}

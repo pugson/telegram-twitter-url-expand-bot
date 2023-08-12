@@ -9,10 +9,10 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@grammyjs/types@3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-3.0.3.tgz#f979fa184d58ac2eb9bf33e28e64be413bd5d3e5"
-  integrity sha512-ca/7GGJVFaqETN0IkXPRBY/bLV/PwmiP8AOU7Lg0VJIELDMqPvHLM8xENtx3iVCUoEa8/SkWfvHt5wb8Kzz+Dg==
+"@grammyjs/types@3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-3.1.2.tgz#8240826266574e46b14a34783251b11528ce63f1"
+  integrity sha512-AsSkTUfZCfSEIacUBOQ94qLbZZy3UofkschWv4uBJKEHjuEfGnjeZZgiwhDfTDjmpmW+MbcasvS+FEfD2jiSLw==
 
 "@grammyjs/types@^2.12.1":
   version "2.12.1"
@@ -58,9 +58,9 @@
   integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
 
 "@types/node@^18.13.0":
-  version "18.15.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.3.tgz#f0b991c32cfc6a4e7f3399d6cb4b8cf9a0315014"
-  integrity sha512-p6ua9zBxz5otCmbpb5D3U4B5Nanw6Pk3PPyX05xnxbB/fRv71N7CPmORg7uAD5P70T0xmx1pzAx/FUfa5X+3cw==
+  version "18.17.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.17.5.tgz#c58b12bca8c2a437b38c15270615627e96dd0bc5"
+  integrity sha512-xNbS75FxH6P4UXTPUJp/zNPq6/xsfdJKussCWNOnz4aULWIRwMgP1LgaB5RiBnMX1DPCYenuqGZfnIAx5mbFLA==
 
 "@types/strip-bom@^3.0.0":
   version "3.0.0"
@@ -72,10 +72,10 @@
   resolved "https://registry.yarnpkg.com/@types/strip-json-comments/-/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==
 
-"@xata.io/client@^0.22.1":
-  version "0.22.4"
-  resolved "https://registry.yarnpkg.com/@xata.io/client/-/client-0.22.4.tgz#a9549d03a21437ea51ec7fb8783fb3e129ac6ad0"
-  integrity sha512-c0qGueIf9QzM70m75zmcQQtNbVk7ByygTRXMO4eXjoPHBQbghezntvWnpFFdj+ZInFrWOqqMsc8qQnTnF64Dzw==
+"@xata.io/client@^0.25.2":
+  version "0.25.2"
+  resolved "https://registry.yarnpkg.com/@xata.io/client/-/client-0.25.2.tgz#79e44d76d93bb575abdb9545ebc4954ee69aa46f"
+  integrity sha512-W3eBfTM2PZzrH5+YLW6niasrgE31oHkVPqf5JW/hosq6M/2F2K4EUiwFoRKRnpsRUo9GP1VmqGvVX2eJAl73SA==
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -113,9 +113,9 @@ asynckit@^0.4.0:
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
 axios@^1.3.2:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.3.4.tgz#f5760cefd9cfb51fd2481acf88c05f67c4523024"
-  integrity sha512-toYm+Bsyl6VC5wSkfkbbNB6ROv7KY93PEBBL6xyDczaIHasAiv4wPqQ/c4RjoQzipxRD2W5g21cOqQulZ7rHwQ==
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.4.0.tgz#38a7bf1224cd308de271146038b551d725f0be1f"
+  integrity sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==
   dependencies:
     follow-redirects "^1.15.0"
     form-data "^4.0.0"
@@ -211,9 +211,9 @@ diff@^4.0.1:
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
 dotenv@^16.0.1:
-  version "16.0.3"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
-  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
+  version "16.3.1"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.3.1.tgz#369034de7d7e5b120972693352a3bf112172cc3e"
+  integrity sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==
 
 dynamic-dedupe@^0.3.0:
   version "0.3.0"
@@ -298,14 +298,14 @@ glob@^7.1.3:
     path-is-absolute "^1.0.0"
 
 grammy@^1.14.1:
-  version "1.15.3"
-  resolved "https://registry.yarnpkg.com/grammy/-/grammy-1.15.3.tgz#82d9c3939a35b00273064ea8520cd061160262df"
-  integrity sha512-uqkF4AMWiZTSwwzBeprRIEiOg3yXT7Ray37bpg2ew5jaX+cuIG5AUm30S2Vr8ezghjLZKgAg2tRi+r9f9uvMrg==
+  version "1.17.2"
+  resolved "https://registry.yarnpkg.com/grammy/-/grammy-1.17.2.tgz#e6e081297b5d438c1344338e6b6013a3ddb7a2ec"
+  integrity sha512-5TuAzqxupkVcKXB5Jfl8F9GMXgGh/h/RcoOJThlQSJz2MMT2+2o+W/7C8ZULzrZ4TEB9TIIliPR6UW0J+1fT4w==
   dependencies:
-    "@grammyjs/types" "3.0.3"
+    "@grammyjs/types" "3.1.2"
     abort-controller "^3.0.0"
     debug "^4.3.4"
-    node-fetch "^2.6.9"
+    node-fetch "^2.6.11"
 
 has@^1.0.3:
   version "1.0.3"
@@ -417,10 +417,10 @@ node-domexception@^1.0.0:
   resolved "https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz#6888db46a1f71c0b76b3f7555016b63fe64766e5"
   integrity sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==
 
-node-fetch@^2.6.9:
-  version "2.6.9"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.9.tgz#7c7f744b5cc6eb5fd404e0c7a9fec630a55657e6"
-  integrity sha512-DJm/CJkZkRjKKj4Zi4BsKVZh3ValV5IR5s7LVZnW+6YMh0W1BfNA8XSs6DLMGYlId5F3KnA70uu2qepcR08Qqg==
+node-fetch@^2.6.11:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.12.tgz#02eb8e22074018e3d5a83016649d04df0e348fba"
+  integrity sha512-C/fGU2E8ToujUivIO0H+tpQ6HWo4eEmchoPIoXtxCrVghxdKq+QOHqEZW7tuP3KlV3bC8FRMO5nMCC7Zm1VP6g==
   dependencies:
     whatwg-url "^5.0.0"
 

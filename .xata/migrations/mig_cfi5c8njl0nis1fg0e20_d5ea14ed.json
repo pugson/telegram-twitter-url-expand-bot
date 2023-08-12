@@ -1,0 +1,16 @@
+{
+  "id": "mig_cfi5c8njl0nis1fg0e20",
+  "parentID": "mig_cfi5c07jl0nis1fg0e1g",
+  "checksum": "1:d5ea14edb193657f2794cd6d670440537499ff916731a2565a4f6f7f7fd61826",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "timestamp",
+          "type": "datetime"
+        },
+        "table": "events"
+      }
+    }
+  ]
+}

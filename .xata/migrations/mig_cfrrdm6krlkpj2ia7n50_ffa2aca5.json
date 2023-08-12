@@ -1,0 +1,18 @@
+{
+  "id": "mig_cfrrdm6krlkpj2ia7n50",
+  "parentID": "mig_cfrrdhukrlkpj2ia7n4g",
+  "checksum": "1:ffa2aca56928952b09718de2372bf5fc90b05373b85ef013b0376897907a81ba",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "changelog",
+          "type": "bool",
+          "notNull": true,
+          "defaultValue": "true"
+        },
+        "table": "chats"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "mig_cfi51uvjl0nis1fg0dl0",
+  "parentID": "mig_cfi2sot1glmqsj88bu30",
+  "checksum": "1:09f50d1b2cd5b4e333e4146f2e2da7d988a64d0e01f74978d7ed7d6f9ed8d9b3",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "autoexpand",
+          "type": "bool",
+          "notNull": true,
+          "defaultValue": "false"
+        },
+        "table": "chats"
+      }
+    }
+  ]
+}

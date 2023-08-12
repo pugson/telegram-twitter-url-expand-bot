@@ -3,7 +3,7 @@ const checkLink = (link: string, platform: string) => {
   return isMatch;
 };
 
-export const isTweet = (link: string) => checkLink(link, "twitter.com");
+export const isTweet = (link: string) => checkLink(link, "twitter.com") || checkLink(link, "x.com");
 export const isInstagram = (link: string) => checkLink(link, "instagram.com");
 export const isTikTok = (link: string) => checkLink(link, "tiktok.com");
 export const isPosts = (link: string) => checkLink(link, "posts.cv");
