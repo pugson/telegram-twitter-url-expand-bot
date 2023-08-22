@@ -1,9 +1,11 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    TELEGRAM_BOT_TOKEN: string;
     ADMIN_TELEGRAM_ID: string;
-    PASSKEY: string;
-    XATA_API_KEY?: string;
-    XATA_FALLBACK_BRANCH?: string;
+    ANALYTICS_ENDPOINT?: string;
+    ANALYTICS_KEY?: string;
+    DEV?: boolean;
+    TELEGRAM_BOT_TOKEN: string;
+    XATA_API_KEY: string;
+    XATA_BRANCH: string;
   }
 }
