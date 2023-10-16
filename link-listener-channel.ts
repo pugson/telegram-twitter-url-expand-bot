@@ -19,8 +19,8 @@ bot.on("channel_post::url", async (ctx: Context) => {
     ? "posts"
     : "twitter";
   const expandedLinksMessage = message
-    .replace("x.com/", "fxtwitter.com/")
     .replace("twitter.com/", "fxtwitter.com/")
+    .replace("x.com/", "fxtwitter.com/")
     .replace("instagram.com/", "ddinstagram.com/")
     .replace("tiktok.com/", "vxtiktok.com/")
     .replace("posts.cv/", "postscv.com/");
