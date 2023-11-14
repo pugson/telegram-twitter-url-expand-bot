@@ -1,8 +1,12 @@
-# Link Expander — Telegram Bot for expanding Twitter, Instagram, and TikTok links.
+# Link Expander — Telegram Bot for expanding Twitter, Instagram, Hacker News, and TikTok links.
 
 ![banner-4 1@1x](https://user-images.githubusercontent.com/6843656/214646426-db3bf292-afc4-4729-8e16-64ed687127aa.png)
 
 Some Twitter links stopped expanding inside Telegram which made it extremely annoying when you wanted to send a banger tweet to your homies in the group chat. This bot replies with an alternative [fxtwitter.com](https://fxtwitter.com) URL which has a working embed for multiple photos and even includes inline video.
+
+## Supports Hacker News links! (not in channels yet)
+
+You can now expand Hacker News links. It will reply with the original YCombinator URL, the link shared in a HN post, and the title of the submission.
 
 ## ✨🆕✨ Bot now works in Telegram Channels!
 
