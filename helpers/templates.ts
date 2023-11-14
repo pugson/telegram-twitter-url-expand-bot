@@ -100,9 +100,9 @@ export const expandedMessageTemplate = async (
       const metadata = await getHackerNewsMetadata(hnPostId);
       const { title, user, time_ago, comments_count, url } = metadata.post;
 
-      includedLink = `${link}
-<b>${title ? title : "Comment"}</b>
+      includedLink = `<b>${title ? title : "Comment"}</b>
 ${comments_count} replies | ${time_ago} by ${user}
+${link}
 
 ${url ? url : ""}`;
     } catch (error) {
