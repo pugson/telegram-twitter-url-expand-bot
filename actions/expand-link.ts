@@ -65,7 +65,7 @@ export async function expandLink(
 
     const botReply = await ctx.api.sendMessage(
       chatId,
-      expandedMessageTemplate(
+      await expandedMessageTemplate(
         ctx,
         userInfo.username,
         userInfo.userId,

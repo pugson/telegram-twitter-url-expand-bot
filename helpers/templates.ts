@@ -3,7 +3,9 @@
 //! to display properly in Telegram
 
 import { Context } from "grammy";
-import { isInstagram, isPosts, isTikTok } from "./platforms";
+import { isHackerNews, isInstagram, isPosts, isTikTok } from "./platforms";
+import { getHackerNewsMetadata } from "./hacker-news-metadata";
+import { notifyAdmin } from "./notifier";
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
@@ -16,7 +18,7 @@ export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this c
 export const autoexpandSettingsTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
-I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, TikTok, and Posts․cv links\\.
+I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, TikTok, Hacker News, and Posts․cv links\\.
       
 ${
   enabled
@@ -49,6 +51,7 @@ export const askToExpandTemplate = (link: string) => {
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
   const posts = isPosts(link);
+  const hn = isHackerNews(link);
 
   if (insta) {
     return `Expand this Instagram post?`;
@@ -62,6 +65,10 @@ export const askToExpandTemplate = (link: string) => {
     return `Expand this Post?`;
   }
 
+  if (hn) {
+    return `Expand this Hacker News post?`;
+  }
+
   return `Expand this Tweet?`;
 };
 
@@ -69,7 +76,7 @@ export const askToExpandTemplate = (link: string) => {
  * This is what gets sent in a bot message when a user
  * clicks the expand button or the links are autoexpanded.
  */
-export const expandedMessageTemplate = (
+export const expandedMessageTemplate = async (
   ctx: Context,
   username?: string,
   userId?: number,
@@ -82,6 +89,27 @@ export const expandedMessageTemplate = (
   const bothNames = firstName && lastName;
   const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
   const usernameOrFullNameTag = username ? `@${username}` : `<a href="tg://user?id=${userId}">${nameTemplate}</a>`;
+  const isHackerNewsLink = link ? isHackerNews(link) : false;
+  let includedLink = link;
+
+  // Replace message template with HN metadata inline
+  // This is ugly as hell but it works.
+  if (isHackerNewsLink) {
+    try {
+      const hnPostId = link?.split("id=")[1];
+      const metadata = await getHackerNewsMetadata(hnPostId);
+      const { title, user, time_ago, comments_count, url } = metadata.post;
+
+      includedLink = `${link}
+<b>${title ? title : "Comment"}</b>
+${comments_count} replies | ${time_ago} by ${user}
+
+${url ? url : ""}`;
+    } catch (error) {
+      console.error(error);
+      notifyAdmin(error);
+    }
+  }
 
   // Check if the original author of the message has a public profile.
   if (ctx.msg?.forward_from) {
@@ -97,14 +125,14 @@ export const expandedMessageTemplate = (
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}
 
-${link}`;
+${includedLink}`;
     }
 
     // Link to the original author by ID if they don’t have a username.
     return `<u>Forwarded from <a href="tg://user?id=${forwardUserId}">${nameTemplate}</a> by ${usernameOrFullNameTag}</u> 
 ${text}
 
-${link}`;
+${includedLink}`;
   }
 
   // Check if the original author of the message has a private profile.
@@ -112,7 +140,7 @@ ${link}`;
     return `<u>Forwarded from <i>${ctx.msg?.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
 ${text}
 
-${link}`;
+${includedLink}`;
   }
 
   // Check if the original author of the message is a channel.
@@ -127,18 +155,18 @@ ${link}`;
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}
 
-${link}`;
+${includedLink}`;
     }
 
     // Make the channel name italic if they don’t have a username.
     return `<u>Forwarded from <i>${forwardName}</i> by ${usernameOrFullNameTag}</u>
 ${text}
 
-${link}`;
+${includedLink}`;
   }
 
   // If the message was not forwarded, handle it normally.
   return `${usernameOrFullNameTag} 💬 ${text}
 
-${link}`;
+${includedLink}`;
 };

@@ -1,5 +1,5 @@
 import { Context } from "grammy";
-import { isInstagram, isTikTok, isPosts } from "../helpers/platforms";
+import { isInstagram, isTikTok, isPosts, isHackerNews } from "../helpers/platforms";
 import { askToExpandTemplate } from "../helpers/templates";
 
 /**
@@ -17,7 +17,8 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
   const posts = isPosts(link);
-  const platform = insta ? "instagram" : tiktok ? "tiktok" : posts ? "posts" : "twitter";
+  const hn = isHackerNews(link);
+  const platform = insta ? "instagram" : tiktok ? "tiktok" : posts ? "posts" : hn ? "hackernews" : "twitter";
 
   try {
     const originalReplyId = ctx.update?.message?.reply_to_message?.message_id;
