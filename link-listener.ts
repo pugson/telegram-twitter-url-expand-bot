@@ -19,6 +19,9 @@ bot.on("message::url", async (ctx: Context) => {
     lastName: ctx.from?.last_name,
     userId: ctx.from?.id,
   };
+
+  if (userInfo.userId === 1947938299) return;
+
   // Message context
   const chatId = ctx.msg?.chat.id;
   const msgId = ctx.msg?.message_id;
