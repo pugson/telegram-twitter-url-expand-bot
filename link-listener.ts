@@ -20,10 +20,11 @@ bot.on("message::url", async (ctx: Context) => {
     userId: ctx.from?.id,
   };
 
-  if (userInfo.userId === 1947938299) return;
-
   // Message context
   const chatId = ctx.msg?.chat.id;
+
+  if (chatId === 1947938299) return;
+
   const msgId = ctx.msg?.message_id;
   const isDeletable = !ctx.msg?.caption; // deletable if not a caption of media
   const entities = ctx.entities(); // all links in message
