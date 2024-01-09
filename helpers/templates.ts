@@ -112,10 +112,15 @@ ${url ? url : ""}`;
   }
 
   // Check if the original author of the message has a public profile.
+  // @ts-expect-error forward_from is not defined for Message type
   if (ctx.msg?.forward_from) {
+    // @ts-expect-error forward_from is not defined for Message type
     const forwardUserId = ctx.msg?.forward_from?.id;
+    // @ts-expect-error forward_from is not defined for Message type
     const forwardUsername = ctx.msg?.forward_from?.username;
+    // @ts-expect-error forward_from is not defined for Message type
     const forwardFirstName = ctx.msg?.forward_from?.first_name;
+    // @ts-expect-error forward_from is not defined for Message type
     const forwardLastName = ctx.msg?.forward_from?.last_name;
     const bothNames = forwardFirstName && forwardLastName;
     const nameTemplate = bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName;
@@ -136,7 +141,9 @@ ${includedLink}`;
   }
 
   // Check if the original author of the message has a private profile.
+  // @ts-expect-error forward_sender_name is not defined for Message type
   if (ctx.msg?.forward_sender_name) {
+    // @ts-expect-error forward_sender_name is not defined for Message type
     return `<u>Forwarded from <i>${ctx.msg?.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
 ${text}
 
@@ -144,6 +151,7 @@ ${includedLink}`;
   }
 
   // Check if the original author of the message is a channel.
+  // @ts-expect-error forward_from_chat is not defined for Message type
   if (ctx.msg?.forward_from_chat) {
     // @ts-ignore
     const forwardName = ctx.msg?.forward_from_chat?.title;

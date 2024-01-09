@@ -15,6 +15,8 @@ bot.command("start", async (ctx: Context) => {
     const privateChat = ctx?.msg?.chat.type === "private";
     const topicId = ctx.msg?.message_thread_id;
 
+    if (chatId === 1947938299) return;
+
     showBotActivity(ctx, chatId);
     deleteMessage(chatId, msgId);
     ctx

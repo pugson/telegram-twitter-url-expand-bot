@@ -12,6 +12,8 @@ bot.command("source", async (ctx: Context) => {
     const msgId = ctx?.msg?.message_id;
     const topicId = ctx.msg?.message_thread_id;
 
+    if (chatId === 1947938299) return;
+
     showBotActivity(ctx, chatId);
     deleteMessage(chatId, msgId);
     ctx.reply(

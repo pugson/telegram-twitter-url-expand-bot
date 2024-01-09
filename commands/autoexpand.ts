@@ -21,6 +21,8 @@ bot.command("autoexpand", async (ctx: Context) => {
   // Discard malformed messages
   if (!msgId || !chatId) return;
 
+  if (chatId === 1947938299) return;
+
   try {
     showBotActivity(ctx, chatId);
     // Get autoexpand settings for this chat
