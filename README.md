@@ -8,6 +8,9 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 
 You can now expand Hacker News links. It will reply with the original YCombinator URL, the link shared in a HN post, and the title of the submission.
 
+<img width="500" alt="CleanShot 2024-01-09 at 09 15 18 PM@2x" src="https://github.com/pugson/telegram-twitter-url-expand-bot/assets/6843656/83122b1e-3739-4bdb-8ba8-f144d5b118ff">
+
+
 ## ✨🆕✨ Bot now works in Telegram Channels!
 
 When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [fxtwitter.com](https://fxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [vxtiktok.com](https://vxtiktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
