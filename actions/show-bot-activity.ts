@@ -8,17 +8,18 @@ import { bot } from "..";
 export const showBotActivity = async (ctx: Context, chatId: number) => {
   try {
     const topicId = ctx.msg?.message_thread_id;
-    bot.api
-      .sendChatAction(chatId, "typing", {
+
+    try {
+      await bot.api.sendChatAction(chatId, "typing", {
         message_thread_id: topicId ?? undefined,
-      })
-      .catch((error) => {
-        console.error(`[Error] Could not display bot activity indicator.`);
-        console.error(error);
-        return;
       });
+    } catch (e) {
+      console.error(`[Error-1] Could not display bot activity indicator.`);
+      console.error(e);
+      return;
+    }
   } catch (error) {
-    console.error(`[Error] Could not display bot activity indicator.`);
+    console.error(`[Error-2] Could not display bot activity indicator.`);
     return;
   }
 };
