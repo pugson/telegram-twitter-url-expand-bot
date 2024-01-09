@@ -7,6 +7,7 @@ import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { handleMissingPermissions } from "../actions/missing-permissions";
 import { trackEvent } from "../helpers/analytics";
+import { isBanned } from "../helpers/banned";
 
 /**
  * Manage autoexpand settings
@@ -21,7 +22,7 @@ bot.command("autoexpand", async (ctx: Context) => {
   // Discard malformed messages
   if (!msgId || !chatId) return;
 
-  if (chatId === 1947938299) return;
+  if (isBanned(chatId)) return;
 
   try {
     showBotActivity(ctx, chatId);

@@ -6,6 +6,7 @@ import { changelogSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
+import { isBanned } from "../helpers/banned";
 
 /**
  * Manage changelog settings
@@ -19,7 +20,7 @@ bot.command("changelog", async (ctx: Context) => {
   // Discard malformed messages
   if (!msgId || !chatId) return;
 
-  if (chatId === 1947938299) return;
+  if (isBanned(chatId)) return;
 
   try {
     showBotActivity(ctx, chatId);

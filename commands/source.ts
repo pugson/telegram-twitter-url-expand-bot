@@ -3,6 +3,7 @@ import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
+import { isBanned } from "../helpers/banned";
 
 bot.command("source", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -12,7 +13,7 @@ bot.command("source", async (ctx: Context) => {
     const msgId = ctx?.msg?.message_id;
     const topicId = ctx.msg?.message_thread_id;
 
-    if (chatId === 1947938299) return;
+    if (isBanned(chatId)) return;
 
     showBotActivity(ctx, chatId);
     deleteMessage(chatId, msgId);

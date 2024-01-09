@@ -4,6 +4,7 @@ import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { handleMissingPermissions } from "../actions/missing-permissions";
+import { isBanned } from "../helpers/banned";
 
 bot.command("permissions", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -12,7 +13,7 @@ bot.command("permissions", async (ctx: Context) => {
     const chatId = ctx?.msg?.chat.id;
     const msgId = ctx?.msg?.message_id;
 
-    if (chatId === 1947938299) return;
+    if (isBanned(chatId)) return;
 
     showBotActivity(ctx, chatId);
     deleteMessage(chatId, msgId);

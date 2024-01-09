@@ -10,7 +10,7 @@ export const showBotActivity = async (ctx: Context, chatId: number) => {
     const topicId = ctx.msg?.message_thread_id;
 
     try {
-      await bot.api.sendChatAction(chatId, "typing", {
+      bot.api.sendChatAction(chatId, "typing", {
         message_thread_id: topicId ?? undefined,
       });
     } catch (e) {
