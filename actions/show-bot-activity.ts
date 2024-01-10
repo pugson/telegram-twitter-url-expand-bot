@@ -1,15 +1,11 @@
 import { Context } from "grammy";
 import { bot } from "..";
-import { isBanned } from "../helpers/banned"
 
 /**
  * Displays the "is typing..." animated indicator inside Telegram.
  * @param chatId ID of current chat.
  */
 export const showBotActivity = async (ctx: Context, chatId: number) => {
-
-if (isBanned(chatId)) return;
-
   try {
     const topicId = ctx.msg?.message_thread_id;
 

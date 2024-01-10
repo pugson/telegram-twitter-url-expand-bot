@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import { isInstagram, isTikTok, isPosts, isHackerNews } from "../helpers/platforms";
-import { isBanned } from "../helpers/banned"
+import { isBanned } from "../helpers/banned";
 import { askToExpandTemplate } from "../helpers/templates";
 
 /**
@@ -14,8 +14,6 @@ import { askToExpandTemplate } from "../helpers/templates";
  */
 export const askToExpand = async (ctx: Context, identifier: string, link: string, isDeletable: boolean) => {
   if (!ctx || !ctx.chat?.id) return;
-
-  if (isBanned(ctx.chat?.id)) return;
 
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
