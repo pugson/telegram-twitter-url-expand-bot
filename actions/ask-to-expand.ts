@@ -15,6 +15,9 @@ import { askToExpandTemplate } from "../helpers/templates";
 export const askToExpand = async (ctx: Context, identifier: string, link: string, isDeletable: boolean) => {
   if (!ctx || !ctx.chat?.id) return;
 
+  const chatId = ctx.chat?.id;
+  if (isBanned(chatId)) return;
+
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
   const posts = isPosts(link);
