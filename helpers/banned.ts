@@ -5,6 +5,8 @@ const banList: number[] = [
   -1002124315683, 
   -1001149568794, 
   -1001493829609,
-  6908519864];
+  6908519864,
+  -1001859238543
+];
 
 export const isBanned = (chatId: number) => banList.includes(Number(chatId));
