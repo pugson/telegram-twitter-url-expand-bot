@@ -8,6 +8,7 @@ import { Context } from "grammy";
 import { handleMissingPermissions } from "../actions/missing-permissions";
 import { trackEvent } from "../helpers/analytics";
 import { isBanned } from "../helpers/banned";
+import { checkAdminStatus } from "../helpers/admin";
 
 /**
  * Manage autoexpand settings
@@ -21,13 +22,23 @@ bot.command("autoexpand", async (ctx: Context) => {
 
   // Discard malformed messages
   if (!msgId || !chatId) return;
-
   if (isBanned(chatId)) return;
+
+  const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
+  if (!isAdmin && settings?.settings_lock) {
+    return await bot.api
+      .sendMessage(chatId, "You need to be an admin to use the autoexpand command.", {
+        message_thread_id: topicId ?? undefined,
+        disable_notification: true,
+      })
+      .catch(() => {
+        console.error(`[Error] [autoexpand.ts:37] Failed to send message.`);
+        return;
+      });
+  }
 
   try {
     showBotActivity(ctx, chatId);
-    // Get autoexpand settings for this chat
-    const settings = await getSettings(chatId);
 
     if (settings) {
       deleteMessage(chatId, msgId);
@@ -63,7 +74,7 @@ bot.command("autoexpand", async (ctx: Context) => {
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
-      createSettings(chatId, true, true);
+      createSettings(chatId, true, true, false);
       // Reply with template and buttons to control autoexpand settings (default: on)
       await ctx.api
         .sendMessage(chatId, autoexpandSettingsTemplate(true), {
