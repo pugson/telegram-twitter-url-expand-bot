@@ -9,6 +9,7 @@ import { deleteMessage } from "./actions/delete-message";
 import { isHackerNews, isInstagram, isPosts, isTikTok } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
+import { isBanned } from "./helpers/banned";
 
 bot.on("message::url", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -23,7 +24,7 @@ bot.on("message::url", async (ctx: Context) => {
   // Message context
   const chatId = ctx.msg?.chat.id;
 
-  if (chatId === 1947938299) return;
+  if (isBanned(chatId)) return;
 
   const msgId = ctx.msg?.message_id;
   const isDeletable = !ctx.msg?.caption; // deletable if not a caption of media
@@ -42,7 +43,7 @@ bot.on("message::url", async (ctx: Context) => {
 
   // Create default settings for this chat if they don’t exist
   if (!settings) {
-    await createSettings(chatId, false, true);
+    await createSettings(chatId, false, true, false);
   }
 
   // Loop through all links in message

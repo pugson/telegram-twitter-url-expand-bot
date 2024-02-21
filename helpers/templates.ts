@@ -28,6 +28,18 @@ ${
 };
 
 /**
+ * Message sent when a user sends the /lock command.
+ * @param enabled
+ * @returns
+ */
+export const lockSettingsTemplate = (locked: boolean) => {
+  return `Settings lock is ${locked ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
+  
+As an admin you have the option to lock bot settings to prevent members from changing them\\.
+`;
+};
+
+/**
  * Message sent when a user sends the /changelog command.
  * @param enabled
  */

@@ -1,9 +1,10 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
-import { updateSettings } from "../helpers/api";
+import { getSettings, updateSettings } from "../helpers/api";
 import { autoexpandSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { handleMissingPermissions } from "../actions/missing-permissions";
+import { checkAdminStatus } from "../helpers/admin";
 
 const FIELD_NAME = "autoexpand";
 
@@ -20,6 +21,14 @@ export async function handleAutoexpandSettings(ctx: Context) {
 
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) return;
+
+  const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
+  if (!isAdmin && settings?.settings_lock) {
+    return await ctx.reply("You need to be an admin to change Autoexpand settings.").catch(() => {
+      console.error(`[Error] [settings-autoexpand.ts:28] Failed to send message.`);
+      return;
+    });
+  }
 
   if (data.includes("autoexpand:done")) {
     await ctx.answerCallbackQuery().catch(() => {

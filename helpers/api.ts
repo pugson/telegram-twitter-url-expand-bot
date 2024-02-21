@@ -32,14 +32,21 @@ export const getSettings = async (chatId: number) => {
  * @param chatId Telegram Chat ID
  * @param autoexpandValue Autoexpand value boolean
  * @param changelogValue Changelog value boolean
+ * @param settingsLockValue Settings lock value boolean
  * @returns Chat settings record
  */
-export const createSettings = async (chatId: number, autoexpandValue: boolean, changelogValue: boolean) => {
+export const createSettings = async (
+  chatId: number,
+  autoexpandValue: boolean,
+  changelogValue: boolean,
+  settingsLockValue: boolean
+) => {
   try {
     const record = await xata.db.chats.create({
       chat_id: chatId.toString(),
       autoexpand: autoexpandValue,
       changelog: changelogValue,
+      settings_lock: settingsLockValue,
     });
 
     return record;

@@ -2,7 +2,7 @@ import { bot } from "..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../helpers/api";
 import { notifyAdmin } from "../helpers/notifier";
-import { changelogSettingsTemplate } from "../helpers/templates";
+import { lockSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
@@ -10,9 +10,9 @@ import { isBanned } from "../helpers/banned";
 import { checkAdminStatus } from "../helpers/admin";
 
 /**
- * Manage changelog settings
+ * Manage locking settings
  */
-bot.command("changelog", async (ctx: Context) => {
+bot.command("lock", async (ctx: Context) => {
   const msg = ctx.update.message;
   const msgId = msg?.message_id;
   const chatId = msg?.chat.id;
@@ -25,12 +25,12 @@ bot.command("changelog", async (ctx: Context) => {
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
     return await bot.api
-      .sendMessage(chatId, "You need to be an admin to use the Changelog command.", {
+      .sendMessage(chatId, "You need to be an admin to use the Lock command.", {
         message_thread_id: topicId ?? undefined,
         disable_notification: true,
       })
       .catch(() => {
-        console.error(`[Error] [changelog.ts:34] Failed to send message.`);
+        console.error(`[Error] [lock.ts:35] Failed to send message.`);
         return;
       });
   }
@@ -42,7 +42,7 @@ bot.command("changelog", async (ctx: Context) => {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control changelog settings
       await bot.api
-        .sendMessage(chatId, changelogSettingsTemplate(settings.changelog), {
+        .sendMessage(chatId, lockSettingsTemplate(settings.settings_lock), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -50,28 +50,28 @@ bot.command("changelog", async (ctx: Context) => {
             inline_keyboard: [
               [
                 {
-                  text: settings.changelog ? "❌ Disable" : "✅ Enable",
-                  callback_data: `changelog:${settings.changelog ? "off" : "on"}`,
+                  text: settings.settings_lock ? "🔓 Unlock" : "🔒 Lock",
+                  callback_data: `lock:${settings.settings_lock ? "off" : "on"}`,
                 },
                 {
                   text: "✨ Done",
-                  callback_data: "changelog:done",
+                  callback_data: "lock:done",
                 },
               ],
             ],
           },
         })
         .catch(() => {
-          console.error(`[Error] [changelog.ts:51] Failed to send changelog settings template.`);
+          console.error(`[Error] [changelog.ts:51] Failed to send settings_lock template.`);
           return;
         });
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
       createSettings(chatId, false, true, false);
-      // Reply with template and buttons to control changelog settings (default: on)
+      // Reply with template and buttons to control settings_lock (default: off)
       await ctx.api
-        .sendMessage(chatId, changelogSettingsTemplate(true), {
+        .sendMessage(chatId, lockSettingsTemplate(true), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -79,12 +79,12 @@ bot.command("changelog", async (ctx: Context) => {
             inline_keyboard: [
               [
                 {
-                  text: "❌ Disable",
-                  callback_data: `changelog:off`,
+                  text: "🔒 Lock",
+                  callback_data: `lock:on`,
                 },
                 {
                   text: "✨ Done",
-                  callback_data: "changelog:done",
+                  callback_data: "lock:done",
                 },
               ],
             ],
@@ -101,5 +101,5 @@ bot.command("changelog", async (ctx: Context) => {
     return;
   }
 
-  trackEvent("command.changelog");
+  trackEvent("command.lock");
 });

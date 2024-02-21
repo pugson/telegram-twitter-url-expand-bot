@@ -1,17 +1,17 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { getSettings, updateSettings } from "../helpers/api";
-import { changelogSettingsTemplate } from "../helpers/templates";
+import { lockSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { checkAdminStatus } from "../helpers/admin";
 
-const FIELD_NAME = "changelog";
+const FIELD_NAME = "settings_lock";
 
 /**
- * Handle button responses to /changelog
+ * Handle button responses to /autoexpand
  * @param ctx Telegram context
  */
-export async function handleChangelogSettings(ctx: Context) {
+export async function handleLockSettings(ctx: Context) {
   const answer = ctx.update?.callback_query;
   const chatId = answer?.message?.chat.id;
   const messageId = answer?.message?.message_id;
@@ -22,13 +22,13 @@ export async function handleChangelogSettings(ctx: Context) {
 
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
-    return await ctx.reply("You need to be an admin to change Changelog settings.").catch(() => {
-      console.error(`[Error] [settings-changelog.ts:26] Failed to send message.`);
+    return await ctx.reply("You need to be an admin to change Lock settings.").catch(() => {
+      console.error(`[Error] [settings-lock.ts:26] Failed to send message.`);
       return;
     });
   }
 
-  if (data.includes("changelog:done")) {
+  if (data.includes("lock:done")) {
     await ctx.answerCallbackQuery().catch(() => {
       console.error(`[Error] Cannot answer callback query.`);
       return;
@@ -37,64 +37,69 @@ export async function handleChangelogSettings(ctx: Context) {
     return;
   }
 
-  if (data.includes("changelog:off")) {
+  if (data.includes("lock:off")) {
     updateSettings(chatId, FIELD_NAME, false);
     await ctx.answerCallbackQuery().catch(() => {
       console.error(`[Error] Cannot answer callback query.`);
       return;
     });
-    await ctx.api.editMessageText(chatId, messageId, changelogSettingsTemplate(false), {
-      parse_mode: "MarkdownV2",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "✅ Enable",
-              callback_data: `changelog:on`,
-            },
-            {
-              text: "✨ Done",
-              callback_data: "changelog:done",
-            },
-          ],
-        ],
-      },
-    });
-
-    trackEvent("settings.changelog.disable");
-    return;
-  }
-
-  if (data.includes("changelog:on")) {
-    updateSettings(chatId, FIELD_NAME, true);
-    await ctx.answerCallbackQuery().catch(() => {
-      console.error(`[Error] Cannot answer callback query.`);
-      return;
-    });
     await ctx.api
-      .editMessageText(chatId, messageId, changelogSettingsTemplate(true), {
+      .editMessageText(chatId, messageId, lockSettingsTemplate(false), {
         parse_mode: "MarkdownV2",
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: "❌ Disable",
-                callback_data: `changelog:off`,
+                text: "🔒 Lock",
+                callback_data: `lock:on`,
               },
               {
                 text: "✨ Done",
-                callback_data: "changelog:done",
+                callback_data: "lock:done",
               },
             ],
           ],
         },
       })
       .catch(() => {
-        console.error(`[Error] Cannot edit chanegelog settings.`);
+        console.error(`[Error1]`);
         return;
       });
 
-    trackEvent("settings.changelog.enable");
+    trackEvent("settings.lock.disable");
+    return;
+  }
+
+  if (data.includes("lock:on")) {
+    updateSettings(chatId, FIELD_NAME, true);
+    await ctx.answerCallbackQuery().catch(() => {
+      console.error(`[Error] Cannot answer callback query.`);
+      return;
+    });
+    await ctx.api
+      .editMessageText(chatId, messageId, lockSettingsTemplate(true), {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "🔓 Unlock",
+                callback_data: `lock:off`,
+              },
+              {
+                text: "✨ Done",
+                callback_data: "lock:done",
+              },
+            ],
+          ],
+        },
+      })
+      .catch(() => {
+        console.error(`[Error] Cannot edit settings.`);
+        return;
+      });
+
+    trackEvent("settings.lock.enable");
     return;
   }
 }
