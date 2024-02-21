@@ -25,7 +25,7 @@ bot.command("lock", async (ctx: Context) => {
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
     return await bot.api
-      .sendMessage(chatId, "You need to be an admin to use the lock command.", {
+      .sendMessage(chatId, "You need to be an admin to use the Lock command.", {
         message_thread_id: topicId ?? undefined,
         disable_notification: true,
       })

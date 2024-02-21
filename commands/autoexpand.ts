@@ -27,7 +27,7 @@ bot.command("autoexpand", async (ctx: Context) => {
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
     return await bot.api
-      .sendMessage(chatId, "You need to be an admin to use the autoexpand command.", {
+      .sendMessage(chatId, "You need to be an admin to use the Autoexpand command.", {
         message_thread_id: topicId ?? undefined,
         disable_notification: true,
       })
