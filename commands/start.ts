@@ -73,6 +73,7 @@ You can also add me to your channel and I will edit messages with links to expan
       error,
     });
 
+    // @ts-ignore
     if (error.description.includes("was blocked")) {
       const chatId = ctx?.msg?.chat.id;
       notifyAdmin(chatId);
