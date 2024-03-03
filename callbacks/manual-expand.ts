@@ -93,6 +93,7 @@ export async function handleManualExpand(ctx: Context) {
 
       trackEvent(`expand.yes.${platform}`);
     } catch (error) {
+      console.error(`[Error] Cannot answer expand callback query.`);
       console.error(error);
       return;
     }

@@ -28,6 +28,7 @@ export async function checkAdminStatus(ctx: Context) {
     // Not an admin by default
     return false;
   } catch (e) {
+    console.error("[Error] Unable to check admin status.");
     console.error(e);
     return false;
   }

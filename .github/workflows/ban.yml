@@ -1,0 +1,30 @@
+name: Append Chat ID to Ban List
+
+on:
+  workflow_dispatch:
+    inputs:
+      chatId:
+        description: "Chat ID to ban"
+        required: true
+
+jobs:
+  update-array:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Append to array
+        run: |
+          echo "Appending chat ID to the ban list..."
+          sed -i "/];/i \  ${{ github.event.inputs.chatId }}," helpers/banned.ts
+          cat helpers/banned.ts
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.email "hi@wojtek.im"
+          git config --global user.name "pugson"
+          git add helpers/banned.ts
+          git commit -m "Appending Chat ID ${{ github.event.inputs.chatId }} to Ban List" || exit 0
+          git push

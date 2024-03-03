@@ -11,6 +11,7 @@ export const notifyAdmin = async (message: any): Promise<void> => {
       text: JSON.stringify(message),
     });
   } catch (error) {
+    console.error(`[Error] Could not send Adming Telegram notification.`);
     console.error(error);
   }
 };

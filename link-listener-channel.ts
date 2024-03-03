@@ -3,12 +3,14 @@ import { bot } from ".";
 import { LINK_REGEX } from "./helpers/link-regex";
 import { isInstagram, isPosts, isTikTok } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
+import { isBanned } from "./helpers/banned";
 
 bot.on("channel_post::url", async (ctx: Context) => {
   const post = ctx.update.channel_post;
   const caption = post?.caption;
   const message = post?.text ?? caption ?? "";
 
+  if (ctx && ctx.chat && isBanned(ctx.chat?.id)) return;
   if (!LINK_REGEX.test(message)) return;
 
   const platform = isInstagram(message)
