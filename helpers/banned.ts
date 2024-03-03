@@ -39,6 +39,7 @@ export async function triggerWorkflow(chatId: number) {
     notifyAdmin("Workflow dispatched successfully.");
   } catch (error) {
     notifyAdmin("Error dispatching workflow");
+    // @ts-ignore
     console.error("Error dispatching workflow:", error.response?.data || error.message);
   }
 }
