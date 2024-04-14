@@ -10,10 +10,9 @@ You can now expand Hacker News links. It will reply with the original YCombinato
 
 <img width="500" alt="CleanShot 2024-01-09 at 09 15 18 PM@2x" src="https://github.com/pugson/telegram-twitter-url-expand-bot/assets/6843656/83122b1e-3739-4bdb-8ba8-f144d5b118ff">
 
-
 ## ✨🆕✨ Bot now works in Telegram Channels!
 
-When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [fxtwitter.com](https://fxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [vxtiktok.com](https://vxtiktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
+When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [fxtwitter.com](https://fxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [tfxktok.com](https://tfxktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
 
 ## Also supports Posts.cv!
 
@@ -21,7 +20,7 @@ The bot will expand posts.cv links inside Telegram. It will reply with a link to
 
 ## Also supports TikTok!
 
-The bot can now expand TikTok videos inside Telegram. It will reply with a link to [vxtiktok.com](https://vxtiktok.com) which has a working embed for TikTok videos so you can see them play inline inside Telegram.
+The bot can now expand TikTok videos inside Telegram. It will reply with a link to [tfxktok.com](https://tfxktok.com) which has a working embed for TikTok videos so you can see them play inline inside Telegram.
 
 ## Also supports Instagram!
 
@@ -67,6 +66,6 @@ While it is technically possible through the Bot API, I simply do not have the t
 
 This bot wouldn't be possible without the following people and projects. Huge thanks to:
 
-- [@dylanpdx](https://github.com/dylanpdx) for creating [BetterTwitFix](https://github.com/dylanpdx/BetterTwitFix) / [vxtwitter.com](https://vxtwitter.com) and [vxtiktok.com](https://vxtiktok.com)
+- [@dylanpdx](https://github.com/dylanpdx) for creating [BetterTwitFix](https://github.com/dylanpdx/BetterTwitFix) / [vxtwitter.com](https://vxtwitter.com) and [tfxktok.com](https://tfxktok.com)
 - [@Wikidepia](https://github.com/Wikidepia) for creating [InstaFix](https://github.com/Wikidepia/InstaFix) / [ddinstagram.com](https://ddinstagram.com)
 - [fxtwitter.com](https://fxtwitter.com) / [FixTweet](https://github.com/FixTweet/FixTweet)

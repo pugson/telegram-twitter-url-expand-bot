@@ -20,7 +20,7 @@ function handleExpandedLinkDomain(link: string): string {
     case isInstagram(link):
       return link.replace("instagram.com", "ddinstagram.com");
     case isTikTok(link):
-      return link.replace("tiktok.com", "vxtiktok.com");
+      return link.replace("tiktok.com", "tfxktok.com");
     case isPosts(link):
       return link.replace("posts.cv", "postscv.com");
     case isTweet(link):
