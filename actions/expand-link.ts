@@ -48,6 +48,11 @@ export async function expandLink(
   if (!ctx || !ctx.chat?.id) return;
   // Return correct link based on platform
   const expandedLink = handleExpandedLinkDomain(link);
+  let linkWithNoTrackers = expandedLink;
+  // Strip trackers from these platforms but not others.
+  if (isTweet(link) || isInstagram(link) || isTikTok(link)) {
+    linkWithNoTrackers = expandedLink.split("?")[0];
+  }
 
   try {
     const chatId = ctx.chat?.id;
@@ -72,7 +77,7 @@ export async function expandLink(
         userInfo.firstName,
         userInfo.lastName,
         messageText,
-        expandedLink
+        linkWithNoTrackers
       ),
       {
         ...replyOptions,
