@@ -8,8 +8,8 @@
     - https://www.twitter.com/username/statuses/status_id
     
  * Instagram post URLs, in the format:
-    - https://twitter.com/username/statuses/status_id
     - https://mobile.instagram.com/p/post_id
+    - https://www.instagram.com/stories/username/post_id
     - https://www.instagram.com/p/post_id
     - https://www.instagram.com/reel/post_id
     - https://instagram.com/p/post_id
