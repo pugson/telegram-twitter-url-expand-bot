@@ -66,6 +66,7 @@ While it is technically possible through the Bot API, I simply do not have the t
 
 This bot wouldn't be possible without the following people and projects. Huge thanks to:
 
-- [@dylanpdx](https://github.com/dylanpdx) for creating [BetterTwitFix](https://github.com/dylanpdx/BetterTwitFix) / [vxtwitter.com](https://vxtwitter.com) and [tfxktok.com](https://tfxktok.com)
+- [@dylanpdx](https://github.com/dylanpdx) for creating [BetterTwitFix](https://github.com/dylanpdx/BetterTwitFix) / [vxtwitter.com](https://vxtwitter.com)
 - [@Wikidepia](https://github.com/Wikidepia) for creating [InstaFix](https://github.com/Wikidepia/InstaFix) / [ddinstagram.com](https://ddinstagram.com)
 - [fxtwitter.com](https://fxtwitter.com) / [FixTweet](https://github.com/FixTweet/FixTweet)
+- [@allanf181](https://github.com/allanf181) for creating [tfxktok.com](https://tfxktok.com)
