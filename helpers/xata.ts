@@ -33,14 +33,6 @@ const tables = [
       },
     ],
   },
-  {
-    name: "events",
-    columns: [
-      { name: "timestamp", type: "datetime" },
-      { name: "note", type: "string" },
-      { name: "name", type: "string", notNull: true, defaultValue: "" },
-    ],
-  },
 ] as const;
 
 export type SchemaTables = typeof tables;
@@ -49,12 +41,8 @@ export type InferredTypes = SchemaInference<SchemaTables>;
 export type Chats = InferredTypes["chats"];
 export type ChatsRecord = Chats & XataRecord;
 
-export type Events = InferredTypes["events"];
-export type EventsRecord = Events & XataRecord;
-
 export type DatabaseSchema = {
   chats: ChatsRecord;
-  events: EventsRecord;
 };
 
 const DatabaseClient = buildClient();
