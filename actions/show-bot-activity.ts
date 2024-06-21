@@ -7,19 +7,19 @@ import { isBanned } from "../helpers/banned";
  * @param chatId ID of current chat.
  */
 export const showBotActivity = async (ctx: Context, chatId: number) => {
-  if (isBanned(chatId)) return;
+  // if (isBanned(chatId)) return;
 
-  const topicId = ctx.msg?.message_thread_id;
+  // const topicId = ctx.msg?.message_thread_id;
 
-  try {
-    bot.api.sendChatAction(chatId, "typing", {
-      message_thread_id: topicId ?? undefined,
-    });
-  } catch (e) {
-    console.error(`[Error-1] Could not display bot activity indicator.`);
-    console.error(e);
-    return;
-  }
+  // try {
+    // bot.api.sendChatAction(chatId, "typing", {
+      // message_thread_id: topicId ?? undefined,
+    // });
+  // } catch (e) {
+    // console.error(`[Error-1] Could not display bot activity indicator.`);
+    // console.error(e);
+    // return;
+  // }
 
   return;
 };
