@@ -12,13 +12,13 @@ export const showBotActivity = async (ctx: Context, chatId: number) => {
   // const topicId = ctx.msg?.message_thread_id;
 
   // try {
-    // bot.api.sendChatAction(chatId, "typing", {
-      // message_thread_id: topicId ?? undefined,
-    // });
+  // bot.api.sendChatAction(chatId, "typing", {
+  // message_thread_id: topicId ?? undefined,
+  // });
   // } catch (e) {
-    // console.error(`[Error-1] Could not display bot activity indicator.`);
-    // console.error(e);
-    // return;
+  // console.error(`[Error-1] Could not display bot activity indicator.`);
+  // console.error(e);
+  // return;
   // }
 
   return;

@@ -1,4 +1,4 @@
-# Link Expander — Telegram Bot for expanding Twitter, Instagram, Hacker News, and TikTok links.
+# Link Expander — Telegram Bot for expanding Twitter, Instagram, Hacker News, Dribbble,and TikTok links.
 
 ![banner-4 1@1x](https://user-images.githubusercontent.com/6843656/214646426-db3bf292-afc4-4729-8e16-64ed687127aa.png)
 
@@ -13,6 +13,10 @@ You can now expand Hacker News links. It will reply with the original YCombinato
 ## ✨🆕✨ Bot now works in Telegram Channels!
 
 When you add this bot to your channel it will automatically edit any message that includes a Twitter, Instagram, or TikTok link and replace the link in that message with a link to [fxtwitter.com](https://fxtwitter.com), [ddinstagram.com](https://ddinstagram.com), or [tfxktok.com](https://tfxktok.com) which have working embeds for each platform. Your channel subscribers will finally be able to watch inline videos and photos without leaving Telegram.
+
+## Also supports Dribbble!
+
+The bot will expand Dribbble links inside Telegram. It will reply with a link to [dribbbletv.com](https://dribbbletv.com) which has a working embed for Dribbble shots so you can see them play inline inside Telegram.
 
 ## Also supports Posts.cv!
 
