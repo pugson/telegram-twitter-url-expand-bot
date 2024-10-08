@@ -1,4 +1,4 @@
-# Link Expander — Telegram Bot for expanding Twitter, Instagram, Hacker News, Dribbble,and TikTok links.
+# Link Expander — Telegram Bot for expanding Twitter, Instagram, Hacker News, Dribbble, and TikTok links.
 
 ![banner-4 1@1x](https://user-images.githubusercontent.com/6843656/214646426-db3bf292-afc4-4729-8e16-64ed687127aa.png)
 
@@ -30,7 +30,7 @@ The bot can now expand TikTok videos inside Telegram. It will reply with a link 
 
 You can now expand Instagram links inside Telegram with this bot. It will reply with a link to [ddinstagram.com](https://ddinstagram.com) which has a working embed for multiple photos and even includes inline video. Works with regular Instagram Posts and Reels. Doesn’t work with Stories or Highlights yet.
 
-> **Note**
+> [!NOTE]  
 >
 > There is no message logging or personal tracking — your chats stay private.
 >
