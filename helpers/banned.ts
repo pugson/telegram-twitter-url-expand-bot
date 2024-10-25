@@ -1,5 +1,3 @@
-import axios from "axios";
-import { notifyAdmin } from "./notifier";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -15,35 +13,3 @@ const banList: number[] = [
 ];
 
 export const isBanned = (chatId: number) => banList.includes(Number(chatId));
-
-export async function triggerWorkflow(chatId: number) {
-  const owner = "pugson";
-  const repo = "telegram-twitter-url-expand-bot";
-  const workflowId = "ban.yml";
-  const githubToken = process.env.GITHUB_TOKEN;
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`;
-
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        ref: "main",
-        inputs: {
-          chatId,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${githubToken}`,
-          Accept: "application/vnd.github.v3+json",
-        },
-      }
-    );
-
-    notifyAdmin("Workflow dispatched successfully.");
-  } catch (error) {
-    notifyAdmin("Error dispatching workflow");
-    // @ts-ignore
-    console.error("Error dispatching workflow:", error.response?.data || error.message);
-  }
-}

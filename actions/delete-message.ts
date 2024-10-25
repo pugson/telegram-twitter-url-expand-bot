@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import { bot } from "..";
-import { handleMissingPermissions } from "./missing-permissions";
+// import { handleMissingPermissions } from "./missing-permissions";
 
 /**
  * Delete a Telegram message in chat.

@@ -1,7 +1,7 @@
 {
   "name": "telegram-twitter-url-expand-bot",
-  "version": "4.7.0",
-  "description": "Replaces Twitter, Instagram, TikTok, Hacker News, and Posts.cv links in Telegram chats + channels with an expanded preview and inline video.",
+  "version": "4.8.0",
+  "description": "Replaces Twitter, Instagram, Bluesky, TikTok, Hacker News, and Posts.cv links in Telegram chats + channels with an expanded preview and inline video.",
   "main": "index.ts",
   "repository": "https://github.com/pugson/telegram-twitter-url-expand-bot.git",
   "author": "pugson <hi@wojtek.im>",

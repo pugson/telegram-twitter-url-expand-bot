@@ -3,7 +3,7 @@
 //! to display properly in Telegram
 
 import { Context } from "grammy";
-import { isDribbble, isHackerNews, isInstagram, isPosts, isTikTok } from "./platforms";
+import { isBluesky, isDribbble, isHackerNews, isInstagram, isPosts, isTikTok } from "./platforms";
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
 
@@ -18,7 +18,7 @@ export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this c
 export const autoexpandSettingsTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
-I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, TikTok, Hacker News, Dribbble,and Posts․cv links\\.
+I will ${enabled ? "expand" : "reply to"} Twitter, Instagram, Bluesky, TikTok, Hacker News, Dribbble, and Posts․cv links\\.
       
 ${
   enabled
@@ -65,6 +65,7 @@ export const askToExpandTemplate = (link: string) => {
   const posts = isPosts(link);
   const hn = isHackerNews(link);
   const dribbble = isDribbble(link);
+  const bluesky = isBluesky(link);
 
   if (insta) {
     return `Expand this Instagram post?`;
@@ -84,6 +85,10 @@ export const askToExpandTemplate = (link: string) => {
 
   if (dribbble) {
     return `Expand this Dribbble shot?`;
+  }
+
+  if (bluesky) {
+    return `Expand this Bluesky post?`;
   }
 
   return `Expand this Tweet?`;

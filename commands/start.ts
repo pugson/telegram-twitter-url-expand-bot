@@ -3,7 +3,7 @@ import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
-import { isBanned, triggerWorkflow } from "../helpers/banned";
+import { isBanned } from "../helpers/banned";
 import { notifyAdmin } from "../helpers/notifier";
 
 bot.command("start", async (ctx: Context) => {
@@ -77,7 +77,6 @@ You can also add me to your channel and I will edit messages with links to expan
     if (error.description.includes("was blocked")) {
       const chatId = ctx?.msg?.chat.id;
       notifyAdmin(chatId);
-      triggerWorkflow(chatId);
     }
     return;
   }
