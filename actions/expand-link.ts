@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import { expandedMessageTemplate } from "../helpers/templates";
-import { isInstagram, isPosts, isTikTok, isTweet, isDribbble, isBluesky } from "../helpers/platforms";
+import { isInstagram, isPosts, isReddit, isTikTok, isTweet, isDribbble, isBluesky } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
 
 type UserInfoType = {
@@ -29,6 +29,8 @@ function handleExpandedLinkDomain(link: string): string {
       return link.replace("dribbble.com", "dribbbletv.com");
     case isBluesky(link):
       return link.replace("bsky.app", "fxbsky.app");
+    case isReddit(link):
+      return link.replace("reddit.com", "rxddit.com");
     default:
       return link;
   }

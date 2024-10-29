@@ -10,3 +10,4 @@ export const isPosts = (link: string) => checkLink(link, "posts.cv");
 export const isHackerNews = (link: string) => checkLink(link, "news.ycombinator.com");
 export const isDribbble = (link: string) => checkLink(link, "dribbble.com");
 export const isBluesky = (link: string) => checkLink(link, "bsky.app");
+export const isReddit = (link: string) => checkLink(link, "reddit.com");

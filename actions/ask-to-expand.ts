@@ -1,5 +1,5 @@
 import { Context } from "grammy";
-import { isInstagram, isTikTok, isPosts, isHackerNews, isDribbble, isBluesky } from "../helpers/platforms";
+import { isInstagram, isTikTok, isPosts, isHackerNews, isDribbble, isBluesky, isReddit } from "../helpers/platforms";
 import { isBanned } from "../helpers/banned";
 import { askToExpandTemplate } from "../helpers/templates";
 
@@ -24,6 +24,7 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
   const hn = isHackerNews(link);
   const dribbble = isDribbble(link);
   const bluesky = isBluesky(link);
+  const reddit = isReddit(link);
   const platform = insta
     ? "instagram"
     : tiktok
@@ -36,6 +37,8 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
     ? "dribbble"
     : bluesky
     ? "bluesky"
+    : reddit
+    ? "reddit"
     : "twitter";
 
   try {

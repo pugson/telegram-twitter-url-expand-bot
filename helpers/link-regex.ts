@@ -38,6 +38,13 @@
    * Bluesky URLs, in the format:
     - https://bsky.app/username/post_id
     - https://bsky.app/profile/username/post/post_id
+
+   * Reddit URLs, in the format:
+    - https://www.reddit.com/r/:subreddit/comments/:id/:slug/:comment
+    - https://reddit.com/r/:subreddit/comments/:id/:slug
+    - https://reddit.com/r/:subreddit/comments/:id
+    - https://reddit.com/r/:subreddit/s/:id
+    - https://reddit.com/:id
  */
 export const LINK_REGEX: RegExp =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:lite\.|www\.|)?tiktok\.com\/(?:@|v\/)?(\w+)\/(video\/)?(\d+)(?:\?.*)?|(?:vm\.|id\.|en\.|lite\.)tiktok\.com\/([A-Za-z0-9-_]+)(?:\?.*)?|www\.tiktok\.com\/(@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?)/im;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:lite\.|www\.|)?tiktok\.com\/(?:@|v\/)?(\w+)\/(video\/)?(\d+)(?:\?.*)?|(?:vm\.|id\.|en\.|lite\.)tiktok\.com\/([A-Za-z0-9-_]+)(?:\?.*)?|www\.tiktok\.com\/(@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?|reddit\.com\/(?:r\/[^\/]+\/(?:comments|s)\/[A-Za-z0-9]+(?:\/[^\/]*)?(?:\/[^\/]*)?|[A-Za-z0-9]+)(?:\?.*)?)/im;
