@@ -21,6 +21,9 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 When you send a Spotify link, the bot will reply with a photo of the artwork and info about the track / album / playlist / artist / podcast / show.
 It will also send a sample audio clip in another message.
 
+![Spotify preview](https://wsrv.nl/?url=https://github.com/user-attachments/assets/a63af8c5-c968-4b44-b5ba-ed64f1336462&w=300)
+
+
 ## Hacker News links! (not in channels yet)
 
 You can now expand Hacker News links. It will reply with the original YCombinator URL, the link shared in a HN post, and the title of the submission.
