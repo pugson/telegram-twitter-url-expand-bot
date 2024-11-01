@@ -183,6 +183,14 @@ export async function expandLink(
                   text: "❌ Delete — 15s",
                   callback_data: `destruct:${userInfo.userId}:${expansionType}`,
                 },
+                ...(linkWithNoTrackers.includes("fxtwitter")
+                  ? [
+                      {
+                        text: "🔗 Open on Twitter",
+                        url: link?.replace("fxtwitter", "twitter"),
+                      },
+                    ]
+                  : []),
               ],
             ],
           },
@@ -207,6 +215,14 @@ export async function expandLink(
                       text: `❌ Delete — ${time}s`,
                       callback_data: `destruct:${userInfo.userId}:${expansionType}`,
                     },
+                    ...(linkWithNoTrackers.includes("fxtwitter")
+                      ? [
+                          {
+                            text: "🔗 Open on Twitter",
+                            url: link?.replace("fxtwitter", "twitter"),
+                          },
+                        ]
+                      : []),
                   ],
                 ],
               },
@@ -240,7 +256,20 @@ export async function expandLink(
         try {
           await ctx.api
             .editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
-              reply_markup: undefined,
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    ...(linkWithNoTrackers.includes("fxtwitter")
+                      ? [
+                          {
+                            text: "🔗 Open on Twitter",
+                            url: link?.replace("fxtwitter", "twitter"),
+                          },
+                        ]
+                      : []),
+                  ],
+                ],
+              },
             })
             .catch(() => {
               console.error(
