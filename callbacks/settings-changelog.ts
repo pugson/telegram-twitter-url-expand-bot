@@ -22,10 +22,10 @@ export async function handleChangelogSettings(ctx: Context) {
 
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
-    return await ctx.reply("You need to be an admin to change Changelog settings.").catch(() => {
-      console.error(`[Error] [settings-changelog.ts:26] Failed to send message.`);
-      return;
-    });
+    // return await ctx.reply("You need to be an admin to change Changelog settings.").catch(() => {
+    console.error(`[Error] [settings-changelog.ts:26] Failed to send message.`);
+    return;
+    // });
   }
 
   if (data.includes("changelog:done")) {
