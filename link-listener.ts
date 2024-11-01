@@ -6,7 +6,7 @@ import { LINK_REGEX } from "./helpers/link-regex";
 import { createSettings, getSettings } from "./helpers/api";
 import { expandLink } from "./actions/expand-link";
 import { deleteMessage } from "./actions/delete-message";
-import { isDribbble, isHackerNews, isInstagram, isPosts, isReddit, isTikTok } from "./helpers/platforms";
+import { isDribbble, isHackerNews, isInstagram, isPosts, isReddit, isSpotify, isTikTok } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
 import { isBanned } from "./helpers/banned";
@@ -70,6 +70,7 @@ bot.on("message::url", async (ctx: Context) => {
       const hn = isHackerNews(url);
       const dribbble = isDribbble(url);
       const reddit = isReddit(url);
+      const spotify = isSpotify(url);
       const platform = insta
         ? "instagram"
         : tiktok
@@ -82,6 +83,8 @@ bot.on("message::url", async (ctx: Context) => {
         ? "dribbble"
         : reddit
         ? "reddit"
+        : spotify
+        ? "spotify"
         : "twitter";
       trackEvent(`expand.auto.${platform}`);
     } else {

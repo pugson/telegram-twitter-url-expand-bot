@@ -11,3 +11,12 @@ export const isHackerNews = (link: string) => checkLink(link, "news.ycombinator.
 export const isDribbble = (link: string) => checkLink(link, "dribbble.com");
 export const isBluesky = (link: string) => checkLink(link, "bsky.app");
 export const isReddit = (link: string) => checkLink(link, "reddit.com");
+export const isSpotify = (link: string) => checkLink(link, "open.spotify.com");
+
+// Spotify helpers
+export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
+export const isSpotifyAlbum = (link: string) => checkLink(link, "open.spotify.com/album");
+export const isSpotifyPlaylist = (link: string) => checkLink(link, "open.spotify.com/playlist");
+export const isSpotifyArtist = (link: string) => checkLink(link, "open.spotify.com/artist");
+export const isSpotifyEpisode = (link: string) => checkLink(link, "open.spotify.com/episode");
+export const isSpotifyShow = (link: string) => checkLink(link, "open.spotify.com/show");

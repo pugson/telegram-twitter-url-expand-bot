@@ -1,7 +1,18 @@
-import { Context } from "grammy";
+import { Context, InputFile } from "grammy";
 import { expandedMessageTemplate } from "../helpers/templates";
-import { isInstagram, isPosts, isReddit, isTikTok, isTweet, isDribbble, isBluesky } from "../helpers/platforms";
+import {
+  isInstagram,
+  isPosts,
+  isReddit,
+  isTikTok,
+  isTweet,
+  isDribbble,
+  isBluesky,
+  isSpotify,
+} from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
+import { notifyAdmin } from "../helpers/notifier";
+import { getOGMetadata } from "../helpers/og-metadata";
 
 type UserInfoType = {
   username: string | undefined;
@@ -56,7 +67,7 @@ export async function expandLink(
   const expandedLink = handleExpandedLinkDomain(link);
   let linkWithNoTrackers = expandedLink;
   // Strip trackers from these platforms but not others.
-  if (isTweet(link) || isInstagram(link) || isTikTok(link)) {
+  if (isTweet(link) || isInstagram(link) || isTikTok(link) || isSpotify(link)) {
     linkWithNoTrackers = expandedLink.split("?")[0];
   }
 
@@ -74,34 +85,110 @@ export async function expandLink(
       ...threadId,
     };
 
-    const botReply = await ctx.api.sendMessage(
-      chatId,
-      await expandedMessageTemplate(
-        ctx,
-        userInfo.username,
-        userInfo.userId,
-        userInfo.firstName,
-        userInfo.lastName,
-        messageText,
-        linkWithNoTrackers
-      ),
-      {
-        ...replyOptions,
-        // Use HTML parse mode if the user does not have a username,
-        // otherwise the bot will not be able to mention the user.
-        parse_mode: "HTML",
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "❌ Delete — 15s",
-                callback_data: `destruct:${userInfo.userId}:${expansionType}`,
-              },
-            ],
-          ],
-        },
+    let botReply: any;
+
+    if (isSpotify(link)) {
+      try {
+        const metadata = await getOGMetadata(link ?? "");
+        const { title, description, image, audio } = metadata;
+
+        botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
+          ...replyOptions,
+          caption:
+            (await expandedMessageTemplate(
+              ctx,
+              userInfo.username,
+              userInfo.userId,
+              userInfo.firstName,
+              userInfo.lastName,
+              messageText,
+              linkWithNoTrackers
+            )) + `\n\n<b>${title}</b>\n${description}`,
+          parse_mode: "HTML",
+        });
+
+        if (audio) {
+          await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
+            ...replyOptions,
+            title: title,
+            caption: description,
+            thumbnail: new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=200&h=200`)),
+            parse_mode: "HTML",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "❌ Delete",
+                    callback_data: `destruct:${userInfo.userId}:${expansionType}`,
+                  },
+                ],
+              ],
+            },
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        notifyAdmin(error);
+
+        botReply = await ctx.api.sendMessage(
+          chatId,
+          await expandedMessageTemplate(
+            ctx,
+            userInfo.username,
+            userInfo.userId,
+            userInfo.firstName,
+            userInfo.lastName,
+            messageText,
+            linkWithNoTrackers
+          ),
+          {
+            ...replyOptions,
+            // Use HTML parse mode if the user does not have a username,
+            // otherwise the bot will not be able to mention the user.
+            parse_mode: "HTML",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "❌ Delete — 15s",
+                    callback_data: `destruct:${userInfo.userId}:${expansionType}`,
+                  },
+                ],
+              ],
+            },
+          }
+        );
       }
-    );
+    } else {
+      botReply = await ctx.api.sendMessage(
+        chatId,
+        await expandedMessageTemplate(
+          ctx,
+          userInfo.username,
+          userInfo.userId,
+          userInfo.firstName,
+          userInfo.lastName,
+          messageText,
+          linkWithNoTrackers
+        ),
+        {
+          ...replyOptions,
+          // Use HTML parse mode if the user does not have a username,
+          // otherwise the bot will not be able to mention the user.
+          parse_mode: "HTML",
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "❌ Delete — 15s",
+                  callback_data: `destruct:${userInfo.userId}:${expansionType}`,
+                },
+              ],
+            ],
+          },
+        }
+      );
+    }
 
     if (topicId) {
       trackEvent(`expand.${expansionType}.inside-topic`);
