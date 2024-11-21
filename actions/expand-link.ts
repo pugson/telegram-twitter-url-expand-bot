@@ -92,6 +92,10 @@ export async function expandLink(
         const metadata = await getOGMetadata(link ?? "");
         const { title, description, image, audio } = metadata;
 
+        // Limit description to 1024 chars because Telegram rejects messages with more than 4096 characters.
+        // 4096 seems a bit excessive to see in the chat so we'll just cut it off at 1024.
+        const limitedDescription = description.length > 1024 ? description.slice(0, 1024) + "..." : description;
+
         botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
           ...replyOptions,
           caption:
@@ -103,7 +107,7 @@ export async function expandLink(
               userInfo.lastName,
               messageText,
               linkWithNoTrackers
-            )) + `\n\n<b>${title}</b>\n${description}`,
+            )) + `\n\n<b>${title}</b>\n${limitedDescription}`,
           parse_mode: "HTML",
         });
 
