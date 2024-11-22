@@ -92,9 +92,9 @@ export async function expandLink(
         const metadata = await getOGMetadata(link ?? "");
         const { title, description, image, audio } = metadata;
 
-        // Limit description to 1024 chars because Telegram rejects messages with more than 4096 characters.
-        // 4096 seems a bit excessive to see in the chat so we'll just cut it off at 1024.
-        const limitedDescription = description.length > 1024 ? description.slice(0, 1024) + "..." : description;
+        // Limit description to 500 chars because Telegram rejects messages with more than 4096 characters.
+        // 4096 seems a bit excessive to see in the chat so we'll just cut it off at 500.
+        const limitedDescription = description.length > 500 ? description.slice(0, 500) + "..." : description;
 
         botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
           ...replyOptions,
@@ -115,7 +115,7 @@ export async function expandLink(
           await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
             ...replyOptions,
             title: title,
-            caption: description,
+            caption: limitedDescription,
             thumbnail: new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=200&h=200`)),
             parse_mode: "HTML",
             reply_markup: {
