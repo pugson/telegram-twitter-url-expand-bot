@@ -94,28 +94,41 @@ export async function expandLink(
 
         // Limit description to 500 chars because Telegram rejects messages with more than 4096 characters.
         // 4096 seems a bit excessive to see in the chat so we'll just cut it off at 500.
-        const limitedDescription = description.length > 500 ? description.slice(0, 500) + "..." : description;
+        const maxCaptionLength = 500;
+
+        // Calculate template length first
+        const template = await expandedMessageTemplate(
+          ctx,
+          userInfo.username,
+          userInfo.userId,
+          userInfo.firstName,
+          userInfo.lastName,
+          messageText,
+          linkWithNoTrackers
+        );
+
+        // Calculate remaining space for title and description (using 500 to be safe)
+        const remainingSpace = Math.max(0, maxCaptionLength - template.length - 4); // 4 chars for "\n\n"
+        const titleMaxLength = Math.min(50, Math.floor(remainingSpace * 0.3)); // Max 50 chars for title
+        const descMaxLength = Math.floor(remainingSpace * 0.7); // Rest for description
+
+        const truncatedTitle = title.length > titleMaxLength ? title.slice(0, titleMaxLength) + "..." : title;
+        const truncatedDesc =
+          description.length > descMaxLength ? description.slice(0, descMaxLength) + "..." : description;
 
         botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
           ...replyOptions,
-          caption:
-            (await expandedMessageTemplate(
-              ctx,
-              userInfo.username,
-              userInfo.userId,
-              userInfo.firstName,
-              userInfo.lastName,
-              messageText,
-              linkWithNoTrackers
-            )) + `\n\n<b>${title}</b>\n${limitedDescription}`,
+          caption: template + `\n\n<b>${truncatedTitle}</b>\n${truncatedDesc}`,
           parse_mode: "HTML",
         });
 
         if (audio) {
+          // Also limit the audio caption
+          const audioDesc = description.length > 250 ? description.slice(0, 250) + "..." : description;
           await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
             ...replyOptions,
-            title: title,
-            caption: limitedDescription,
+            title: truncatedTitle,
+            caption: audioDesc,
             thumbnail: new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=200&h=200`)),
             parse_mode: "HTML",
             reply_markup: {
