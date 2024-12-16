@@ -13,6 +13,8 @@ import {
 import { trackEvent } from "../helpers/analytics";
 import { notifyAdmin } from "../helpers/notifier";
 import { getOGMetadata } from "../helpers/og-metadata";
+import { saveToCache, deleteFromCache } from "../helpers/cache";
+import { getButtonState } from "../helpers/button-states";
 
 type UserInfoType = {
   username: string | undefined;
@@ -177,127 +179,130 @@ export async function expandLink(
         );
       }
     } else {
-      botReply = await ctx.api.sendMessage(
-        chatId,
-        await expandedMessageTemplate(
-          ctx,
-          userInfo.username,
-          userInfo.userId,
-          userInfo.firstName,
-          userInfo.lastName,
-          messageText,
-          linkWithNoTrackers
-        ),
-        {
-          ...replyOptions,
-          // Use HTML parse mode if the user does not have a username,
-          // otherwise the bot will not be able to mention the user.
-          parse_mode: "HTML",
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: "❌ Delete — 15s",
-                  callback_data: `destruct:${userInfo.userId}:${expansionType}`,
-                },
-                ...(linkWithNoTrackers.includes("fxtwitter")
-                  ? [
-                      {
-                        text: "🔗 Open on Twitter",
-                        url: link?.replace("fxtwitter", "twitter"),
-                      },
-                    ]
-                  : []),
-              ],
-            ],
-          },
-        }
+      // For all other platforms
+      const template = await expandedMessageTemplate(
+        ctx,
+        userInfo.username,
+        userInfo.userId,
+        userInfo.firstName,
+        userInfo.lastName,
+        messageText,
+        linkWithNoTrackers
       );
+
+      // Add buttons based on platform
+      let platform: "twitter" | "instagram" | "tiktok" | null = null;
+      if (isInstagram(link)) platform = "instagram";
+      else if (isTikTok(link)) platform = "tiktok";
+      else if (isTweet(link)) platform = "twitter";
+
+      const replyMarkup = platform
+        ? {
+            inline_keyboard: getButtonState(platform, 15, userInfo.userId || ctx.from?.id || 0, link).buttons,
+          }
+        : undefined;
+
+      try {
+        botReply = await ctx.api.sendMessage(chatId, template, {
+          parse_mode: "HTML",
+          ...replyOptions,
+          ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
+        });
+
+        // For supported platforms, start the button progression
+        if (platform && botReply) {
+          const identifier = `${chatId}:${botReply.message_id}`;
+          await saveToCache(identifier, ctx);
+
+          // Keep track of timeouts so we can clear them if needed
+          const timeouts: NodeJS.Timeout[] = [];
+
+          // Start the button progression
+          const updateButtons = async (timeRemaining: number) => {
+            try {
+              const state = getButtonState(platform!, timeRemaining, userInfo.userId || ctx.from?.id || 0, link);
+              await ctx.api.editMessageReplyMarkup(chatId, botReply!.message_id, {
+                reply_markup: { inline_keyboard: state.buttons },
+              });
+
+              // Schedule next update if there is one
+              if (state.nextTimeout !== null) {
+                const timeout = setTimeout(() => {
+                  try {
+                    updateButtons(state.nextTimeout!).catch(() => {
+                      // Clear all timeouts if we can't update buttons
+                      timeouts.forEach((t) => clearTimeout(t));
+                    });
+                  } catch (error) {
+                    // Clear all timeouts if we can't update buttons
+                    timeouts.forEach((t) => clearTimeout(t));
+                  }
+                }, 5000);
+                timeouts.push(timeout);
+              }
+            } catch (error) {
+              // Message not found errors are expected if message was deleted
+              if (error instanceof Error && error.message.includes("message to edit not found")) {
+                console.warn("[Warning] Message has probably been already deleted.");
+                // Clear all timeouts since we can't update this message anymore
+                timeouts.forEach((t) => clearTimeout(t));
+              } else {
+                console.error("[Error] Failed to update buttons:", error);
+              }
+            }
+          };
+
+          // Start the progression
+          try {
+            const initialTimeout = setTimeout(() => {
+              updateButtons(10).catch(() => {
+                // Clear all timeouts if initial update fails
+                timeouts.forEach((t) => clearTimeout(t));
+              });
+            }, 5000);
+            timeouts.push(initialTimeout);
+
+            // Remove from cache and set final state after 35 seconds
+            const finalTimeout = setTimeout(() => {
+              try {
+                deleteFromCache(identifier);
+                // Set final state with just the open button
+                const finalState = getButtonState(platform!, null, userInfo.userId || ctx.from?.id || 0, link);
+                ctx.api
+                  .editMessageReplyMarkup(chatId, botReply!.message_id, {
+                    reply_markup: { inline_keyboard: finalState.buttons },
+                  })
+                  .catch((error) => {
+                    if (error.message.includes("message to edit not found")) {
+                      console.warn("[Warning] Message has probably been already deleted.");
+                    } else {
+                      console.error("[Error] Failed to set final button state:", error);
+                    }
+                  });
+              } catch (error) {
+                // Message not found errors are expected if message was deleted
+                if (error instanceof Error && error.message.includes("message to edit not found")) {
+                  console.warn("[Warning] Message has probably been already deleted.");
+                } else {
+                  console.error("[Error] Failed to set final button state:", error);
+                }
+              }
+            }, 35000);
+            timeouts.push(finalTimeout);
+          } catch (error) {
+            console.error("[Error] Failed to start button progression:", error);
+            // Clear any timeouts that might have been set
+            timeouts.forEach((t) => clearTimeout(t));
+          }
+        }
+      } catch (error) {
+        console.error("[Error] Could not reply with an expanded link.", error);
+        throw error;
+      }
     }
 
     if (topicId) {
       trackEvent(`expand.${expansionType}.inside-topic`);
-    }
-
-    // Countdown the destruct timer under message
-    if (botReply) {
-      async function editDestructTimer(time: number) {
-        try {
-          await ctx.api
-            .editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    {
-                      text: `❌ Delete — ${time}s`,
-                      callback_data: `destruct:${userInfo.userId}:${expansionType}`,
-                    },
-                    ...(linkWithNoTrackers.includes("fxtwitter")
-                      ? [
-                          {
-                            text: "🔗 Open on Twitter",
-                            url: link?.replace("fxtwitter", "twitter"),
-                          },
-                        ]
-                      : []),
-                  ],
-                ],
-              },
-            })
-            .catch(() => {
-              console.error(
-                "[Error] [expand-link.ts:113] Could not edit destruct timer. Message was probably deleted."
-              );
-              return;
-            });
-        } catch (error) {
-          // console.error("[Error] Could not edit destruct timer. Message was probably deleted.");
-          // @ts-ignore
-          // console.error(error.message);
-          return;
-        }
-      }
-
-      // edit timer to 10s
-      setTimeout(async () => {
-        editDestructTimer(10);
-      }, 5000);
-
-      // edit timer to 5s
-      setTimeout(async () => {
-        editDestructTimer(5);
-      }, 10000);
-
-      // clear buttons after 15s
-      setTimeout(async () => {
-        try {
-          await ctx.api
-            .editMessageReplyMarkup(botReply.chat.id, botReply.message_id, {
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    ...(linkWithNoTrackers.includes("fxtwitter")
-                      ? [
-                          {
-                            text: "🔗 Open on Twitter",
-                            url: link?.replace("fxtwitter", "twitter"),
-                          },
-                        ]
-                      : []),
-                  ],
-                ],
-              },
-            })
-            .catch(() => {
-              console.error(
-                "[Error] [expand-link.ts:144] Could not clear destruct timer. Message was probably deleted."
-              );
-            });
-        } catch (error) {
-          // console.error("[Error] Could not clear destruct timer. Message was probably deleted.");
-          return;
-        }
-      }, 15000);
     }
   } catch (error) {
     console.error("[Error: expand-link.ts] Could not reply with an expanded link.");

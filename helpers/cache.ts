@@ -47,6 +47,15 @@ export async function getFromCache(key: string) {
 }
 
 /**
+ * Read message from in-memory cache without removing it.
+ * @param key Unique identifier for the message (chatId:messageId:linkIndex)
+ * @returns Telegram Context
+ */
+export async function peekFromCache(key: string) {
+  return memoryCache.get(key);
+}
+
+/**
  * Delete message from in-memory cache immediately.
  * @param key Unique identifier for the message (chatId:messageId:linkIndex)
  */

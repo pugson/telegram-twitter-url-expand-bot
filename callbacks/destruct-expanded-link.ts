@@ -1,9 +1,10 @@
 import { Context } from "grammy";
 import { deleteMessage } from "../actions/delete-message";
 import { trackEvent } from "../helpers/analytics";
+import { getButtonState } from "../helpers/button-states";
 
 /**
- * Handle responses to expanded link’s "❌ Delete" button
+ * Handle responses to expanded link's "❌ Delete" button
  * @param ctx Telegram context
  */
 export async function handleExpandedLinkDestruction(ctx: Context) {
@@ -18,7 +19,7 @@ export async function handleExpandedLinkDestruction(ctx: Context) {
   if (data.includes("destruct:")) {
     const destructData = data.split(":");
     const originalAuthorId = Number(destructData[1]);
-    const expansionType = destructData[2];
+    const timeRemaining = Number(destructData[2]);
     const answerGiverId = answer?.from?.id;
 
     if (answerGiverId !== originalAuthorId) {
@@ -32,7 +33,7 @@ export async function handleExpandedLinkDestruction(ctx: Context) {
           return;
         });
 
-      trackEvent(`destruct.${expansionType}.not-author-alert`);
+      trackEvent(`destruct.${timeRemaining}.not-author-alert`);
       return;
     }
 
@@ -41,7 +42,7 @@ export async function handleExpandedLinkDestruction(ctx: Context) {
       console.error(`[Error] Cannot answer callback query.`);
       return;
     });
-    trackEvent(`destruct.${expansionType}.author`);
+    trackEvent(`destruct.${timeRemaining}.author`);
     return;
   }
 }

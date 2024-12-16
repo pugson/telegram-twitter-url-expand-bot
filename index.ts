@@ -1,6 +1,7 @@
 import { Bot as TelegramBot } from "grammy";
 import { notifyAdmin } from "./helpers/notifier";
 import * as dotenv from "dotenv";
+import { errorHandler } from "./middleware/error-handler";
 dotenv.config();
 
 if (!process.env.TELEGRAM_BOT_TOKEN) {
@@ -8,6 +9,9 @@ if (!process.env.TELEGRAM_BOT_TOKEN) {
 }
 
 export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+
+// Catch all errors with middleware
+bot.catch(errorHandler);
 
 try {
   bot.api.setMyCommands([
