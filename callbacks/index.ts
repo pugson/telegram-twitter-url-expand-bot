@@ -25,41 +25,11 @@ bot.on("callback_query", async (ctx: Context) => {
   getMemberCount(chatId);
 
   // Handle expand callbacks
-  if (data.includes("expand:")) {
-    await handleManualExpand(ctx);
-    return;
-  }
-
-  // Handle destruct callbacks
-  if (data.includes("destruct:")) {
-    await handleExpandedLinkDestruction(ctx);
-    return;
-  }
-
-  // Handle undo callbacks
-  if (data === "undo") {
-    await handleUndo(ctx);
-    return;
-  }
-
-  // Handle settings callbacks
-  if (data.includes("settings:autoexpand")) {
-    await handleAutoexpandSettings(ctx);
-    return;
-  }
-
-  if (data.includes("settings:lock")) {
-    await handleLockSettings(ctx);
-    return;
-  }
-
-  if (data.includes("settings:changelog")) {
-    await handleChangelogSettings(ctx);
-    return;
-  }
-
-  if (data.includes("settings:permissions")) {
-    await handlePermissionsSettings(ctx);
-    return;
-  }
+  await handleManualExpand(ctx);
+  await handleExpandedLinkDestruction(ctx);
+  await handleUndo(ctx);
+  await handleAutoexpandSettings(ctx);
+  await handleLockSettings(ctx);
+  await handleChangelogSettings(ctx);
+  await handlePermissionsSettings(ctx);
 });

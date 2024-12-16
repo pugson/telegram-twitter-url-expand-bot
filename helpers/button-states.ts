@@ -1,6 +1,6 @@
 import { InlineKeyboardButton } from "@grammyjs/types";
 
-type Platform = "twitter" | "instagram" | "tiktok";
+type Platform = "twitter" | "instagram" | "tiktok" | "instagram-share";
 
 type ButtonState = {
   buttons: InlineKeyboardButton[][];
@@ -21,7 +21,14 @@ export function getButtonState(
   userId: number,
   url: string
 ): ButtonState {
-  const platformName = platform === "twitter" ? "Twitter" : platform === "instagram" ? "Instagram" : "TikTok";
+  const platformName =
+    platform === "twitter"
+      ? "Twitter"
+      : platform.includes("instagram")
+      ? "Instagram"
+      : platform === "tiktok"
+      ? "TikTok"
+      : "...";
   const baseButtons: InlineKeyboardButton[] = [
     {
       text: `🔗 Open on ${platformName}`,

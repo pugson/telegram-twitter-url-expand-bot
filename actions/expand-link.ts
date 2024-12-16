@@ -9,6 +9,7 @@ import {
   isDribbble,
   isBluesky,
   isSpotify,
+  isInstagramShare,
 } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
 import { notifyAdmin } from "../helpers/notifier";
@@ -189,8 +190,8 @@ export async function expandLink(
             const finalUrl = resolvedUrl.replace(/instagram\.com/g, "ddinstagram.com");
             linkWithNoTrackers = finalUrl; // Update the link used in the template
             link = finalUrl;
-            let platform: "twitter" | "instagram" | "tiktok" | null = null;
-            platform = "instagram";
+            let platform: "twitter" | "instagram" | "tiktok" | "instagram-share" | null = null;
+            platform = "instagram-share"; // Track as Instagram share
           }
         } catch (error) {
           console.error("[Error] Failed to resolve Instagram share link:", error);
@@ -304,10 +305,11 @@ export async function expandLink(
         );
 
         // Add buttons based on platform
-        let platform: "twitter" | "instagram" | "tiktok" | null = null;
+        let platform: any = null;
         if (isInstagram(link)) platform = "instagram";
         else if (isTikTok(link)) platform = "tiktok";
         else if (isTweet(link)) platform = "twitter";
+        else if (isInstagramShare(link)) platform = "instagram-share";
 
         const replyMarkup = platform
           ? {
