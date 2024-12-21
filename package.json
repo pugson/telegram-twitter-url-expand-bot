@@ -1,6 +1,6 @@
 {
   "name": "telegram-twitter-url-expand-bot",
-  "version": "4.12.1",
+  "version": "4.12.2",
   "description": "Replaces Twitter, Instagram, Bluesky, TikTok, Reddit, Spotify,Hacker News, and Posts.cv links in Telegram chats + channels with an expanded preview and inline video.",
   "main": "index.ts",
   "repository": "https://github.com/pugson/telegram-twitter-url-expand-bot.git",

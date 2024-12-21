@@ -417,6 +417,21 @@ export async function expandLink(
       }
     }
 
+    try {
+      // Delete the original message only after we've successfully sent our reply
+      if (ctx.msg?.message_id && botReply) {
+        await ctx.api.deleteMessage(chatId, ctx.msg.message_id);
+      }
+
+      // Add message to cache for undo functionality
+      if (botReply) {
+        const identifier = `${chatId}:${botReply.message_id}`;
+        await saveToCache(identifier, ctx);
+      }
+    } catch (error) {
+      console.error("[Error] Could not delete original message or add to cache.", error);
+    }
+
     if (topicId) {
       trackEvent(`expand.${expansionType}.inside-topic`);
     }
