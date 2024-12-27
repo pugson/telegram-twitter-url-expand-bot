@@ -14,8 +14,12 @@ interface MetadataResponse {
  */
 export async function resolveInstagramShare(shareUrl: string): Promise<string | null> {
   try {
+    // Ensure the URL ends with a trailing slash to avoid unnecessary redirects
+    // (e.g., "https://www.instagram.com/share/xxx" might redirect to "https://www.instagram.com/share/xxx/").
+    const normalizedShareUrl = shareUrl.replace(/\/?$/, '/');
+
     const response = await axios.get<MetadataResponse>(
-      `https://og.metadata.vision/${encodeURIComponent(shareUrl)}`
+      `https://og.metadata.vision/${encodeURIComponent(normalizedShareUrl)}`
     );
 
     if (response.data?.data?.url) {
