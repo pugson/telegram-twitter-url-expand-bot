@@ -5,7 +5,7 @@ const memoryCache = new NodeCache({
   // Store message Context in memory for a longer duration
   // if necessary, otherwise the button to expand links
   // will not work if the message has expired from cache.
-  stdTTL: 60 * 60 * 12, // 12 hours
+  stdTTL: 60 * 60 * 8, // 8 hours
   // Most of the time, the message will be cached only
   // for a few seconds while the bot is processing it,
   // or when the user is in the process of clicking
