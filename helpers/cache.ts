@@ -10,7 +10,22 @@ const memoryCache = new NodeCache({
   // for a few seconds while the bot is processing it,
   // or when the user is in the process of clicking
   // the button that expands links in the message.
+  checkperiod: 300, // Check for expired keys every 5 minutes
+  maxKeys: 1000, // Max 1000 items in cache
+  deleteOnExpire: true,
 });
+
+// Add cache stats logging every 5 minutes
+setInterval(() => {
+  const stats = memoryCache.getStats();
+  console.log("[Cache Stats]", {
+    keys: stats.keys,
+    hits: stats.hits,
+    misses: stats.misses,
+    ksize: stats.ksize,
+    vsize: stats.vsize,
+  });
+}, 300000);
 
 /**
  * Cache messages in memory to be able to process them later.
