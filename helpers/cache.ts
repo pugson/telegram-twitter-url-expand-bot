@@ -15,7 +15,7 @@ const memoryCache = new NodeCache({
   deleteOnExpire: true,
 });
 
-// Add cache stats logging every 5 minutes
+// Add cache stats logging every hour
 setInterval(() => {
   const stats = memoryCache.getStats();
   console.log("[Cache Stats]", {
@@ -25,7 +25,7 @@ setInterval(() => {
     ksize: stats.ksize,
     vsize: stats.vsize,
   });
-}, 300000);
+}, 60 * 60 * 1000);
 
 /**
  * Cache messages in memory to be able to process them later.
