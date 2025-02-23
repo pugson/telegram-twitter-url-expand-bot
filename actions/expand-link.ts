@@ -31,14 +31,21 @@ type UserInfoType = {
  * @returns Expanded URL with the right domain
  */
 function handleExpandedLinkDomain(link: string): string {
+  // If multiple URLs are accidentally concatenated, take only the first one
+  if (link.includes("http", 1)) {
+    link = link.split("http")[0];
+  }
+
   switch (true) {
     case isInstagram(link):
+      if (link.includes("ddinstagram.com")) return link;
       return link.replace("instagram.com", "ddinstagram.com");
     case isTikTok(link):
       return link.replace("lite.tiktok.com", "tfxktok.com").replace("tiktok.com", "tfxktok.com");
     case isPosts(link):
       return link.replace("posts.cv", "postscv.com");
     case isTweet(link):
+      if (link.includes("fxtwitter.com")) return link;
       return link.replace("twitter.com", "fxtwitter.com").replace("x.com", "fxtwitter.com");
     case isDribbble(link):
       return link.replace("dribbble.com", "dribbbletv.com");
