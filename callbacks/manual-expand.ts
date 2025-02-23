@@ -66,7 +66,7 @@ export async function handleManualExpand(ctx: Context) {
       if (contextFromCache) {
         const entities = contextFromCache.entities() || contextFromCache.caption_entities();
         const messageWithNoLinks = entities.reduce((msg: string, entity: { type: string; text: any }) => {
-          if (entity.type === "url") {
+          if (entity.type === "url" && entity.text === url) {
             return msg.replace(entity.text, "");
           }
           return msg;
