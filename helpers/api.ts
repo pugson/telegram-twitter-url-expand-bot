@@ -13,6 +13,7 @@ const xata = getXataClient();
  */
 export const getSettings = async (chatId: number) => {
   try {
+    console.log("Getting settings for chat ID:", chatId);
     const record = await xata.db.chats
       .filter({
         chat_id: chatId.toString(),
@@ -24,6 +25,7 @@ export const getSettings = async (chatId: number) => {
     return record;
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 
@@ -42,6 +44,7 @@ export const createSettings = async (
   settingsLockValue: boolean
 ) => {
   try {
+    console.log("Creating settings for chat ID:", chatId);
     const record = await xata.db.chats.create({
       chat_id: chatId.toString(),
       autoexpand: autoexpandValue,
@@ -52,6 +55,7 @@ export const createSettings = async (
     return record;
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 
@@ -64,6 +68,7 @@ export const createSettings = async (
  */
 export const updateSettings = async (id: number, property: keyof Chats, value: Chats[keyof Chats]) => {
   try {
+    console.log("Updating settings for chat ID:", id);
     const record = await xata.db.chats
       .filter({ chat_id: id.toString() })
       .getFirst()
@@ -78,5 +83,6 @@ export const updateSettings = async (id: number, property: keyof Chats, value: C
     return record;
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
