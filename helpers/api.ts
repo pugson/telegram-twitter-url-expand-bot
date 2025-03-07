@@ -75,6 +75,8 @@ export const updateSettings = async (id: number, property: keyof Chats, value: C
           record.update({
             [`${property}`]: value,
           });
+        } else {
+          console.warn("[Error] Unable to get records. No settings found for chat ID:", id);
         }
       });
 
