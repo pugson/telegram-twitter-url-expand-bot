@@ -25,7 +25,6 @@ export const getSettings = async (chatId: number) => {
     return record;
   } catch (error) {
     console.error(error);
-    return null;
   }
 };
 
@@ -55,7 +54,6 @@ export const createSettings = async (
     return record;
   } catch (error) {
     console.error(error);
-    return null;
   }
 };
 
@@ -83,6 +81,5 @@ export const updateSettings = async (id: number, property: keyof Chats, value: C
     return record;
   } catch (error) {
     console.error(error);
-    return null;
   }
 };
