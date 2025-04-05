@@ -38,8 +38,8 @@ function handleExpandedLinkDomain(link: string): string {
 
   switch (true) {
     case isInstagram(link):
-      if (link.includes("ddinstagram.com")) return link;
-      return link.replace("instagram.com", "ddinstagram.com");
+      if (link.includes("kkinstagram.com")) return link;
+      return link.replace("instagram.com", "kkinstagram.com");
     case isTikTok(link):
       return link.replace("lite.tiktok.com", "tfxktok.com").replace("tiktok.com", "tfxktok.com");
     case isPosts(link):
@@ -193,8 +193,8 @@ export async function expandLink(
         try {
           const resolvedUrl = await resolveInstagramShare(link);
           if (resolvedUrl) {
-            // Replace the share URL with the resolved URL and convert to ddinstagram.com
-            const finalUrl = resolvedUrl.replace(/instagram\.com/g, "ddinstagram.com");
+            // Replace the share URL with the resolved URL and convert to kkinstagram.com
+            const finalUrl = resolvedUrl.replace(/instagram\.com/g, "kkinstagram.com");
             linkWithNoTrackers = finalUrl; // Update the link used in the template
             link = finalUrl;
             let platform: "twitter" | "instagram" | "tiktok" | "instagram-share" | null = null;
@@ -204,9 +204,9 @@ export async function expandLink(
           console.error("[Error] Failed to resolve Instagram share link:", error);
         }
       }
-      // Handle regular Instagram links (replace domain with ddinstagram.com)
+      // Handle regular Instagram links (replace domain with kkinstagram.com)
       else if (isInstagram(link)) {
-        link = link.replace(/instagram\.com/g, "ddinstagram.com");
+        link = link.replace(/instagram\.com/g, "kkinstagram.com");
       }
 
       // Handle Spotify links
