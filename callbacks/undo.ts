@@ -34,7 +34,7 @@ export async function handleUndo(ctx: Context) {
           return;
         }
 
-        let platform: "twitter" | "instagram" | "tiktok" | null = null;
+        let platform: "twitter" | "instagram" | "tiktok" | "reddit" | null = null;
         let undoText = messageText;
 
         // Determine platform and handle URL replacement
@@ -47,10 +47,14 @@ export async function handleUndo(ctx: Context) {
         } else if (messageText.includes("tfxktok.com")) {
           platform = "tiktok";
           undoText = messageText.replace(/tfxktok\.com/g, "tiktok.com");
+        } else if (messageText.includes("rxddit.com")) {
+          platform = "reddit";
+          undoText = messageText.replace(/rxddit\.com/g, "reddit.com");
         } else if (
           messageText.includes("instagram.com") ||
           messageText.includes("twitter.com") ||
-          messageText.includes("tiktok.com")
+          messageText.includes("tiktok.com") ||
+          messageText.includes("reddit.com")
         ) {
           // The message already contains original URLs - it was already undone
           await ctx.answerCallbackQuery({
@@ -74,7 +78,7 @@ export async function handleUndo(ctx: Context) {
           await ctx.api.editMessageText(chatId, messageId, undoText, {
             parse_mode: "HTML",
             reply_markup: {
-              inline_keyboard: getButtonState(platform, 15, ctx.from?.id || 0, url).buttons,
+              inline_keyboard: getButtonState(platform as any, 15, ctx.from?.id || 0, url).buttons,
             },
           });
         } catch (editError) {

@@ -301,22 +301,12 @@ export async function expandLink(
         }
       } else {
         // For all other platforms
-        const template = await expandedMessageTemplate(
-          ctx,
-          userInfo.username,
-          userInfo.userId,
-          userInfo.firstName,
-          userInfo.lastName,
-          messageText,
-          linkWithNoTrackers
-        );
-
-        // Add buttons based on platform
         let platform: any = null;
         if (isInstagram(link)) platform = "instagram";
         else if (isTikTok(link)) platform = "tiktok";
         else if (isTweet(link)) platform = "twitter";
         else if (isInstagramShare(link)) platform = "instagram-share";
+        else if (isReddit(link)) platform = "reddit";
 
         const replyMarkup = platform
           ? {
@@ -325,11 +315,23 @@ export async function expandLink(
           : undefined;
 
         try {
-          botReply = await ctx.api.sendMessage(chatId, template, {
-            parse_mode: "HTML",
-            ...replyOptions,
-            ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
-          });
+          botReply = await ctx.api.sendMessage(
+            chatId,
+            await expandedMessageTemplate(
+              ctx,
+              userInfo.username,
+              userInfo.userId,
+              userInfo.firstName,
+              userInfo.lastName,
+              messageText,
+              linkWithNoTrackers
+            ),
+            {
+              parse_mode: "HTML",
+              ...replyOptions,
+              ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
+            }
+          );
 
           // For supported platforms, start the button progression
           if (platform && botReply) {
