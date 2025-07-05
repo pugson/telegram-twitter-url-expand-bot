@@ -13,6 +13,7 @@ export const isDribbble = (link: string) => checkLink(link, "dribbble.com");
 export const isBluesky = (link: string) => checkLink(link, "bsky.app");
 export const isReddit = (link: string) => checkLink(link, "reddit.com");
 export const isSpotify = (link: string) => checkLink(link, "open.spotify.com");
+export const isFarcaster = (link: string) => checkLink(link, "farcaster.xyz");
 
 // Spotify helpers
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");

@@ -10,6 +10,7 @@ import {
   isBluesky,
   isSpotify,
   isInstagramShare,
+  isFarcaster,
 } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
 import { notifyAdmin } from "../helpers/notifier";
@@ -53,6 +54,8 @@ function handleExpandedLinkDomain(link: string): string {
       return link.replace("bsky.app", "fxbsky.app");
     case isReddit(link):
       return link.replace("reddit.com", "rxddit.com");
+    case isFarcaster(link):
+      return link.replace("farcaster.xyz", "farlinker.xyz");
     default:
       return link;
   }
@@ -307,6 +310,7 @@ export async function expandLink(
         else if (isTweet(link)) platform = "twitter";
         else if (isInstagramShare(link)) platform = "instagram-share";
         else if (isReddit(link)) platform = "reddit";
+        else if (isFarcaster(link)) platform = "farcaster";
 
         const replyMarkup = platform
           ? {

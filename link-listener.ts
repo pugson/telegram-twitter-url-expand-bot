@@ -15,6 +15,7 @@ import {
   isReddit,
   isSpotify,
   isTikTok,
+  isFarcaster,
 } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
@@ -82,6 +83,7 @@ bot.on("message::url", async (ctx: Context) => {
       const dribbble = isDribbble(url);
       const reddit = isReddit(url);
       const spotify = isSpotify(url);
+      const farcaster = isFarcaster(url);
       const platform = insta
         ? "instagram"
         : instaShare
@@ -98,6 +100,8 @@ bot.on("message::url", async (ctx: Context) => {
         ? "reddit"
         : spotify
         ? "spotify"
+        : farcaster
+        ? "farcaster"
         : "twitter";
       trackEvent(`expand.auto.${platform}`);
     } else {
