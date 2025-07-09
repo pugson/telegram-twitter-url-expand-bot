@@ -28,6 +28,7 @@ bot.on("channel_post::url", async (ctx: Context) => {
     .replace("twitter.com/", "fxtwitter.com/")
     .replace("x.com/", "fxtwitter.com/")
     .replace("instagram.com/", "kkinstagram.com/")
+    .replace("vt.tiktok.com/", "vm.tfxktok.com/")
     .replace("lite.tiktok.com/", "tfxktok.com/")
     .replace("tiktok.com/", "tfxktok.com/")
     .replace("posts.cv/", "postscv.com/")

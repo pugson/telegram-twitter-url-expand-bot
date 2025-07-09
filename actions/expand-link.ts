@@ -41,7 +41,10 @@ function handleExpandedLinkDomain(link: string): string {
       if (link.includes("kkinstagram.com")) return link;
       return link.replace("instagram.com", "kkinstagram.com");
     case isTikTok(link):
-      return link.replace("lite.tiktok.com", "tfxktok.com").replace("tiktok.com", "tfxktok.com");
+      return link
+        .replace("vt.tiktok.com", "vm.tfxktok.com")
+        .replace("lite.tiktok.com", "tfxktok.com")
+        .replace("tiktok.com", "tfxktok.com");
     case isPosts(link):
       return link.replace("posts.cv", "postscv.com");
     case isTweet(link):
