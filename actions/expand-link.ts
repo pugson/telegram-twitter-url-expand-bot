@@ -305,15 +305,19 @@ export async function expandLink(
       } else {
         // For all other platforms
         let platform: any = null;
-        if (isInstagram(link)) platform = "instagram";
-        else if (isTikTok(link)) platform = "tiktok";
+        let originalLink = link; // Keep track of original link for button
+        if (isInstagram(link)) {
+          platform = "instagram";
+          // Keep original Instagram link for button, but modify for message
+          originalLink = link.replace(/kkinstagram\.com/g, "instagram.com");
+        } else if (isTikTok(link)) platform = "tiktok";
         else if (isTweet(link)) platform = "twitter";
         else if (isInstagramShare(link)) platform = "instagram-share";
         else if (isReddit(link)) platform = "reddit";
 
         const replyMarkup = platform
           ? {
-              inline_keyboard: getButtonState(platform, 15, userInfo.userId || ctx.from?.id || 0, link).buttons,
+              inline_keyboard: getButtonState(platform, 15, userInfo.userId || ctx.from?.id || 0, originalLink).buttons,
             }
           : undefined;
 
@@ -347,7 +351,12 @@ export async function expandLink(
             // Start the button progression
             const updateButtons = async (timeRemaining: number) => {
               try {
-                const state = getButtonState(platform!, timeRemaining, userInfo.userId || ctx.from?.id || 0, link);
+                const state = getButtonState(
+                  platform!,
+                  timeRemaining,
+                  userInfo.userId || ctx.from?.id || 0,
+                  originalLink
+                );
                 await ctx.api.editMessageReplyMarkup(chatId, botReply!.message_id, {
                   reply_markup: { inline_keyboard: state.buttons },
                 });
@@ -394,7 +403,12 @@ export async function expandLink(
                 try {
                   deleteFromCache(identifier);
                   // Set final state with just the open button
-                  const finalState = getButtonState(platform!, null, userInfo.userId || ctx.from?.id || 0, link);
+                  const finalState = getButtonState(
+                    platform!,
+                    null,
+                    userInfo.userId || ctx.from?.id || 0,
+                    originalLink
+                  );
                   ctx.api
                     .editMessageReplyMarkup(chatId, botReply!.message_id, {
                       reply_markup: { inline_keyboard: finalState.buttons },
