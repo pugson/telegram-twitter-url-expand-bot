@@ -5,6 +5,7 @@ import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { isBanned } from "../helpers/banned";
 import { notifyAdmin } from "../helpers/notifier";
+import { safeReply } from "../helpers/templates";
 
 bot.command("start", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -21,9 +22,11 @@ bot.command("start", async (ctx: Context) => {
 
     showBotActivity(ctx, chatId);
     deleteMessage(chatId, msgId);
-    ctx
-      .reply(
-        `👋 Hello! I’m a bot that expands Twitter, Instagram, TikTok, Reddit, Spotify, Hacker News, Dribbble,and Posts․cv URLs. Send me a link and I’ll expand it for you. 🔗🖼️
+
+    try {
+      await safeReply(
+        ctx,
+        `👋 Hello! I’m a bot that expands Twitter, Instagram, TikTok, Reddit, Spotify, Hacker News, and Dribbble URLs. Send me a link and I’ll expand it for you. 🔗🖼️
 
 Commands:
 /autoexpand - Configure link expanding
@@ -60,11 +63,11 @@ You can also add me to your channel and I will edit messages with links to expan
           : {
               message_thread_id: topicId ?? undefined,
             }
-      )
-      .catch(() => {
-        console.error(`[Error] [start.ts:61] Failed to send start message.`);
-        return;
-      });
+      );
+    } catch (replyError) {
+      console.error(`[Error] [start.ts:61] Failed to send start message.`, replyError);
+      return;
+    }
 
     trackEvent("command.start");
   } catch (error) {

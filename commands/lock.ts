@@ -2,7 +2,7 @@ import { bot } from "..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../helpers/api";
 import { notifyAdmin } from "../helpers/notifier";
-import { lockSettingsTemplate } from "../helpers/templates";
+import { lockSettingsTemplate, safeSendMessage } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
@@ -24,15 +24,15 @@ bot.command("lock", async (ctx: Context) => {
 
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
-    return await bot.api
-      .sendMessage(chatId, "You need to be an admin to use the Lock command.", {
+    try {
+      return await safeSendMessage(bot.api, chatId, "You need to be an admin to use the Lock command.", {
         message_thread_id: topicId ?? undefined,
         disable_notification: true,
-      })
-      .catch(() => {
-        console.error(`[Error] [lock.ts:35] Failed to send message.`);
-        return;
       });
+    } catch (error) {
+      console.error(`[Error] [lock.ts:34] Failed to send message.`, error);
+      return;
+    }
   }
 
   try {
@@ -40,9 +40,9 @@ bot.command("lock", async (ctx: Context) => {
 
     if (settings) {
       deleteMessage(chatId, msgId);
-      // Reply with template and buttons to control changelog settings
-      await bot.api
-        .sendMessage(chatId, lockSettingsTemplate(settings.settings_lock), {
+      // Reply with template and buttons to control lock settings
+      try {
+        await safeSendMessage(bot.api, chatId, lockSettingsTemplate(settings.settings_lock), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -60,18 +60,18 @@ bot.command("lock", async (ctx: Context) => {
               ],
             ],
           },
-        })
-        .catch(() => {
-          console.error(`[Error] [changelog.ts:51] Failed to send settings_lock template.`);
-          return;
         });
+      } catch (error) {
+        console.error(`[Error] [lock.ts:58] Failed to send message.`, error);
+        return;
+      }
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
       createSettings(chatId, false, true, false);
       // Reply with template and buttons to control settings_lock (default: off)
-      await ctx.api
-        .sendMessage(chatId, lockSettingsTemplate(true), {
+      try {
+        await safeSendMessage(ctx.api, chatId, lockSettingsTemplate(true), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -89,15 +89,19 @@ bot.command("lock", async (ctx: Context) => {
               ],
             ],
           },
-        })
-        .catch(() => {
-          console.error(`[Error] [changelog.ts:79] Failed to send changelog settings template.`);
-          return;
         });
+      } catch (error) {
+        console.error(`[Error] [lock.ts:84] Failed to send message.`, error);
+        return;
+      }
     }
-  } catch (error: any) {
-    console.error(error);
-    notifyAdmin(error);
+  } catch (error) {
+    console.error(`[Error] [lock.ts:91] Failed to process lock command.`, error);
+
+    // @ts-ignore
+    if (error.description.includes("was blocked")) {
+      notifyAdmin(chatId);
+    }
     return;
   }
 

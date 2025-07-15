@@ -2,7 +2,7 @@ import { bot } from "..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../helpers/api";
 import { notifyAdmin } from "../helpers/notifier";
-import { autoexpandSettingsTemplate } from "../helpers/templates";
+import { autoexpandSettingsTemplate, safeSendMessage } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { handleMissingPermissions } from "../actions/missing-permissions";
@@ -26,15 +26,15 @@ bot.command("autoexpand", async (ctx: Context) => {
 
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
-    return await bot.api
-      .sendMessage(chatId, "You need to be an admin to use the Autoexpand command.", {
+    try {
+      return await safeSendMessage(bot.api, chatId, "You need to be an admin to use the Autoexpand command.", {
         message_thread_id: topicId ?? undefined,
         disable_notification: true,
-      })
-      .catch(() => {
-        console.error(`[Error] [autoexpand.ts:37] Failed to send message.`);
-        return;
       });
+    } catch (error) {
+      console.error(`[Error] [autoexpand.ts:37] Failed to send message.`, error);
+      return;
+    }
   }
 
   try {
@@ -43,8 +43,8 @@ bot.command("autoexpand", async (ctx: Context) => {
     if (settings) {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control autoexpand settings
-      await bot.api
-        .sendMessage(chatId, autoexpandSettingsTemplate(settings.autoexpand), {
+      try {
+        await safeSendMessage(bot.api, chatId, autoexpandSettingsTemplate(settings.autoexpand), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -62,11 +62,11 @@ bot.command("autoexpand", async (ctx: Context) => {
               ],
             ],
           },
-        })
-        .catch(() => {
-          console.error(`[Error] [autoexpand.ts:51] Failed to send autoexpand settings template.`);
-          return;
         });
+      } catch (error) {
+        console.error(`[Error] [autoexpand.ts:60] Failed to send message.`, error);
+        return;
+      }
 
       if (settings.autoexpand && !privateChat) {
         handleMissingPermissions(ctx);
@@ -76,8 +76,8 @@ bot.command("autoexpand", async (ctx: Context) => {
       // Create default settings for this chat
       createSettings(chatId, true, true, false);
       // Reply with template and buttons to control autoexpand settings (default: on)
-      await ctx.api
-        .sendMessage(chatId, autoexpandSettingsTemplate(true), {
+      try {
+        await safeSendMessage(ctx.api, chatId, autoexpandSettingsTemplate(true), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -95,17 +95,27 @@ bot.command("autoexpand", async (ctx: Context) => {
               ],
             ],
           },
-        })
-        .catch(() => {
-          console.error(`[Error] [autoexpand.ts:85] Failed to send autoexpand settings template.`);
-          return;
         });
+      } catch (error) {
+        console.error(`[Error] [autoexpand.ts:88] Failed to send message.`, error);
+        return;
+      }
 
       if (!privateChat) handleMissingPermissions(ctx);
     }
-  } catch (error: any) {
-    console.error(error);
-    notifyAdmin(error);
+  } catch (error) {
+    console.error(`[Error] [autoexpand.ts:95] Failed to process autoexpand command.`, error);
+
+    // @ts-ignore
+    if (error.description.includes("was blocked")) {
+      notifyAdmin(chatId);
+      return;
+    }
+
+    if (!privateChat) {
+      await handleMissingPermissions(ctx);
+    }
+    return;
   }
 
   trackEvent("command.autoexpand");

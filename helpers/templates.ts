@@ -256,3 +256,69 @@ ${includedLink}`;
 
 ${includedLink}`;
 };
+
+/**
+ * Safely send a reply message, handling the case where the message thread doesn't exist
+ * by retrying without the thread ID
+ */
+export async function safeReply(
+  ctx: any,
+  message: string,
+  options: { message_thread_id?: number; [key: string]: any } = {}
+): Promise<void> {
+  try {
+    await ctx.reply(message, options);
+  } catch (error: any) {
+    // If thread doesn't exist, retry without thread ID
+    if (error.description?.includes("message thread not found")) {
+      const { message_thread_id, ...optionsWithoutThread } = options;
+      await ctx.reply(message, optionsWithoutThread);
+    } else {
+      throw error; // Re-throw other errors
+    }
+  }
+}
+
+/**
+ * Safely send a message via bot.api.sendMessage, handling the case where the message thread doesn't exist
+ * by retrying without the thread ID
+ */
+export async function safeSendMessage(
+  api: any,
+  chatId: number,
+  message: string,
+  options: { message_thread_id?: number; [key: string]: any } = {}
+): Promise<any> {
+  try {
+    return await api.sendMessage(chatId, message, options);
+  } catch (error: any) {
+    // If thread doesn't exist, retry without thread ID
+    if (error.description?.includes("message thread not found")) {
+      const { message_thread_id, ...optionsWithoutThread } = options;
+      return await api.sendMessage(chatId, message, optionsWithoutThread);
+    } else {
+      throw error; // Re-throw other errors
+    }
+  }
+}
+
+/**
+ * Safely call any API method that accepts message_thread_id, handling the case where the message thread doesn't exist
+ * by retrying without the thread ID
+ */
+export async function safeApiCall<T>(
+  apiMethod: (options: any) => Promise<T>,
+  options: { message_thread_id?: number; [key: string]: any } = {}
+): Promise<T> {
+  try {
+    return await apiMethod(options);
+  } catch (error: any) {
+    // If thread doesn't exist, retry without thread ID
+    if (error.description?.includes("message thread not found")) {
+      const { message_thread_id, ...optionsWithoutThread } = options;
+      return await apiMethod(optionsWithoutThread);
+    } else {
+      throw error; // Re-throw other errors
+    }
+  }
+}

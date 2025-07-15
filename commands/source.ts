@@ -4,6 +4,7 @@ import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { isBanned } from "../helpers/banned";
+import { safeReply } from "../helpers/templates";
 
 bot.command("source", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -17,7 +18,9 @@ bot.command("source", async (ctx: Context) => {
 
     showBotActivity(ctx, chatId);
     deleteMessage(chatId, msgId);
-    ctx.reply(
+
+    await safeReply(
+      ctx,
       `This bot’s source code is available here: https://github.com/pugson/telegram-twitter-url-expand-bot
 
 For feature requests and bug reports please open an issue on GitHub.

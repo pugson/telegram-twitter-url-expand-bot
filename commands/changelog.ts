@@ -2,7 +2,7 @@ import { bot } from "..";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { createSettings, getSettings } from "../helpers/api";
 import { notifyAdmin } from "../helpers/notifier";
-import { changelogSettingsTemplate } from "../helpers/templates";
+import { changelogSettingsTemplate, safeSendMessage } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
@@ -24,15 +24,15 @@ bot.command("changelog", async (ctx: Context) => {
 
   const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   if (!isAdmin && settings?.settings_lock) {
-    return await bot.api
-      .sendMessage(chatId, "You need to be an admin to use the Changelog command.", {
+    try {
+      return await safeSendMessage(bot.api, chatId, "You need to be an admin to use the Changelog command.", {
         message_thread_id: topicId ?? undefined,
         disable_notification: true,
-      })
-      .catch(() => {
-        console.error(`[Error] [changelog.ts:34] Failed to send message.`);
-        return;
       });
+    } catch (error) {
+      console.error(`[Error] [changelog.ts:34] Failed to send message.`, error);
+      return;
+    }
   }
 
   try {
@@ -41,8 +41,8 @@ bot.command("changelog", async (ctx: Context) => {
     if (settings) {
       deleteMessage(chatId, msgId);
       // Reply with template and buttons to control changelog settings
-      await bot.api
-        .sendMessage(chatId, changelogSettingsTemplate(settings.changelog), {
+      try {
+        await safeSendMessage(bot.api, chatId, changelogSettingsTemplate(settings.changelog), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -60,18 +60,18 @@ bot.command("changelog", async (ctx: Context) => {
               ],
             ],
           },
-        })
-        .catch(() => {
-          console.error(`[Error] [changelog.ts:51] Failed to send changelog settings template.`);
-          return;
         });
+      } catch (error) {
+        console.error(`[Error] [changelog.ts:50] Failed to send message.`, error);
+        return;
+      }
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
       createSettings(chatId, false, true, false);
       // Reply with template and buttons to control changelog settings (default: on)
-      await ctx.api
-        .sendMessage(chatId, changelogSettingsTemplate(true), {
+      try {
+        await safeSendMessage(ctx.api, chatId, changelogSettingsTemplate(true), {
           message_thread_id: topicId ?? undefined,
           parse_mode: "MarkdownV2",
           disable_notification: true,
@@ -89,15 +89,19 @@ bot.command("changelog", async (ctx: Context) => {
               ],
             ],
           },
-        })
-        .catch(() => {
-          console.error(`[Error] [changelog.ts:79] Failed to send changelog settings template.`);
-          return;
         });
+      } catch (error) {
+        console.error(`[Error] [changelog.ts:78] Failed to send message.`, error);
+        return;
+      }
     }
-  } catch (error: any) {
-    console.error(error);
-    notifyAdmin(error);
+  } catch (error) {
+    console.error(`[Error] [changelog.ts:87] Failed to process changelog command.`, error);
+
+    // @ts-ignore
+    if (error.description.includes("was blocked")) {
+      notifyAdmin(chatId);
+    }
     return;
   }
 
