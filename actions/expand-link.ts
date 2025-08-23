@@ -10,6 +10,7 @@ import {
   isBluesky,
   isSpotify,
   isInstagramShare,
+  isThreads,
 } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
 import { notifyAdmin } from "../helpers/notifier";
@@ -56,6 +57,8 @@ function handleExpandedLinkDomain(link: string): string {
       return link.replace("bsky.app", "fxbsky.app");
     case isReddit(link):
       return link.replace("reddit.com", "rxddit.com");
+    case isThreads(link):
+      return link.replace("threads.com", "threadsez.com").replace("threads.net", "threadsez.com");
     default:
       return link;
   }
@@ -81,7 +84,7 @@ export async function expandLink(
   const expandedLink = handleExpandedLinkDomain(link);
   let linkWithNoTrackers = expandedLink;
   // Strip trackers from these platforms but not others.
-  if (isTweet(link) || isInstagram(link) || isTikTok(link) || isSpotify(link)) {
+  if (isTweet(link) || isInstagram(link) || isTikTok(link) || isSpotify(link) || isThreads(link)) {
     linkWithNoTrackers = expandedLink.split("?")[0];
   }
 
@@ -314,6 +317,11 @@ export async function expandLink(
         else if (isTweet(link)) platform = "twitter";
         else if (isInstagramShare(link)) platform = "instagram-share";
         else if (isReddit(link)) platform = "reddit";
+        else if (isThreads(link)) {
+          platform = "threads";
+          // Keep original Threads link for button, but modify for message
+          originalLink = link.replace(/threadsez\.com/g, "threads.com");
+        }
 
         const replyMarkup = platform
           ? {

@@ -8,6 +8,7 @@ import {
   isBluesky,
   isReddit,
   isSpotify,
+  isThreads,
 } from "../helpers/platforms";
 import { isBanned } from "../helpers/banned";
 import { askToExpandTemplate } from "../helpers/templates";
@@ -35,6 +36,7 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
   const bluesky = isBluesky(link);
   const reddit = isReddit(link);
   const spotify = isSpotify(link);
+  const threads = isThreads(link);
   const platform = insta
     ? "instagram"
     : tiktok
@@ -51,6 +53,8 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
     ? "reddit"
     : spotify
     ? "spotify"
+    : threads
+    ? "threads"
     : "twitter";
 
   try {

@@ -18,6 +18,7 @@ import {
   isSpotifyEpisode,
   isSpotifyShow,
   isTikTok,
+  isThreads,
 } from "./platforms";
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
@@ -85,6 +86,7 @@ export const askToExpandTemplate = (link: string) => {
   const bluesky = isBluesky(link);
   const reddit = isReddit(link);
   const spotify = isSpotify(link);
+  const threads = isThreads(link);
 
   if (insta) {
     return `Expand this Instagram post?`;
@@ -145,6 +147,10 @@ export const askToExpandTemplate = (link: string) => {
     if (show) {
       return `Expand this Spotify show?`;
     }
+  }
+
+  if (threads) {
+    return `Expand this Threads post?`;
   }
 
   return `Expand this Tweet?`;

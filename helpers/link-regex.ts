@@ -56,6 +56,12 @@
     - https://open.spotify.com/episode/episode_id
     - https://open.spotify.com/show/show_id
 
+    * Threads URLs, in the format:
+    - https://threads.com/@username/post/post_id
+    - https://www.threads.com/@username/post/post_id
+    - https://threads.net/@username/post/post_id
+    - https://www.threads.net/@username/post/post_id
+
  */
 export const LINK_REGEX: RegExp =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|share|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:[a-z0-9-]+\.)?tiktok\.com\/(?:@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+|[A-Za-z0-9-_]+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?|reddit\.com\/(?:r\/[^\/]+\/(?:comments|s)\/[A-Za-z0-9]+(?:\/[^\/]*)?(?:\/[^\/]*)?|[A-Za-z0-9]+)(?:\?.*)?|open\.spotify\.com\/(?:track|album|playlist|episode|show|artist)\/([A-Za-z0-9]+)(?:\?.*)?)/im;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|share|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:[a-z0-9-]+\.)?tiktok\.com\/(?:@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+|[A-Za-z0-9-_]+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?|reddit\.com\/(?:r\/[^\/]+\/(?:comments|s)\/[A-Za-z0-9]+(?:\/[^\/]*)?(?:\/[^\/]*)?|[A-Za-z0-9]+)(?:\?.*)?|open\.spotify\.com\/(?:track|album|playlist|episode|show|artist)\/([A-Za-z0-9]+)(?:\?.*)?|threads\.(?:com|net)\/@[A-Za-z0-9_.]+\/post\/[A-Za-z0-9]+(?:\?.*)?)/im;

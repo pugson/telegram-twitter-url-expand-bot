@@ -34,7 +34,7 @@ export async function handleUndo(ctx: Context) {
           return;
         }
 
-        let platform: "twitter" | "instagram" | "tiktok" | "reddit" | null = null;
+        let platform: "twitter" | "instagram" | "tiktok" | "reddit" | "threads" | null = null;
         let undoText = messageText;
 
         // Determine platform and handle URL replacement
@@ -50,11 +50,16 @@ export async function handleUndo(ctx: Context) {
         } else if (messageText.includes("rxddit.com")) {
           platform = "reddit";
           undoText = messageText.replace(/rxddit\.com/g, "reddit.com");
+        } else if (messageText.includes("threadsez.com")) {
+          platform = "threads";
+          undoText = messageText.replace(/threadsez\.com/g, "threads.com");
         } else if (
           messageText.includes("instagram.com") ||
           messageText.includes("twitter.com") ||
           messageText.includes("tiktok.com") ||
-          messageText.includes("reddit.com")
+          messageText.includes("reddit.com") ||
+          messageText.includes("threads.com") ||
+          messageText.includes("threads.net")
         ) {
           // The message already contains original URLs - it was already undone
           await ctx.answerCallbackQuery({

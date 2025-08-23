@@ -6,6 +6,7 @@ import { showBotActivity } from "../actions/show-bot-activity";
 import { isBanned } from "../helpers/banned";
 import { notifyAdmin } from "../helpers/notifier";
 import { safeReply } from "../helpers/templates";
+import { listOfAllPlatforms } from "../helpers/platforms";
 
 bot.command("start", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -26,7 +27,7 @@ bot.command("start", async (ctx: Context) => {
     try {
       await safeReply(
         ctx,
-        `👋 Hello! I’m a bot that expands Twitter, Instagram, TikTok, Reddit, Spotify, Hacker News, and Dribbble URLs. Send me a link and I’ll expand it for you. 🔗🖼️
+        `👋 Hello! I’m a bot that expands ${listOfAllPlatforms} URLs. Send me a link and I’ll expand it for you. 🔗🖼️
 
 Commands:
 /autoexpand - Configure link expanding

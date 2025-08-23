@@ -13,6 +13,7 @@ export const isDribbble = (link: string) => checkLink(link, "dribbble.com");
 export const isBluesky = (link: string) => checkLink(link, "bsky.app");
 export const isReddit = (link: string) => checkLink(link, "reddit.com");
 export const isSpotify = (link: string) => checkLink(link, "open.spotify.com");
+export const isThreads = (link: string) => checkLink(link, "threads.com") || checkLink(link, "threads.net");
 
 // Spotify helpers
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
@@ -21,3 +22,17 @@ export const isSpotifyPlaylist = (link: string) => checkLink(link, "open.spotify
 export const isSpotifyArtist = (link: string) => checkLink(link, "open.spotify.com/artist");
 export const isSpotifyEpisode = (link: string) => checkLink(link, "open.spotify.com/episode");
 export const isSpotifyShow = (link: string) => checkLink(link, "open.spotify.com/show");
+
+const ALL_PLATFORMS = [
+  "Twitter",
+  "Instagram",
+  "TikTok",
+  "Reddit",
+  "Spotify",
+  "Hacker News",
+  "Dribbble",
+  "Bluesky",
+  "Threads",
+];
+
+export const listOfAllPlatforms = ALL_PLATFORMS.join(", ");

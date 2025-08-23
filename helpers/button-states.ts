@@ -1,6 +1,6 @@
 import { InlineKeyboardButton } from "@grammyjs/types";
 
-type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share";
+type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads";
 
 type ButtonState = {
   buttons: InlineKeyboardButton[][];
@@ -9,7 +9,7 @@ type ButtonState = {
 
 /**
  * Get button state for a platform based on time remaining
- * @param platform Platform (twitter, instagram, tiktok, reddit)
+ * @param platform Platform (twitter, instagram, tiktok, reddit, threads)
  * @param timeRemaining Time remaining in seconds, or null for final state
  * @param userId User ID for analytics
  * @param url URL to open
@@ -30,6 +30,8 @@ export function getButtonState(
       ? "TikTok"
       : platform === "reddit"
       ? "Reddit"
+      : platform === "threads"
+      ? "Threads"
       : "...";
   const baseButtons: InlineKeyboardButton[] = [
     {
