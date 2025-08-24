@@ -44,9 +44,9 @@ export async function handleUndo(ctx: Context) {
         } else if (messageText.includes("fxtwitter.com")) {
           platform = "twitter";
           undoText = messageText.replace(/fxtwitter\.com/g, "twitter.com");
-        } else if (messageText.includes("tfxktok.com")) {
+        } else if (messageText.includes("tiktokez.com")) {
           platform = "tiktok";
-          undoText = messageText.replace(/tfxktok\.com/g, "tiktok.com");
+          undoText = messageText.replace(/tiktokez\.com/g, "tiktok.com");
         } else if (messageText.includes("rxddit.com")) {
           platform = "reddit";
           undoText = messageText.replace(/rxddit\.com/g, "reddit.com");
