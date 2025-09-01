@@ -1,4 +1,4 @@
-# Link Expander — Telegram Bot for expanding Twitter, Instagram, TikTok, Spotify, Reddit, Threads, Bluesky, Hacker News, and Dribbble links.
+# Link Expander — Telegram Bot for expanding Twitter, Instagram, TikTok, YouTube Shorts, Spotify, Reddit, Threads, Bluesky, Hacker News, and Dribbble links.
 
 ![banner-4 1@1x](https://user-images.githubusercontent.com/6843656/214646426-db3bf292-afc4-4729-8e16-64ed687127aa.png)
 
@@ -16,6 +16,7 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 - _Posts.cv_ using [postscv.com](https://postscv.com)
 - _Spotify_ using a custom API
 - _Threads_ using [threadsez.com](https://threadsez.com)
+- _YouTube Shorts_ using [koutube.com](https://koutube.com)
 
 ## ✨🆕✨ Support for Spotify links!
 
@@ -81,3 +82,4 @@ This bot wouldn't be possible without the following people and projects. Huge th
 - [@fxbsky.app](https://bsky.app/profile/fxbsky.app) for creating [fxbsky.app](https://fxbsky.app)
 - [@MinnDevelopment](https://github.com/MinnDevelopment/fxreddit) for creating [rxddit.com](https://rxddit.com)
 - [Embedez.com](https://embedez.com) for their services: instagramez.com, threadsez.com, tiktokez.com
+- [@iGerman00](https://github.com/iGerman00) for creating [koutube.com](https://koutube.com)
