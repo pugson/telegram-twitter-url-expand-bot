@@ -16,6 +16,7 @@ import {
   isSpotify,
   isTikTok,
   isThreads,
+  isYouTubeShort,
 } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
@@ -84,6 +85,7 @@ bot.on("message::url", async (ctx: Context) => {
       const reddit = isReddit(url);
       const spotify = isSpotify(url);
       const threads = isThreads(url);
+      const youtube = isYouTubeShort(url);
       const platform = insta
         ? "instagram"
         : instaShare
@@ -102,6 +104,8 @@ bot.on("message::url", async (ctx: Context) => {
         ? "spotify"
         : threads
         ? "threads"
+        : youtube
+        ? "youtube"
         : "twitter";
       trackEvent(`expand.auto.${platform}`);
     } else {

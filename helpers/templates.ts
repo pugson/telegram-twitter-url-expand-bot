@@ -19,6 +19,7 @@ import {
   isSpotifyShow,
   isTikTok,
   isThreads,
+  isYouTubeShort,
 } from "./platforms";
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
@@ -87,6 +88,7 @@ export const askToExpandTemplate = (link: string) => {
   const reddit = isReddit(link);
   const spotify = isSpotify(link);
   const threads = isThreads(link);
+  const ytShort = isYouTubeShort(link);
 
   if (insta) {
     return `Expand this Instagram post?`;
@@ -151,6 +153,10 @@ export const askToExpandTemplate = (link: string) => {
 
   if (threads) {
     return `Expand this Threads post?`;
+  }
+
+  if (ytShort) {
+    return `Expand this YouTube Short?`;
   }
 
   return `Expand this Tweet?`;

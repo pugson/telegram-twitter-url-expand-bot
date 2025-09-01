@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { bot } from ".";
 import { LINK_REGEX } from "./helpers/link-regex";
-import { isDribbble, isInstagram, isPosts, isReddit, isTikTok, isThreads } from "./helpers/platforms";
+import { isDribbble, isInstagram, isPosts, isReddit, isTikTok, isThreads, isYouTubeShort } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { isBanned } from "./helpers/banned";
 
@@ -25,6 +25,8 @@ bot.on("channel_post::url", async (ctx: Context) => {
     ? "reddit"
     : isThreads(message)
     ? "threads"
+    : isYouTubeShort(message)
+    ? "youtube"
     : "twitter";
   const expandedLinksMessage = message
     .replace("twitter.com/", "fxtwitter.com/")
@@ -37,7 +39,8 @@ bot.on("channel_post::url", async (ctx: Context) => {
     .replace("dribbble.com/", "dribbbletv.com/")
     .replace("reddit.com/", "rxddit.com/")
     .replace("threads.com/", "threadsez.com/")
-    .replace("threads.net/", "threadsez.com/");
+    .replace("threads.net/", "threadsez.com/")
+    .replace("youtube.com/shorts/", "koutube.com/shorts/");
 
   try {
     if (caption) {

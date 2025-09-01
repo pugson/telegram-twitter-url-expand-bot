@@ -1,6 +1,6 @@
 import { InlineKeyboardButton } from "@grammyjs/types";
 
-type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads";
+type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads" | "youtube";
 
 type ButtonState = {
   buttons: InlineKeyboardButton[][];
@@ -32,6 +32,8 @@ export function getButtonState(
       ? "Reddit"
       : platform === "threads"
       ? "Threads"
+      : platform === "youtube"
+      ? "YouTube"
       : "...";
   const baseButtons: InlineKeyboardButton[] = [
     {

@@ -9,6 +9,7 @@ import {
   isReddit,
   isSpotify,
   isThreads,
+  isYouTubeShort,
 } from "../helpers/platforms";
 import { isBanned } from "../helpers/banned";
 import { askToExpandTemplate } from "../helpers/templates";
@@ -37,6 +38,7 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
   const reddit = isReddit(link);
   const spotify = isSpotify(link);
   const threads = isThreads(link);
+  const youtube = isYouTubeShort(link);
   const platform = insta
     ? "instagram"
     : tiktok
@@ -55,6 +57,8 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
     ? "spotify"
     : threads
     ? "threads"
+    : youtube
+    ? "youtube"
     : "twitter";
 
   try {

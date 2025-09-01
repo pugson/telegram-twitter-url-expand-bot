@@ -14,6 +14,7 @@ export const isBluesky = (link: string) => checkLink(link, "bsky.app");
 export const isReddit = (link: string) => checkLink(link, "reddit.com");
 export const isSpotify = (link: string) => checkLink(link, "open.spotify.com");
 export const isThreads = (link: string) => checkLink(link, "threads.com") || checkLink(link, "threads.net");
+export const isYouTubeShort = (link: string) => checkLink(link, "youtube.com/shorts/");
 
 // Spotify helpers
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
@@ -33,6 +34,7 @@ const ALL_PLATFORMS = [
   "Dribbble",
   "Bluesky",
   "Threads",
+  "YouTube Shorts",
 ];
 
 export const listOfAllPlatforms = ALL_PLATFORMS.join(", ");
