@@ -3,18 +3,22 @@ const checkLink = (link: string, platform: string) => {
   return isMatch;
 };
 
-export const isTweet = (link: string) => checkLink(link, "twitter.com") || checkLink(link, "x.com");
-export const isInstagram = (link: string) => checkLink(link, "instagram.com") && !link.includes("/share/");
+export const isTweet = (link: string) =>
+  checkLink(link, "twitter.com") || checkLink(link, "x.com") || checkLink(link, "fxtwitter.com");
+export const isInstagram = (link: string) =>
+  (checkLink(link, "instagram.com") || checkLink(link, "instagramez.com")) && !link.includes("/share/");
 export const isInstagramShare = (link: string) => link.includes("instagram.com/share/");
-export const isTikTok = (link: string) => checkLink(link, "tiktok.com");
-export const isPosts = (link: string) => checkLink(link, "posts.cv");
+export const isTikTok = (link: string) => checkLink(link, "tiktok.com") || checkLink(link, "tiktokez.com");
+export const isPosts = (link: string) => checkLink(link, "posts.cv") || checkLink(link, "postscv.com");
 export const isHackerNews = (link: string) => checkLink(link, "news.ycombinator.com");
-export const isDribbble = (link: string) => checkLink(link, "dribbble.com");
-export const isBluesky = (link: string) => checkLink(link, "bsky.app");
-export const isReddit = (link: string) => checkLink(link, "reddit.com");
+export const isDribbble = (link: string) => checkLink(link, "dribbble.com") || checkLink(link, "dribbbletv.com");
+export const isBluesky = (link: string) => checkLink(link, "bsky.app") || checkLink(link, "fxbsky.app");
+export const isReddit = (link: string) => checkLink(link, "reddit.com") || checkLink(link, "rxddit.com");
 export const isSpotify = (link: string) => checkLink(link, "open.spotify.com");
-export const isThreads = (link: string) => checkLink(link, "threads.com") || checkLink(link, "threads.net");
-export const isYouTubeShort = (link: string) => checkLink(link, "youtube.com/shorts/");
+export const isThreads = (link: string) =>
+  checkLink(link, "threads.com") || checkLink(link, "threads.net") || checkLink(link, "threadsez.com");
+export const isYouTubeShort = (link: string) =>
+  checkLink(link, "youtube.com/shorts/") || checkLink(link, "koutube.com/shorts/");
 
 // Spotify helpers
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
