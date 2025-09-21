@@ -83,5 +83,5 @@ This bot wouldn't be possible without the following people and projects. Huge th
 - [@allanf181](https://github.com/allanf181) for creating [tfxktok.com](https://tfxktok.com)
 - [@fxbsky.app](https://bsky.app/profile/fxbsky.app) for creating [fxbsky.app](https://fxbsky.app)
 - [@MinnDevelopment](https://github.com/MinnDevelopment/fxreddit) for creating [rxddit.com](https://rxddit.com)
-- [Embedez.com](https://embedez.com) for their services: instagramez.com, threadsez.com, tiktokez.com
+- [Embedez.com](https://embedez.com) for their services: eeinstagram.com, threadsez.com, tiktokez.com
 - [@iGerman00](https://github.com/iGerman00) for creating [koutube.com](https://koutube.com)

@@ -38,9 +38,9 @@ export async function handleUndo(ctx: Context) {
         let undoText = messageText;
 
         // Determine platform and handle URL replacement
-        if (messageText.includes("instagramez.com")) {
+        if (messageText.includes("eeinstagram.com")) {
           platform = "instagram";
-          undoText = messageText.replace(/instagramez\.com/g, "instagram.com");
+          undoText = messageText.replace(/eeinstagram\.com/g, "instagram.com");
         } else if (messageText.includes("fxtwitter.com")) {
           platform = "twitter";
           undoText = messageText.replace(/fxtwitter\.com/g, "twitter.com");
