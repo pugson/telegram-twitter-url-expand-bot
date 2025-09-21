@@ -40,8 +40,8 @@ function handleExpandedLinkDomain(link: string): string {
 
   switch (true) {
     case isInstagram(link):
-      if (link.includes("instagramez.com")) return link;
-      return link.replace("instagram.com", "instagramez.com");
+      if (link.includes("eeinstagram.com")) return link;
+      return link.replace("instagram.com", "eeinstagram.com");
     case isTikTok(link):
       return link
         .replace("vt.tiktok.com", "vm.tiktokez.com")
@@ -209,8 +209,8 @@ export async function expandLink(
         try {
           const resolvedUrl = await resolveInstagramShare(link);
           if (resolvedUrl) {
-            // Replace the share URL with the resolved URL and convert to instagramez.com
-            const finalUrl = resolvedUrl.replace(/instagram\.com/g, "instagramez.com");
+            // Replace the share URL with the resolved URL and convert to eeinstagram.com
+            const finalUrl = resolvedUrl.replace(/instagram\.com/g, "eeinstagram.com");
             linkWithNoTrackers = finalUrl; // Update the link used in the template
             link = finalUrl;
             let platform: "twitter" | "instagram" | "tiktok" | "instagram-share" | null = null;
@@ -220,9 +220,9 @@ export async function expandLink(
           console.error("[Error] Failed to resolve Instagram share link:", error);
         }
       }
-      // Handle regular Instagram links (replace domain with instagramez.com)
+      // Handle regular Instagram links (replace domain with eeinstagram.com)
       else if (isInstagram(link)) {
-        link = link.replace(/instagram\.com/g, "instagramez.com");
+        link = link.replace(/instagram\.com/g, "eeinstagram.com");
       }
 
       // Handle Spotify links
@@ -322,7 +322,7 @@ export async function expandLink(
         if (isInstagram(link)) {
           platform = "instagram";
           // Keep original Instagram link for button, but modify for message
-          originalLink = link.replace(/instagramez\.com/g, "instagram.com");
+          originalLink = link.replace(/eeinstagram\.com/g, "instagram.com");
         } else if (isTikTok(link)) platform = "tiktok";
         else if (isTweet(link)) platform = "twitter";
         else if (isInstagramShare(link)) platform = "instagram-share";

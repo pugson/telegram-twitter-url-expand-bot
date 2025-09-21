@@ -6,7 +6,7 @@ const checkLink = (link: string, platform: string) => {
 export const isTweet = (link: string) =>
   checkLink(link, "twitter.com") || checkLink(link, "x.com") || checkLink(link, "fxtwitter.com");
 export const isInstagram = (link: string) =>
-  (checkLink(link, "instagram.com") || checkLink(link, "instagramez.com")) && !link.includes("/share/");
+  (checkLink(link, "instagram.com") || checkLink(link, "eeinstagram.com")) && !link.includes("/share/");
 export const isInstagramShare = (link: string) => link.includes("instagram.com/share/");
 export const isTikTok = (link: string) => checkLink(link, "tiktok.com") || checkLink(link, "tiktokez.com");
 export const isPosts = (link: string) => checkLink(link, "posts.cv") || checkLink(link, "postscv.com");
