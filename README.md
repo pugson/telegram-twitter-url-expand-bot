@@ -7,7 +7,7 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 ## Supported platforms
 
 - _Twitter / X_ using [fxtwitter.com](https://fxtwitter.com)
-- _Instagram_ using [ddinstagram.com](https://ddinstagram.com) (doesn’t work with Stories or Highlights yet.)
+- _Instagram_ using [eeinstagram.com](https://eeinstagram.com)
 - _TikTok_ using [tiktokez.com](https://tiktokez.com)
 - _Bluesky_ using [fxbsky.app](https://fxbsky.app)
 - _Reddit_ using [rxddit.com](https://rxddit.com)
@@ -83,5 +83,6 @@ This bot wouldn't be possible without the following people and projects. Huge th
 - [@allanf181](https://github.com/allanf181) for creating [tfxktok.com](https://tfxktok.com)
 - [@fxbsky.app](https://bsky.app/profile/fxbsky.app) for creating [fxbsky.app](https://fxbsky.app)
 - [@MinnDevelopment](https://github.com/MinnDevelopment/fxreddit) for creating [rxddit.com](https://rxddit.com)
-- [Embedez.com](https://embedez.com) for their services: eeinstagram.com, threadsez.com, tiktokez.com
+- [Embedez.com](https://embedez.com) for their services: threadsez.com, tiktokez.com
 - [@iGerman00](https://github.com/iGerman00) for creating [koutube.com](https://koutube.com)
+- [eeinstagram.com](https://eeinstagram.com)
