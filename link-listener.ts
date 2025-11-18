@@ -44,11 +44,11 @@ bot.on("message::url", async (ctx: Context) => {
 
   // Get autoexpand settings for this chat
   let settings;
-  let autoexpand;
+  let autoexpand: boolean;
 
   try {
     settings = await getSettings(chatId);
-    autoexpand = settings?.autoexpand;
+    autoexpand = settings?.autoexpand ?? false;
 
     // Create default settings for this chat if they don't exist
     if (!settings) {
