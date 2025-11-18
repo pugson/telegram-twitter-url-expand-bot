@@ -1,35 +1,62 @@
 import fetch from "isomorphic-unfetch";
-import { Chats, getXataClient } from "./xata";
+import { getRedisClient } from "./redis";
 
 // @ts-ignore
 globalThis.fetch = fetch;
 
-const xata = getXataClient();
+const redis = getRedisClient();
+const ONE_YEAR_IN_SECONDS = 31536000; // 1 year TTL
+
+export interface ChatSettings {
+  autoexpand: boolean;
+  changelog: boolean;
+  chat_size: number;
+  ignore_permissions_warning: boolean;
+  settings_lock: boolean;
+}
 
 /**
- * Get chat settings from the database.
+ * Convert Redis hash string values to proper types
+ */
+const parseRedisHash = (hash: Record<string, string>): ChatSettings | null => {
+  if (!hash || Object.keys(hash).length === 0) {
+    return null;
+  }
+
+  return {
+    autoexpand: hash.autoexpand === "true",
+    changelog: hash.changelog === "true",
+    chat_size: parseInt(hash.chat_size || "0"),
+    ignore_permissions_warning: hash.ignore_permissions_warning === "true",
+    settings_lock: hash.settings_lock === "true",
+  };
+};
+
+/**
+ * Get chat settings from Redis.
  * @param chatId Telegram Chat ID
  * @returns Chat settings record
  */
-export const getSettings = async (chatId: number) => {
+export const getSettings = async (chatId: number): Promise<ChatSettings | null> => {
   try {
     console.log("Getting settings for chat ID:", chatId);
-    const record = await xata.db.chats
-      .filter({
-        chat_id: chatId.toString(),
-      })
-      .getFirst({
-        // cache: 1 * 60 * 1000, // TTL: 1 minute
-      });
+    const key = `chat:${chatId}`;
+    const hash = await redis.hgetall(key);
+    
+    // Refresh TTL to 1 year on read
+    if (hash && Object.keys(hash).length > 0) {
+      await redis.expire(key, ONE_YEAR_IN_SECONDS);
+    }
 
-    return record;
+    return parseRedisHash(hash);
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 
 /**
- * Create a new chat settings record in the database.
+ * Create a new chat settings record in Redis.
  * @param chatId Telegram Chat ID
  * @param autoexpandValue Autoexpand value boolean
  * @param changelogValue Changelog value boolean
@@ -41,47 +68,72 @@ export const createSettings = async (
   autoexpandValue: boolean,
   changelogValue: boolean,
   settingsLockValue: boolean
-) => {
+): Promise<ChatSettings | null> => {
   try {
     console.log("Creating settings for chat ID:", chatId);
-    const record = await xata.db.chats.create({
-      chat_id: chatId.toString(),
+    const key = `chat:${chatId}`;
+    
+    const settings = {
+      autoexpand: autoexpandValue.toString(),
+      changelog: changelogValue.toString(),
+      chat_size: "0",
+      ignore_permissions_warning: "false",
+      settings_lock: settingsLockValue.toString(),
+    };
+
+    await redis.hset(key, settings);
+    
+    // Set initial TTL to 1 year
+    await redis.expire(key, ONE_YEAR_IN_SECONDS);
+
+    return {
       autoexpand: autoexpandValue,
       changelog: changelogValue,
+      chat_size: 0,
+      ignore_permissions_warning: false,
       settings_lock: settingsLockValue,
-    });
-
-    return record;
+    };
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 
 /**
- * Update settings for this chat in the database.
+ * Update settings for this chat in Redis.
  * @param id Telegram Chat ID
  * @param property Column name
  * @param value New value
- * @returns
+ * @returns Updated settings
  */
-export const updateSettings = async (id: number, property: keyof Chats, value: Chats[keyof Chats]) => {
+export const updateSettings = async (
+  id: number,
+  property: keyof ChatSettings,
+  value: ChatSettings[keyof ChatSettings]
+): Promise<ChatSettings | null> => {
   try {
     console.log("Updating settings for chat ID:", id);
-    const record = await xata.db.chats
-      .filter({ chat_id: id.toString() })
-      .getFirst()
-      .then((record) => {
-        if (record) {
-          record.update({
-            [`${property}`]: value,
-          });
-        } else {
-          console.warn("[Error] Unable to get records. No settings found for chat ID:", id);
-        }
-      });
+    const key = `chat:${id}`;
+    
+    // Check if chat exists
+    const exists = await redis.exists(key);
+    
+    if (!exists) {
+      console.warn("[Error] Unable to get records. No settings found for chat ID:", id);
+      return null;
+    }
 
-    return record;
+    // Update the field
+    await redis.hset(key, property, value.toString());
+    
+    // Refresh TTL to 1 year
+    await redis.expire(key, ONE_YEAR_IN_SECONDS);
+
+    // Get and return updated settings
+    const hash = await redis.hgetall(key);
+    return parseRedisHash(hash);
   } catch (error) {
     console.error(error);
+    return null;
   }
 };

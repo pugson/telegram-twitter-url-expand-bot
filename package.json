@@ -1,16 +1,16 @@
 {
   "name": "telegram-twitter-url-expand-bot",
-  "version": "4.14.3",
+  "version": "4.15.0",
   "description": "Replaces Twitter, Instagram, Bluesky, TikTok, Reddit, Spotify, Hacker News, Dribbble, YouTube Shorts, and Threads links in Telegram chats + channels with an expanded preview and inline video.",
   "main": "index.ts",
   "repository": "https://github.com/pugson/telegram-twitter-url-expand-bot.git",
   "author": "pugson <hi@wojtek.im>",
   "dependencies": {
     "@grammyjs/types": "^2.12.1",
-    "@xata.io/client": "^0.25.2",
     "axios": "^1.3.2",
     "dotenv": "^16.0.1",
     "grammy": "^1.14.1",
+    "ioredis": "^5.3.2",
     "isomorphic-unfetch": "^4.0.2",
     "node-cache": "^5.1.2",
     "ts-node": "^10.9.1",
