@@ -1,4 +1,4 @@
-# Link Expander — Telegram Bot for expanding Twitter, Instagram, TikTok, YouTube Shorts, Spotify, Reddit, Threads, Bluesky, Hacker News, and Dribbble links.
+# Link Expander - Telegram Bot for expanding Twitter, Instagram, TikTok, YouTube Shorts, Spotify, Reddit, Threads, Bluesky, Hacker News, and Dribbble links.
 
 ![banner-4 1@1x](https://user-images.githubusercontent.com/6843656/214646426-db3bf292-afc4-4729-8e16-64ed687127aa.png)
 
