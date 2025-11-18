@@ -22,7 +22,13 @@ bot.command("changelog", async (ctx: Context) => {
   if (!msgId || !chatId) return;
   if (isBanned(chatId)) return;
 
-  const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
+  let settings, isAdmin;
+  try {
+    [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
+  } catch (error) {
+    console.error("Error getting settings:", error);
+    return;
+  }
   if (!isAdmin && settings?.settings_lock) {
     try {
       return await safeSendMessage(bot.api, chatId, "You need to be an admin to use the Changelog command.", {
@@ -68,7 +74,11 @@ bot.command("changelog", async (ctx: Context) => {
     } else {
       deleteMessage(chatId, msgId);
       // Create default settings for this chat
-      createSettings(chatId, false, true, false);
+      try {
+        await createSettings(chatId, false, true, false);
+      } catch (error) {
+        console.error("Error creating settings:", error);
+      }
       // Reply with template and buttons to control changelog settings (default: on)
       try {
         await safeSendMessage(ctx.api, chatId, changelogSettingsTemplate(true), {

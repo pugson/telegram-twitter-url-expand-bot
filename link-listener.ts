@@ -43,12 +43,21 @@ bot.on("message::url", async (ctx: Context) => {
   const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
 
   // Get autoexpand settings for this chat
-  const settings = await getSettings(chatId);
-  const autoexpand = settings?.autoexpand;
+  let settings;
+  let autoexpand;
 
-  // Create default settings for this chat if they don’t exist
-  if (!settings) {
-    await createSettings(chatId, false, true, false);
+  try {
+    settings = await getSettings(chatId);
+    autoexpand = settings?.autoexpand;
+
+    // Create default settings for this chat if they don't exist
+    if (!settings) {
+      await createSettings(chatId, false, true, false);
+    }
+  } catch (error) {
+    console.error("Error handling settings:", error);
+    // Default to manual expand if settings fail
+    autoexpand = false;
   }
 
   // Loop through all links in message

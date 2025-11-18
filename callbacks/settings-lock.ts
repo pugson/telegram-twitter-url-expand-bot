@@ -20,7 +20,13 @@ export async function handleLockSettings(ctx: Context) {
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) return;
 
-  const [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
+  let settings, isAdmin;
+  try {
+    [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
+  } catch (error) {
+    console.error("Error getting settings:", error);
+    return;
+  }
   if (!isAdmin && settings?.settings_lock) {
     // return await ctx.reply("You need to be an admin to change Lock settings.").catch(() => {
     console.error(`[Error] [settings-lock.ts:26] Failed to send message.`);
@@ -38,7 +44,11 @@ export async function handleLockSettings(ctx: Context) {
   }
 
   if (data.includes("lock:off")) {
-    updateSettings(chatId, FIELD_NAME, false);
+    try {
+      await updateSettings(chatId, FIELD_NAME, false);
+    } catch (error) {
+      console.error("Error updating settings:", error);
+    }
     await ctx.answerCallbackQuery().catch(() => {
       console.error(`[Error] Cannot answer callback query.`);
       return;
@@ -71,7 +81,11 @@ export async function handleLockSettings(ctx: Context) {
   }
 
   if (data.includes("lock:on")) {
-    updateSettings(chatId, FIELD_NAME, true);
+    try {
+      await updateSettings(chatId, FIELD_NAME, true);
+    } catch (error) {
+      console.error("Error updating settings:", error);
+    }
     await ctx.answerCallbackQuery().catch(() => {
       console.error(`[Error] Cannot answer callback query.`);
       return;

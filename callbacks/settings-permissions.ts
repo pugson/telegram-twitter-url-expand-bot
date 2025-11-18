@@ -31,7 +31,11 @@ export async function handlePermissionsSettings(ctx: Context) {
       return;
     });
     deleteMessage(chatId, messageId);
-    updateSettings(chatId, "ignore_permissions_warning", true);
+    try {
+      await updateSettings(chatId, "ignore_permissions_warning", true);
+    } catch (error) {
+      console.error("Error updating settings:", error);
+    }
     trackEvent("settings.permissions.disable-warning");
     return;
   }

@@ -15,7 +15,11 @@ export const getMemberCount = async (chatId: number) => {
         // Otherwise subtract 1 from the count to account for the bot itself.
         const memberCount = count <= 2 ? 0 : count - 1;
 
-        updateSettings(chatId, "chat_size", memberCount);
+        try {
+          await updateSettings(chatId, "chat_size", memberCount);
+        } catch (error) {
+          console.error("Error updating chat size:", error);
+        }
       })
       .catch(() => {
         console.error(`[Error] Could not get member count.`);
