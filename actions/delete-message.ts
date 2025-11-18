@@ -13,7 +13,7 @@ export const deleteMessage = async (chatId: string | number, msgId: number, ctx?
   // Bot will crash if it tries to delete a message that it cannot delete.
   try {
     await bot.api.deleteMessage(chatId, msgId).catch(() => {
-      console.error(`[Error] Could not delete message.`);
+      console.warn(`[Warning] Could not delete message.`);
       return;
     });
   } catch (error) {
