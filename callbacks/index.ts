@@ -21,9 +21,6 @@ bot.on("callback_query", async (ctx: Context) => {
   if (!chatId || !data) return;
   if (isBanned(chatId)) return;
 
-  // Save chat member count to database
-  getMemberCount(chatId);
-
   // Handle expand callbacks
   await handleManualExpand(ctx);
   await handleExpandedLinkDestruction(ctx);
@@ -32,4 +29,9 @@ bot.on("callback_query", async (ctx: Context) => {
   await handleLockSettings(ctx);
   await handleChangelogSettings(ctx);
   await handlePermissionsSettings(ctx);
+
+  // Save anonymous chat member count to database
+  getMemberCount(chatId).catch(() => {
+    console.warn(`[Warning] Could not get member count for chat ${chatId}`);
+  });
 });

@@ -20,6 +20,9 @@ export async function handleChangelogSettings(ctx: Context) {
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) return;
 
+  // Only process changelog callbacks
+  if (!data.includes("changelog:")) return;
+
   let settings, isAdmin;
   try {
     [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);

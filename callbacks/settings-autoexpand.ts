@@ -22,6 +22,9 @@ export async function handleAutoexpandSettings(ctx: Context) {
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) return;
 
+  // Only process autoexpand callbacks
+  if (!data.includes("autoexpand:")) return;
+
   let settings, isAdmin;
   try {
     [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);

@@ -20,6 +20,9 @@ export async function handleLockSettings(ctx: Context) {
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) return;
 
+  // Only process lock callbacks
+  if (!data.includes("lock:")) return;
+
   let settings, isAdmin;
   try {
     [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
