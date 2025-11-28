@@ -1,7 +1,3 @@
-//! IMPORTANT !
-//! Indentation and line breaks need to be preserved
-//! to display properly in Telegram
-
 import { Context } from "grammy";
 import {
   isBluesky,
@@ -20,6 +16,7 @@ import {
   isTikTok,
   isThreads,
   isYouTubeShort,
+  isFacebook,
 } from "./platforms";
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
@@ -27,11 +24,6 @@ import { notifyAdmin } from "./notifier";
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
 
-/**
- * Message sent when a user sends the /autoexpand command.
- * @param enabled
- * @returns
- */
 export const autoexpandSettingsTemplate = (enabled: boolean) => {
   return `Autoexpand is ${enabled ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
@@ -46,11 +38,6 @@ ${
 }`;
 };
 
-/**
- * Message sent when a user sends the /lock command.
- * @param enabled
- * @returns
- */
 export const lockSettingsTemplate = (locked: boolean) => {
   return `Settings lock is ${locked ? "✅ *ON*" : "❌ *OFF*"} for this chat\\. 
   
@@ -58,10 +45,6 @@ As an admin you have the option to lock bot settings to prevent members from cha
 `;
 };
 
-/**
- * Message sent when a user sends the /changelog command.
- * @param enabled
- */
 export const changelogSettingsTemplate = (enabled: boolean) => {
   return `This chat is ${enabled ? "*subscribed* ✅ to" : "*unsubscribed* ❌ from"} changelog messages\\. 
 
@@ -73,11 +56,6 @@ ${
 `;
 };
 
-/**
- * Message sent when a link is detected in chat but autoexpand is disabled.
- * @param link
- * @returns Expand this (platform)?
- */
 export const askToExpandTemplate = (link: string) => {
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
@@ -89,6 +67,7 @@ export const askToExpandTemplate = (link: string) => {
   const spotify = isSpotify(link);
   const threads = isThreads(link);
   const ytShort = isYouTubeShort(link);
+  const fb = isFacebook(link);
 
   if (insta) {
     return `Expand this Instagram post?`;
@@ -116,6 +95,10 @@ export const askToExpandTemplate = (link: string) => {
 
   if (reddit) {
     return `Expand this Reddit post?`;
+  }
+
+  if (fb) {
+    return `Expand this Facebook post?`;
   }
 
   if (spotify) {
@@ -162,10 +145,6 @@ export const askToExpandTemplate = (link: string) => {
   return `Expand this Tweet?`;
 };
 
-/**
- * This is what gets sent in a bot message when a user
- * clicks the expand button or the links are autoexpanded.
- */
 export const expandedMessageTemplate = async (
   ctx: Context,
   username?: string,
@@ -175,15 +154,12 @@ export const expandedMessageTemplate = async (
   text?: string,
   link?: string
 ) => {
-  // TODO: this function is a clusterfuck of ugly template literals. refactor in the future.
   const bothNames = firstName && lastName;
   const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
   const usernameOrFullNameTag = username ? `@${username}` : `<a href="tg://user?id=${userId}">${nameTemplate}</a>`;
   const isHackerNewsLink = link ? isHackerNews(link) : false;
   let includedLink = link;
 
-  // Replace message template with HN metadata inline
-  // This is ugly as hell but it works.
   if (isHackerNewsLink) {
     try {
       const hnPostId = link?.split("id=")[1];
@@ -201,21 +177,14 @@ ${url ? url : ""}`;
     }
   }
 
-  // Check if the original author of the message has a public profile.
-  // @ts-expect-error forward_from is not defined for Message type
   if (ctx.msg?.forward_from) {
-    // @ts-expect-error forward_from is not defined for Message type
     const forwardUserId = ctx.msg?.forward_from?.id;
-    // @ts-expect-error forward_from is not defined for Message type
     const forwardUsername = ctx.msg?.forward_from?.username;
-    // @ts-expect-error forward_from is not defined for Message type
     const forwardFirstName = ctx.msg?.forward_from?.first_name;
-    // @ts-expect-error forward_from is not defined for Message type
     const forwardLastName = ctx.msg?.forward_from?.last_name;
     const bothNames = forwardFirstName && forwardLastName;
     const nameTemplate = bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName;
 
-    // Link to the original author by username if they have one.
     if (forwardUsername) {
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}
@@ -223,32 +192,23 @@ ${text}
 ${includedLink}`;
     }
 
-    // Link to the original author by ID if they don’t have a username.
     return `<u>Forwarded from <a href="tg://user?id=${forwardUserId}">${nameTemplate}</a> by ${usernameOrFullNameTag}</u> 
 ${text}
 
 ${includedLink}`;
   }
 
-  // Check if the original author of the message has a private profile.
-  // @ts-expect-error forward_sender_name is not defined for Message type
   if (ctx.msg?.forward_sender_name) {
-    // @ts-expect-error forward_sender_name is not defined for Message type
     return `<u>Forwarded from <i>${ctx.msg?.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
 ${text}
 
 ${includedLink}`;
   }
 
-  // Check if the original author of the message is a channel.
-  // @ts-expect-error forward_from_chat is not defined for Message type
   if (ctx.msg?.forward_from_chat) {
-    // @ts-ignore
     const forwardName = ctx.msg?.forward_from_chat?.title;
-    // @ts-ignore
     const forwardUsername = ctx.msg?.forward_from_chat?.username;
 
-    // Link to the original channel by username if they have one.
     if (forwardUsername) {
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}
@@ -256,23 +216,17 @@ ${text}
 ${includedLink}`;
     }
 
-    // Make the channel name italic if they don’t have a username.
     return `<u>Forwarded from <i>${forwardName}</i> by ${usernameOrFullNameTag}</u>
 ${text}
 
 ${includedLink}`;
   }
 
-  // If the message was not forwarded, handle it normally.
   return `${usernameOrFullNameTag} 💬 ${text}
 
 ${includedLink}`;
 };
 
-/**
- * Safely send a reply message, handling the case where the message thread doesn't exist
- * by retrying without the thread ID
- */
 export async function safeReply(
   ctx: any,
   message: string,
@@ -281,20 +235,15 @@ export async function safeReply(
   try {
     await ctx.reply(message, options);
   } catch (error: any) {
-    // If thread doesn't exist, retry without thread ID
     if (error.description?.includes("message thread not found")) {
       const { message_thread_id, ...optionsWithoutThread } = options;
       await ctx.reply(message, optionsWithoutThread);
     } else {
-      throw error; // Re-throw other errors
+      throw error; 
     }
   }
 }
 
-/**
- * Safely send a message via bot.api.sendMessage, handling the case where the message thread doesn't exist
- * by retrying without the thread ID
- */
 export async function safeSendMessage(
   api: any,
   chatId: number,
@@ -304,20 +253,15 @@ export async function safeSendMessage(
   try {
     return await api.sendMessage(chatId, message, options);
   } catch (error: any) {
-    // If thread doesn't exist, retry without thread ID
     if (error.description?.includes("message thread not found")) {
       const { message_thread_id, ...optionsWithoutThread } = options;
       return await api.sendMessage(chatId, message, optionsWithoutThread);
     } else {
-      throw error; // Re-throw other errors
+      throw error; 
     }
   }
 }
 
-/**
- * Safely call any API method that accepts message_thread_id, handling the case where the message thread doesn't exist
- * by retrying without the thread ID
- */
 export async function safeApiCall<T>(
   apiMethod: (options: any) => Promise<T>,
   options: { message_thread_id?: number; [key: string]: any } = {}
@@ -325,12 +269,11 @@ export async function safeApiCall<T>(
   try {
     return await apiMethod(options);
   } catch (error: any) {
-    // If thread doesn't exist, retry without thread ID
     if (error.description?.includes("message thread not found")) {
       const { message_thread_id, ...optionsWithoutThread } = options;
       return await apiMethod(optionsWithoutThread);
     } else {
-      throw error; // Re-throw other errors
+      throw error;
     }
   }
 }
