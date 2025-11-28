@@ -12,6 +12,7 @@ import {
   isInstagramShare,
   isThreads,
   isYouTubeShort,
+  isFacebook,
 } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
 import { notifyAdmin } from "../helpers/notifier";
@@ -19,7 +20,7 @@ import { getOGMetadata } from "../helpers/og-metadata";
 import { saveToCache, deleteFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { resolveInstagramShare } from "../helpers/instagram-share";
-import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS } from "../helpers/service-lists";
+import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/service-lists";
 
 type UserInfoType = {
   username: string | undefined;
@@ -58,6 +59,9 @@ function handleExpandedLinkDomain(link: string): string {
       return link.replace("threads.com", "threadsez.com").replace("threads.net", "threadsez.com");
     case isYouTubeShort(link):
       return link.replace("youtube.com/shorts/", "koutube.com/shorts/");
+    case isFacebook(link):
+      if (FACEBOOK_DOMAINS.some(domain => link.includes(domain))) return link;
+      return link.replace("facebook.com", FACEBOOK_DOMAINS[0]);
     default:
       return link;
   }
@@ -81,7 +85,8 @@ export async function expandLink(
     isTikTok(link) ||
     isSpotify(link) ||
     isThreads(link) ||
-    isYouTubeShort(link)
+    isYouTubeShort(link) ||
+    isFacebook(link)
   ) {
     linkWithNoTrackers = expandedLink.split("?")[0];
   }
@@ -294,6 +299,7 @@ export async function expandLink(
         else if (isInstagramShare(link)) platform = "instagram-share";
         else if (isReddit(link)) platform = "reddit";
         else if (isYouTubeShort(link)) platform = "youtube";
+        else if (isFacebook(link)) platform = "facebook";
         else if (isThreads(link)) {
           platform = "threads";
           originalLink = link.replace(/threadsez\.com/g, "threads.com");
@@ -355,7 +361,6 @@ export async function expandLink(
                   timeouts.push(timeout);
                 } else {
                     // This handles the state when Delete button disappears (time=0)
-                    // We stop scheduling here, but Undo/Embed persist until finalTimeout
                 }
               } catch (error) {
                 if (error instanceof Error && error.message.includes("message to edit not found")) {
