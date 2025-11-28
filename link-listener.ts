@@ -17,6 +17,7 @@ import {
   isTikTok,
   isThreads,
   isYouTubeShort,
+  isFacebook,
 } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
@@ -24,7 +25,6 @@ import { isBanned } from "./helpers/banned";
 
 bot.on("message::url", async (ctx: Context) => {
   if (!ctx.msg) return;
-  // User context
   const userInfo = {
     username: ctx.from?.username,
     firstName: ctx.from?.first_name,
@@ -32,17 +32,15 @@ bot.on("message::url", async (ctx: Context) => {
     userId: ctx.from?.id,
   };
 
-  // Message context
   const chatId = ctx.msg?.chat.id;
 
   if (isBanned(chatId)) return;
 
   const msgId = ctx.msg?.message_id;
-  const isDeletable = !ctx.msg?.caption; // deletable if not a caption of media
-  const entities = ctx.entities(); // all links in message
-  const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
+  const isDeletable = !ctx.msg?.caption; 
+  const entities = ctx.entities(); 
+  const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; 
 
-  // Get autoexpand settings for this chat
   let settings;
   let autoexpand: boolean;
 
@@ -50,22 +48,18 @@ bot.on("message::url", async (ctx: Context) => {
     settings = await getSettings(chatId);
     autoexpand = settings?.autoexpand ?? false;
 
-    // Create default settings for this chat if they don't exist
     if (!settings) {
       await createSettings(chatId, false, true, false);
     }
   } catch (error) {
     console.error("Error handling settings:", error);
-    // Default to manual expand if settings fail
     autoexpand = false;
   }
 
-  // Loop through all links in message
   entities.forEach(async (entity, index) => {
     const url = entity.text;
     const matchingLink = LINK_REGEX.test(url);
 
-    // Ignore if not a link from supported sites
     if (!matchingLink) return;
 
     const messageWithNoLinks = entities.reduce((msg, e) => {
@@ -79,12 +73,9 @@ bot.on("message::url", async (ctx: Context) => {
     const identifier = `${ctx.msg?.chat?.id}:${ctx.msg?.message_id}:${index}`;
 
     if (autoexpand) {
-      // Expand link automatically with provided context
       await expandLink(ctx, url, messageWithNoLinks, userInfo, "auto");
-      // Delete message if it’s not a caption
       if (isDeletable) deleteMessage(chatId, msgId, ctx);
 
-      // Track autoexpand event and platform
       const insta = isInstagram(url);
       const instaShare = isInstagramShare(url);
       const tiktok = isTikTok(url);
@@ -95,6 +86,7 @@ bot.on("message::url", async (ctx: Context) => {
       const spotify = isSpotify(url);
       const threads = isThreads(url);
       const youtube = isYouTubeShort(url);
+      const fb = isFacebook(url);
       const platform = insta
         ? "instagram"
         : instaShare
@@ -115,10 +107,11 @@ bot.on("message::url", async (ctx: Context) => {
         ? "threads"
         : youtube
         ? "youtube"
+        : fb
+        ? "facebook"
         : "twitter";
       trackEvent(`expand.auto.${platform}`);
     } else {
-      // Save message context to cache then ask to expand
       await saveToCache(identifier, ctx);
       await askToExpand(ctx, identifier, url, isDeletable);
     }
