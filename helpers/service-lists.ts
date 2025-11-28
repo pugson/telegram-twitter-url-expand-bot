@@ -12,11 +12,13 @@ export const TIKTOK_DOMAINS = [
   "kktiktok.com",
   "tnktok.com",
   "tiktxk.com",
+  "tiktokez.com",
 ];
 
 export const TWITTER_DOMAINS = [
   "fixupx.com",
   "fixvx.com",
+  "twitterez.com",
 ];
 
 export const FACEBOOK_DOMAINS = [
