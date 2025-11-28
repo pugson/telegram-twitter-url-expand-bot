@@ -1,4 +1,4 @@
-import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS } from "./service-lists";
+import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "./service-lists";
 
 const checkLink = (link: string, platform: string) => {
   const isMatch = link.includes(platform);
@@ -25,6 +25,7 @@ export const isThreads = (link: string) =>
   checkLink(link, "threads.com") || checkLink(link, "threads.net") || checkLink(link, "threadsez.com");
 export const isYouTubeShort = (link: string) =>
   checkLink(link, "youtube.com/shorts/") || checkLink(link, "koutube.com/shorts/");
+export const isFacebook = (link: string) => checkLink(link, "facebook.com") || checkDomains(link, FACEBOOK_DOMAINS);
 
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
 export const isSpotifyAlbum = (link: string) => checkLink(link, "open.spotify.com/album");
@@ -44,6 +45,7 @@ const ALL_PLATFORMS = [
   "Bluesky",
   "Threads",
   "YouTube Shorts",
+  "Facebook",
 ];
 
 export const listOfAllPlatforms = ALL_PLATFORMS.join(", ");
