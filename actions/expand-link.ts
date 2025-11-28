@@ -19,6 +19,7 @@ import { getOGMetadata } from "../helpers/og-metadata";
 import { saveToCache, deleteFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { resolveInstagramShare } from "../helpers/instagram-share";
+import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS } from "../helpers/service-lists";
 
 type UserInfoType = {
   username: string | undefined;
@@ -27,31 +28,26 @@ type UserInfoType = {
   userId: number | undefined;
 };
 
-/**
- * Handle expanding the link based on the platform.
- * @param link URL to expand
- * @returns Expanded URL with the right domain
- */
 function handleExpandedLinkDomain(link: string): string {
-  // If multiple URLs are accidentally concatenated, take only the first one
   if (link.includes("http", 1)) {
     link = link.split("http")[0];
   }
 
   switch (true) {
     case isInstagram(link):
-      if (link.includes("eeinstagram.com")) return link;
-      return link.replace("instagram.com", "eeinstagram.com");
+      if (INSTAGRAM_DOMAINS.some(domain => link.includes(domain))) return link;
+      return link.replace("instagram.com", INSTAGRAM_DOMAINS[0]);
     case isTikTok(link):
+      const tiktokDomain = TIKTOK_DOMAINS[0];
       return link
-        .replace("vt.tiktok.com", "vm.tiktokez.com")
-        .replace("lite.tiktok.com", "tiktokez.com")
-        .replace("tiktok.com", "tiktokez.com");
+        .replace("vt.tiktok.com", "vm." + tiktokDomain)
+        .replace("lite.tiktok.com", tiktokDomain)
+        .replace("tiktok.com", tiktokDomain);
     case isPosts(link):
       return link.replace("posts.cv", "postscv.com");
     case isTweet(link):
-      if (link.includes("fxtwitter.com")) return link;
-      return link.replace("twitter.com", "fxtwitter.com").replace("x.com", "fxtwitter.com");
+      if (link.includes("fxtwitter.com") || TWITTER_DOMAINS.some(domain => link.includes(domain))) return link;
+      return link.replace("twitter.com", TWITTER_DOMAINS[0]).replace("x.com", TWITTER_DOMAINS[0]);
     case isDribbble(link):
       return link.replace("dribbble.com", "dribbbletv.com");
     case isBluesky(link):
@@ -67,13 +63,6 @@ function handleExpandedLinkDomain(link: string): string {
   }
 }
 
-/**
- * Handles link expansion and sending the message with the correct template and destruct button.
- * @param ctx Telegram Context
- * @param link Link to expand
- * @param messageText Text of the message without URLs
- * @param userInfo Object with user details for creating the message template
- */
 export async function expandLink(
   ctx: Context,
   link: string,
@@ -83,10 +72,9 @@ export async function expandLink(
   replyId?: number
 ) {
   if (!ctx || !ctx.chat?.id) return;
-  // Return correct link based on platform
   const expandedLink = handleExpandedLinkDomain(link);
   let linkWithNoTrackers = expandedLink;
-  // Strip trackers from these platforms but not others.
+  
   if (
     isTweet(link) ||
     isInstagram(link) ||
@@ -102,8 +90,6 @@ export async function expandLink(
     const chatId = ctx.chat?.id;
     const topicId = ctx.msg?.message_thread_id;
     const replyTo = replyId || ctx.update?.message?.reply_to_message?.message_id;
-    // Very complicated bullshit to handle replying to a message inside a thread
-    // and replying to a message outside a thread, because the way these topics are set up is annoying.
     const sameId = replyTo === topicId;
     const threadOptions = replyId ? { message_thread_id: topicId } : null;
     const threadId = sameId ? null : threadOptions;
@@ -119,11 +105,8 @@ export async function expandLink(
         const metadata = await getOGMetadata(link ?? "");
         const { title, description, image, audio } = metadata;
 
-        // Limit description to 500 chars because Telegram rejects messages with more than 4096 characters.
-        // 4096 seems a bit excessive to see in the chat so we'll just cut it off at 500.
         const maxCaptionLength = 500;
 
-        // Calculate template length first
         const template = await expandedMessageTemplate(
           ctx,
           userInfo.username,
@@ -134,10 +117,9 @@ export async function expandLink(
           linkWithNoTrackers
         );
 
-        // Calculate remaining space for title and description (using 500 to be safe)
-        const remainingSpace = Math.max(0, maxCaptionLength - template.length - 4); // 4 chars for "\n\n"
-        const titleMaxLength = Math.min(50, Math.floor(remainingSpace * 0.3)); // Max 50 chars for title
-        const descMaxLength = Math.floor(remainingSpace * 0.7); // Rest for description
+        const remainingSpace = Math.max(0, maxCaptionLength - template.length - 4);
+        const titleMaxLength = Math.min(50, Math.floor(remainingSpace * 0.3));
+        const descMaxLength = Math.floor(remainingSpace * 0.7);
 
         const truncatedTitle = title.length > titleMaxLength ? title.slice(0, titleMaxLength) + "..." : title;
         const truncatedDesc =
@@ -150,7 +132,6 @@ export async function expandLink(
         });
 
         if (audio) {
-          // Also limit the audio caption
           const audioDesc = description.length > 250 ? description.slice(0, 250) + "..." : description;
           await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
             ...replyOptions,
@@ -187,8 +168,6 @@ export async function expandLink(
           ),
           {
             ...replyOptions,
-            // Use HTML parse mode if the user does not have a username,
-            // otherwise the bot will not be able to mention the user.
             parse_mode: "HTML",
             reply_markup: {
               inline_keyboard: [
@@ -204,38 +183,29 @@ export async function expandLink(
         );
       }
     } else {
-      // Handle Instagram share links
       if (link.includes("instagram.com/share/")) {
         try {
           const resolvedUrl = await resolveInstagramShare(link);
           if (resolvedUrl) {
-            // Replace the share URL with the resolved URL and convert to eeinstagram.com
-            const finalUrl = resolvedUrl.replace(/instagram\.com/g, "eeinstagram.com");
-            linkWithNoTrackers = finalUrl; // Update the link used in the template
+            const finalUrl = resolvedUrl.replace(/instagram\.com/g, INSTAGRAM_DOMAINS[0]);
+            linkWithNoTrackers = finalUrl;
             link = finalUrl;
             let platform: "twitter" | "instagram" | "tiktok" | "instagram-share" | null = null;
-            platform = "instagram-share"; // Track as Instagram share
+            platform = "instagram-share";
           }
         } catch (error) {
           console.error("[Error] Failed to resolve Instagram share link:", error);
         }
       }
-      // Handle regular Instagram links (replace domain with eeinstagram.com)
       else if (isInstagram(link)) {
-        link = link.replace(/instagram\.com/g, "eeinstagram.com");
+        link = link.replace(/instagram\.com/g, INSTAGRAM_DOMAINS[0]);
       }
 
-      // Handle Spotify links
       if (link.includes("open.spotify.com")) {
-        try {
+         try {
           const metadata = await getOGMetadata(link ?? "");
           const { title, description, image, audio } = metadata;
-
-          // Limit description to 500 chars because Telegram rejects messages with more than 4096 characters.
-          // 4096 seems a bit excessive to see in the chat so we'll just cut it off at 500.
           const maxCaptionLength = 500;
-
-          // Calculate template length first
           const template = await expandedMessageTemplate(
             ctx,
             userInfo.username,
@@ -245,11 +215,9 @@ export async function expandLink(
             messageText,
             linkWithNoTrackers
           );
-
-          // Calculate remaining space for title and description (using 500 to be safe)
-          const remainingSpace = Math.max(0, maxCaptionLength - template.length - 4); // 4 chars for "\n\n"
-          const titleMaxLength = Math.min(50, Math.floor(remainingSpace * 0.3)); // Max 50 chars for title
-          const descMaxLength = Math.floor(remainingSpace * 0.7); // Rest for description
+          const remainingSpace = Math.max(0, maxCaptionLength - template.length - 4); 
+          const titleMaxLength = Math.min(50, Math.floor(remainingSpace * 0.3)); 
+          const descMaxLength = Math.floor(remainingSpace * 0.7); 
 
           const truncatedTitle = title.length > titleMaxLength ? title.slice(0, titleMaxLength) + "..." : title;
           const truncatedDesc =
@@ -262,7 +230,6 @@ export async function expandLink(
           });
 
           if (audio) {
-            // Also limit the audio caption
             const audioDesc = description.length > 250 ? description.slice(0, 250) + "..." : description;
             await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
               ...replyOptions,
@@ -299,8 +266,6 @@ export async function expandLink(
             ),
             {
               ...replyOptions,
-              // Use HTML parse mode if the user does not have a username,
-              // otherwise the bot will not be able to mention the user.
               parse_mode: "HTML",
               reply_markup: {
                 inline_keyboard: [
@@ -316,13 +281,14 @@ export async function expandLink(
           );
         }
       } else {
-        // For all other platforms
         let platform: any = null;
-        let originalLink = link; // Keep track of original link for button
+        let originalLink = link; 
         if (isInstagram(link)) {
           platform = "instagram";
-          // Keep original Instagram link for button, but modify for message
-          originalLink = link.replace(/eeinstagram\.com/g, "instagram.com");
+          originalLink = link;
+          for (const domain of INSTAGRAM_DOMAINS) {
+             originalLink = originalLink.replace(domain, "instagram.com");
+          }
         } else if (isTikTok(link)) platform = "tiktok";
         else if (isTweet(link)) platform = "twitter";
         else if (isInstagramShare(link)) platform = "instagram-share";
@@ -330,13 +296,12 @@ export async function expandLink(
         else if (isYouTubeShort(link)) platform = "youtube";
         else if (isThreads(link)) {
           platform = "threads";
-          // Keep original Threads link for button, but modify for message
           originalLink = link.replace(/threadsez\.com/g, "threads.com");
         }
 
         const replyMarkup = platform
           ? {
-              inline_keyboard: getButtonState(platform, 15, userInfo.userId || ctx.from?.id || 0, originalLink).buttons,
+              inline_keyboard: getButtonState(platform, 30, userInfo.userId || ctx.from?.id || 0, originalLink).buttons,
             }
           : undefined;
 
@@ -359,15 +324,12 @@ export async function expandLink(
             }
           );
 
-          // For supported platforms, start the button progression
           if (platform && botReply) {
             const identifier = `${chatId}:${botReply.message_id}`;
             await saveToCache(identifier, ctx);
 
-            // Keep track of timeouts so we can clear them if needed
             const timeouts: NodeJS.Timeout[] = [];
 
-            // Start the button progression
             const updateButtons = async (timeRemaining: number) => {
               try {
                 const state = getButtonState(
@@ -380,26 +342,22 @@ export async function expandLink(
                   reply_markup: { inline_keyboard: state.buttons },
                 });
 
-                // Schedule next update if there is one
                 if (state.nextTimeout !== null) {
+                  const delay = (timeRemaining - state.nextTimeout) * 1000;
                   const timeout = setTimeout(() => {
                     try {
                       updateButtons(state.nextTimeout!).catch(() => {
-                        // Clear all timeouts if we can't update buttons
                         timeouts.forEach((t) => clearTimeout(t));
                       });
                     } catch (error) {
-                      // Clear all timeouts if we can't update buttons
                       timeouts.forEach((t) => clearTimeout(t));
                     }
-                  }, 5000);
+                  }, delay);
                   timeouts.push(timeout);
                 }
               } catch (error) {
-                // Message not found errors are expected if message was deleted
                 if (error instanceof Error && error.message.includes("message to edit not found")) {
                   console.warn("[Warning] Message has probably been already deleted.");
-                  // Clear all timeouts since we can't update this message anymore
                   timeouts.forEach((t) => clearTimeout(t));
                 } else {
                   console.error("[Error] Failed to update buttons:", error);
@@ -407,21 +365,17 @@ export async function expandLink(
               }
             };
 
-            // Start the progression
             try {
               const initialTimeout = setTimeout(() => {
-                updateButtons(10).catch(() => {
-                  // Clear all timeouts if initial update fails
+                updateButtons(15).catch(() => {
                   timeouts.forEach((t) => clearTimeout(t));
                 });
-              }, 5000);
+              }, 15000);
               timeouts.push(initialTimeout);
 
-              // Remove from cache and set final state after 35 seconds
               const finalTimeout = setTimeout(() => {
                 try {
                   deleteFromCache(identifier);
-                  // Set final state with just the open button
                   const finalState = getButtonState(
                     platform!,
                     null,
@@ -433,25 +387,15 @@ export async function expandLink(
                       reply_markup: { inline_keyboard: finalState.buttons },
                     })
                     .catch((error) => {
-                      if (error.message.includes("message to edit not found")) {
-                        console.warn("[Warning] Message has probably been already deleted.");
-                      } else {
-                        console.error("[Error] Failed to set final button state:", error);
-                      }
+                       // ignore
                     });
                 } catch (error) {
-                  // Message not found errors are expected if message was deleted
-                  if (error instanceof Error && error.message.includes("message to edit not found")) {
-                    console.warn("[Warning] Message has probably been already deleted.");
-                  } else {
-                    console.error("[Error] Failed to set final button state:", error);
-                  }
+                   // ignore
                 }
-              }, 35000);
+              }, 30000);
               timeouts.push(finalTimeout);
             } catch (error) {
               console.error("[Error] Failed to start button progression:", error);
-              // Clear any timeouts that might have been set
               timeouts.forEach((t) => clearTimeout(t));
             }
           }
@@ -463,12 +407,10 @@ export async function expandLink(
     }
 
     try {
-      // Delete the original message only after we've successfully sent our reply
       if (ctx.msg?.message_id && botReply) {
         await ctx.api.deleteMessage(chatId, ctx.msg.message_id);
       }
 
-      // Add message to cache for undo functionality
       if (botReply) {
         const identifier = `${chatId}:${botReply.message_id}`;
         await saveToCache(identifier, ctx);
@@ -482,8 +424,6 @@ export async function expandLink(
     }
   } catch (error) {
     console.error("[Error: expand-link.ts] Could not reply with an expanded link.");
-    // @ts-ignore
-    // console.error(error);
     return;
   }
 }
