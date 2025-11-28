@@ -1,14 +1,20 @@
+import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS } from "./service-lists";
+
 const checkLink = (link: string, platform: string) => {
   const isMatch = link.includes(platform);
   return isMatch;
 };
 
+const checkDomains = (link: string, domains: string[]) => {
+  return domains.some((domain) => link.includes(domain));
+};
+
 export const isTweet = (link: string) =>
-  checkLink(link, "twitter.com") || checkLink(link, "x.com") || checkLink(link, "fxtwitter.com");
+  checkLink(link, "twitter.com") || checkLink(link, "x.com") || checkLink(link, "fxtwitter.com") || checkDomains(link, TWITTER_DOMAINS);
 export const isInstagram = (link: string) =>
-  (checkLink(link, "instagram.com") || checkLink(link, "eeinstagram.com")) && !link.includes("/share/");
+  (checkLink(link, "instagram.com") || checkLink(link, "eeinstagram.com") || checkDomains(link, INSTAGRAM_DOMAINS)) && !link.includes("/share/");
 export const isInstagramShare = (link: string) => link.includes("instagram.com/share/");
-export const isTikTok = (link: string) => checkLink(link, "tiktok.com") || checkLink(link, "tiktokez.com");
+export const isTikTok = (link: string) => checkLink(link, "tiktok.com") || checkLink(link, "tiktokez.com") || checkDomains(link, TIKTOK_DOMAINS);
 export const isPosts = (link: string) => checkLink(link, "posts.cv") || checkLink(link, "postscv.com");
 export const isHackerNews = (link: string) => checkLink(link, "news.ycombinator.com");
 export const isDribbble = (link: string) => checkLink(link, "dribbble.com") || checkLink(link, "dribbbletv.com");
@@ -20,7 +26,6 @@ export const isThreads = (link: string) =>
 export const isYouTubeShort = (link: string) =>
   checkLink(link, "youtube.com/shorts/") || checkLink(link, "koutube.com/shorts/");
 
-// Spotify helpers
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
 export const isSpotifyAlbum = (link: string) => checkLink(link, "open.spotify.com/album");
 export const isSpotifyPlaylist = (link: string) => checkLink(link, "open.spotify.com/playlist");
