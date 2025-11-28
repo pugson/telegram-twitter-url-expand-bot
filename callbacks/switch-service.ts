@@ -2,7 +2,7 @@ import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { peekFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
-import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS } from "../helpers/service-lists";
+import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/service-lists";
 
 export async function handleSwitchService(ctx: Context) {
   const answer = ctx.update?.callback_query;
@@ -18,9 +18,6 @@ export async function handleSwitchService(ctx: Context) {
     const platform = parts[2];
     const clickerId = ctx.from?.id;
 
-    // Optional: Restrict to original user similar to destruct
-    // if (clickerId !== originalUserId) ...
-
     try {
       const identifier = `${chatId}:${messageId}`;
       const cached = await peekFromCache(identifier);
@@ -33,10 +30,10 @@ export async function handleSwitchService(ctx: Context) {
         if (platform === "twitter") domainList = TWITTER_DOMAINS;
         if (platform === "tiktok") domainList = TIKTOK_DOMAINS;
         if (platform === "instagram" || platform === "instagram-share") domainList = INSTAGRAM_DOMAINS;
+        if (platform === "facebook") domainList = FACEBOOK_DOMAINS;
 
         if (domainList.length === 0) return;
 
-        // Find current domain used
         const currentDomain = domainList.find(d => messageText.includes(d));
         let nextDomain = domainList[0];
 
@@ -45,8 +42,6 @@ export async function handleSwitchService(ctx: Context) {
           const nextIndex = (currentIndex + 1) % domainList.length;
           nextDomain = domainList[nextIndex];
         } else {
-           // Fallback if current domain not found in list (e.g. fxtwitter)
-           // If twitter and fxtwitter, switch to first in list
            if (platform === "twitter" && messageText.includes("fxtwitter.com")) {
               nextDomain = domainList[0];
            }
@@ -57,9 +52,10 @@ export async function handleSwitchService(ctx: Context) {
             newText = messageText.replace(new RegExp(currentDomain, "g"), nextDomain);
         } else if (platform === "twitter" && messageText.includes("fxtwitter.com")) {
             newText = messageText.replace(/fxtwitter\.com/g, nextDomain);
+        } else if (platform === "facebook") {
+            newText = messageText.replace(/facebook\.com/g, nextDomain);
         }
 
-        // Original URL for the open button
         let originalLink = "";
         const urlMatch = newText.match(/(https?:\/\/[^\s]+)/);
         if (urlMatch) {
@@ -67,19 +63,18 @@ export async function handleSwitchService(ctx: Context) {
              if (platform === "twitter") originalLink = originalLink.replace(nextDomain, "twitter.com");
              if (platform === "tiktok") originalLink = originalLink.replace(nextDomain, "tiktok.com").replace("vm.", "").replace("vt.", "");
              if (platform.includes("instagram")) originalLink = originalLink.replace(nextDomain, "instagram.com");
+             if (platform === "facebook") originalLink = originalLink.replace(nextDomain, "facebook.com");
         }
 
         if (answer.message?.caption) {
              await ctx.api.editMessageCaption(chatId, messageId, {
                 caption: newText,
                 parse_mode: "HTML",
-                // AÑADIDO ?. AQUÍ
                 reply_markup: answer.message?.reply_markup
             });
         } else {
             await ctx.api.editMessageText(chatId, messageId, newText, {
                 parse_mode: "HTML",
-                // AÑADIDO ?. AQUÍ
                 reply_markup: answer.message?.reply_markup
             });
         }
