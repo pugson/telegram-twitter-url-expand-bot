@@ -301,7 +301,7 @@ export async function expandLink(
 
         const replyMarkup = platform
           ? {
-              inline_keyboard: getButtonState(platform, 30, userInfo.userId || ctx.from?.id || 0, originalLink).buttons,
+              inline_keyboard: getButtonState(platform, 15, userInfo.userId || ctx.from?.id || 0, originalLink).buttons,
             }
           : undefined;
 
@@ -343,7 +343,6 @@ export async function expandLink(
                 });
 
                 if (state.nextTimeout !== null) {
-                  const delay = (timeRemaining - state.nextTimeout) * 1000;
                   const timeout = setTimeout(() => {
                     try {
                       updateButtons(state.nextTimeout!).catch(() => {
@@ -352,8 +351,11 @@ export async function expandLink(
                     } catch (error) {
                       timeouts.forEach((t) => clearTimeout(t));
                     }
-                  }, delay);
+                  }, 5000);
                   timeouts.push(timeout);
+                } else {
+                    // This handles the state when Delete button disappears (time=0)
+                    // We stop scheduling here, but Undo/Embed persist until finalTimeout
                 }
               } catch (error) {
                 if (error instanceof Error && error.message.includes("message to edit not found")) {
@@ -367,10 +369,10 @@ export async function expandLink(
 
             try {
               const initialTimeout = setTimeout(() => {
-                updateButtons(15).catch(() => {
+                updateButtons(10).catch(() => {
                   timeouts.forEach((t) => clearTimeout(t));
                 });
-              }, 15000);
+              }, 5000);
               timeouts.push(initialTimeout);
 
               const finalTimeout = setTimeout(() => {
@@ -392,7 +394,7 @@ export async function expandLink(
                 } catch (error) {
                    // ignore
                 }
-              }, 30000);
+              }, 35000);
               timeouts.push(finalTimeout);
             } catch (error) {
               console.error("[Error] Failed to start button progression:", error);
