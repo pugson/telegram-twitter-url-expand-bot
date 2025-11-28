@@ -1,6 +1,6 @@
 import { InlineKeyboardButton } from "@grammyjs/types";
 
-type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads" | "youtube";
+type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads" | "youtube" | "facebook";
 
 type ButtonState = {
   buttons: InlineKeyboardButton[][];
@@ -26,6 +26,8 @@ export function getButtonState(
       ? "Threads"
       : platform === "youtube"
       ? "YouTube"
+      : platform === "facebook"
+      ? "Facebook"
       : "...";
   const baseButtons: InlineKeyboardButton[] = [
     {
@@ -54,7 +56,7 @@ export function getButtonState(
       callback_data: `switch:${userId}:${platform}`
   };
 
-  const isSupportedPlatform = ["twitter", "instagram", "tiktok", "instagram-share"].includes(platform);
+  const isSupportedPlatform = ["twitter", "instagram", "tiktok", "instagram-share", "facebook"].includes(platform);
   const rows: InlineKeyboardButton[][] = [];
 
   if (timeRemaining > 0) {
