@@ -18,3 +18,7 @@ export const TWITTER_DOMAINS = [
   "fixupx.com",
   "fixvx.com",
 ];
+
+export const FACEBOOK_DOMAINS = [
+  "facebed.com",
+];
