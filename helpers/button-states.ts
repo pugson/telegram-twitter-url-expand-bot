@@ -49,31 +49,32 @@ export function getButtonState(
     ...baseButtons,
   ];
 
-  const fixButton = {
-      text: "Embed not working?",
+  const fixButton: InlineKeyboardButton = {
+      text: "🖼 Embed not working?",
       callback_data: `switch:${userId}:${platform}`
   };
 
+  const isSupportedPlatform = ["twitter", "instagram", "tiktok", "instagram-share"].includes(platform);
+  const rows: InlineKeyboardButton[][] = [];
+
   if (timeRemaining > 0) {
-    const isSupportedPlatform = ["twitter", "instagram", "tiktok", "instagram-share"].includes(platform);
-    
-    return {
-      buttons: [
-        [
-          {
-            text: `❌ Delete ${timeRemaining}s`,
-            callback_data: `destruct:${userId}:${timeRemaining}`,
-          },
-          ...buttonsWithUndo,
-        ],
-        isSupportedPlatform ? [fixButton] : []
-      ],
-      nextTimeout: timeRemaining === 30 ? 15 : timeRemaining === 15 ? 0 : 0,
-    };
+    rows.push([
+      {
+        text: `❌ Delete ${timeRemaining}s`,
+        callback_data: `destruct:${userId}:${timeRemaining}`,
+      },
+      ...buttonsWithUndo,
+    ]);
+  } else {
+    rows.push(buttonsWithUndo);
+  }
+
+  if (isSupportedPlatform) {
+    rows.push([fixButton]);
   }
 
   return {
-    buttons: [buttonsWithUndo],
-    nextTimeout: null,
+    buttons: rows,
+    nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : 0,
   };
 }
