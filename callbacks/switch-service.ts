@@ -69,21 +69,18 @@ export async function handleSwitchService(ctx: Context) {
              if (platform.includes("instagram")) originalLink = originalLink.replace(nextDomain, "instagram.com");
         }
 
-        // Maintain buttons state but perhaps reset timer visual or keep logic? 
-        // For simplicity we keep the 30s flow managed by expand-link but update the markup content
-        // Note: updating text might reset button flow if not handled carefully, 
-        // but since we just edit message text, the timeout in expand-link keeps running.
-        
         if (answer.message?.caption) {
              await ctx.api.editMessageCaption(chatId, messageId, {
                 caption: newText,
                 parse_mode: "HTML",
-                reply_markup: answer.message.reply_markup
+                // AÑADIDO ?. AQUÍ
+                reply_markup: answer.message?.reply_markup
             });
         } else {
             await ctx.api.editMessageText(chatId, messageId, newText, {
                 parse_mode: "HTML",
-                reply_markup: answer.message.reply_markup
+                // AÑADIDO ?. AQUÍ
+                reply_markup: answer.message?.reply_markup
             });
         }
         
