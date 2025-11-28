@@ -7,14 +7,6 @@ type ButtonState = {
   nextTimeout: number | null;
 };
 
-/**
- * Get button state for a platform based on time remaining
- * @param platform Platform (twitter, instagram, tiktok, reddit, threads)
- * @param timeRemaining Time remaining in seconds, or null for final state
- * @param userId User ID for analytics
- * @param url URL to open
- * @returns Button state with buttons and next timeout
- */
 export function getButtonState(
   platform: Platform,
   timeRemaining: number | null,
@@ -42,7 +34,6 @@ export function getButtonState(
     },
   ];
 
-  // Final state - just show open button
   if (timeRemaining === null) {
     return {
       buttons: [baseButtons],
@@ -50,7 +41,6 @@ export function getButtonState(
     };
   }
 
-  // Add undo button if not in final state
   const buttonsWithUndo = [
     {
       text: "↩️ Undo",
@@ -59,8 +49,14 @@ export function getButtonState(
     ...baseButtons,
   ];
 
-  // If we have time remaining, add countdown
+  const fixButton = {
+      text: "Embed not working?",
+      callback_data: `switch:${userId}:${platform}`
+  };
+
   if (timeRemaining > 0) {
+    const isSupportedPlatform = ["twitter", "instagram", "tiktok", "instagram-share"].includes(platform);
+    
     return {
       buttons: [
         [
@@ -70,12 +66,12 @@ export function getButtonState(
           },
           ...buttonsWithUndo,
         ],
+        isSupportedPlatform ? [fixButton] : []
       ],
-      nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : 0,
+      nextTimeout: timeRemaining === 30 ? 15 : timeRemaining === 15 ? 0 : 0,
     };
   }
 
-  // No time remaining but not final state
   return {
     buttons: [buttonsWithUndo],
     nextTimeout: null,
