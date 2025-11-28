@@ -177,11 +177,14 @@ ${url ? url : ""}`;
     }
   }
 
-  if (ctx.msg?.forward_from) {
-    const forwardUserId = ctx.msg?.forward_from?.id;
-    const forwardUsername = ctx.msg?.forward_from?.username;
-    const forwardFirstName = ctx.msg?.forward_from?.first_name;
-    const forwardLastName = ctx.msg?.forward_from?.last_name;
+  // Cast msg to any to avoid TypeScript errors with forward properties
+  const msg = ctx.msg as any;
+
+  if (msg?.forward_from) {
+    const forwardUserId = msg.forward_from.id;
+    const forwardUsername = msg.forward_from.username;
+    const forwardFirstName = msg.forward_from.first_name;
+    const forwardLastName = msg.forward_from.last_name;
     const bothNames = forwardFirstName && forwardLastName;
     const nameTemplate = bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName;
 
@@ -198,16 +201,16 @@ ${text}
 ${includedLink}`;
   }
 
-  if (ctx.msg?.forward_sender_name) {
-    return `<u>Forwarded from <i>${ctx.msg?.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
+  if (msg?.forward_sender_name) {
+    return `<u>Forwarded from <i>${msg.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
 ${text}
 
 ${includedLink}`;
   }
 
-  if (ctx.msg?.forward_from_chat) {
-    const forwardName = ctx.msg?.forward_from_chat?.title;
-    const forwardUsername = ctx.msg?.forward_from_chat?.username;
+  if (msg?.forward_from_chat) {
+    const forwardName = msg.forward_from_chat.title;
+    const forwardUsername = msg.forward_from_chat.username;
 
     if (forwardUsername) {
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
