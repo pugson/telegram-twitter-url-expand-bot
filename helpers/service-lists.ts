@@ -8,10 +8,10 @@ export const INSTAGRAM_DOMAINS = [
 ];
 
 export const TIKTOK_DOMAINS = [
+  "tnktok.com",
   "tfxktok.com",
   "kktiktok.com",
   "tiktxk.com",
-  "tnktok.com",
   "tiktokez.com",
 ];
 
