@@ -380,6 +380,24 @@ export async function expandLink(
               }, 5000);
               timeouts.push(initialTimeout);
 
+              const undoTimeout = setTimeout(() => {
+                try {
+                  const intermediateState = getButtonState(
+                    platform!,
+                    0,
+                    userInfo.userId || ctx.from?.id || 0,
+                    originalLink,
+                    false 
+                  );
+                  ctx.api
+                    .editMessageReplyMarkup(chatId, botReply!.message_id, {
+                      reply_markup: { inline_keyboard: intermediateState.buttons },
+                    })
+                    .catch(() => { /* ignore */ });
+                } catch (error) { /* ignore */ }
+              }, 35000);
+              timeouts.push(undoTimeout);
+
               const finalTimeout = setTimeout(() => {
                 try {
                   deleteFromCache(identifier);
@@ -399,7 +417,7 @@ export async function expandLink(
                 } catch (error) {
                    // ignore
                 }
-              }, 35000);
+              }, 60000);
               timeouts.push(finalTimeout);
             } catch (error) {
               console.error("[Error] Failed to start button progression:", error);

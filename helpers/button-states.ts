@@ -7,11 +7,20 @@ type ButtonState = {
   nextTimeout: number | null;
 };
 
+/**
+ * Get button state for a platform based on time remaining
+ * @param platform Platform (twitter, instagram, tiktok, reddit, threads)
+ * @param timeRemaining Time remaining in seconds, or null for final state
+ * @param userId User ID for analytics
+ * @param url URL to open
+ * @returns Button state with buttons and next timeout
+ */
 export function getButtonState(
   platform: Platform,
   timeRemaining: number | null,
   userId: number,
-  url: string
+  url: string,
+  showUndo: boolean = true
 ): ButtonState {
   const platformName =
     platform === "twitter"
@@ -36,6 +45,7 @@ export function getButtonState(
     },
   ];
 
+  // Final state - just show open button
   if (timeRemaining === null) {
     return {
       buttons: [baseButtons],
@@ -43,11 +53,12 @@ export function getButtonState(
     };
   }
 
+  // Add undo button if not in final state
   const buttonsWithUndo = [
-    {
+    ...(showUndo ? [{
       text: "↩️ Undo",
       callback_data: "undo",
-    },
+    }] : []),
     ...baseButtons,
   ];
 
