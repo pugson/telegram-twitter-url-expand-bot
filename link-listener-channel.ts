@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { bot } from ".";
 import { LINK_REGEX } from "./helpers/link-regex";
-import { isDribbble, isInstagram, isPosts, isReddit, isTikTok, isThreads, isYouTubeShort } from "./helpers/platforms";
+import { isDribbble, isInstagram, isPosts, isReddit, isTikTok, isThreads, isYouTubeShort, isFacebook } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { isBanned } from "./helpers/banned";
 
@@ -27,20 +27,23 @@ bot.on("channel_post::url", async (ctx: Context) => {
     ? "threads"
     : isYouTubeShort(message)
     ? "youtube"
+    : isFacebook(message)
+    ? "facebook"
     : "twitter";
   const expandedLinksMessage = message
     .replace("twitter.com/", "fxtwitter.com/")
     .replace("x.com/", "fxtwitter.com/")
     .replace("instagram.com/", "eeinstagram.com/")
-    .replace("vt.tiktok.com/", "vm.tiktokez.com/")
+    .replace("vt.tiktok.com/", "vm.tfxktok.com/")
     .replace("lite.tiktok.com/", "tiktokez.com/")
-    .replace("tiktok.com/", "tiktokez.com/")
+    .replace("tiktok.com/", "tfxktok.com/")
     .replace("posts.cv/", "postscv.com/")
     .replace("dribbble.com/", "dribbbletv.com/")
     .replace("reddit.com/", "rxddit.com/")
     .replace("threads.com/", "threadsez.com/")
     .replace("threads.net/", "threadsez.com/")
-    .replace("youtube.com/shorts/", "koutube.com/shorts/");
+    .replace("youtube.com/shorts/", "koutube.com/shorts/")
+    .replace("facebook.com/", "facebed.com/");
 
   try {
     if (caption) {

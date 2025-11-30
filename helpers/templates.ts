@@ -20,6 +20,7 @@ import {
   isTikTok,
   isThreads,
   isYouTubeShort,
+  isFacebook,
 } from "./platforms";
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
@@ -89,6 +90,7 @@ export const askToExpandTemplate = (link: string) => {
   const spotify = isSpotify(link);
   const threads = isThreads(link);
   const ytShort = isYouTubeShort(link);
+  const fb = isFacebook(link);
 
   if (insta) {
     return `Expand this Instagram post?`;
@@ -116,6 +118,10 @@ export const askToExpandTemplate = (link: string) => {
 
   if (reddit) {
     return `Expand this Reddit post?`;
+  }
+
+  if (fb) {
+    return `Expand this Facebook post?`;
   }
 
   if (spotify) {
@@ -201,29 +207,25 @@ ${url ? url : ""}`;
     }
   }
 
-  // Check if the original author of the message has a public profile.
-  // @ts-expect-error forward_from is not defined for Message type
-  if (ctx.msg?.forward_from) {
-    // @ts-expect-error forward_from is not defined for Message type
-    const forwardUserId = ctx.msg?.forward_from?.id;
-    // @ts-expect-error forward_from is not defined for Message type
-    const forwardUsername = ctx.msg?.forward_from?.username;
-    // @ts-expect-error forward_from is not defined for Message type
-    const forwardFirstName = ctx.msg?.forward_from?.first_name;
-    // @ts-expect-error forward_from is not defined for Message type
-    const forwardLastName = ctx.msg?.forward_from?.last_name;
+  // Cast msg to any to avoid TypeScript errors with forward properties
+  const msg = ctx.msg as any;
+
+  if (msg?.forward_from) {
+    const forwardUserId = msg.forward_from.id;
+    const forwardUsername = msg.forward_from.username;
+    const forwardFirstName = msg.forward_from.first_name;
+    const forwardLastName = msg.forward_from.last_name;
     const bothNames = forwardFirstName && forwardLastName;
     const nameTemplate = bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName;
 
-    // Link to the original author by username if they have one.
     if (forwardUsername) {
+      // Link to the original author by ID if they don’t have a username.
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}
 
 ${includedLink}`;
     }
 
-    // Link to the original author by ID if they don’t have a username.
     return `<u>Forwarded from <a href="tg://user?id=${forwardUserId}">${nameTemplate}</a> by ${usernameOrFullNameTag}</u> 
 ${text}
 
@@ -231,24 +233,18 @@ ${includedLink}`;
   }
 
   // Check if the original author of the message has a private profile.
-  // @ts-expect-error forward_sender_name is not defined for Message type
-  if (ctx.msg?.forward_sender_name) {
-    // @ts-expect-error forward_sender_name is not defined for Message type
-    return `<u>Forwarded from <i>${ctx.msg?.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
+  if (msg?.forward_sender_name) {
+    return `<u>Forwarded from <i>${msg.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
 ${text}
 
 ${includedLink}`;
   }
 
   // Check if the original author of the message is a channel.
-  // @ts-expect-error forward_from_chat is not defined for Message type
-  if (ctx.msg?.forward_from_chat) {
-    // @ts-ignore
-    const forwardName = ctx.msg?.forward_from_chat?.title;
-    // @ts-ignore
-    const forwardUsername = ctx.msg?.forward_from_chat?.username;
+  if (msg?.forward_from_chat) {
+    const forwardName = msg.forward_from_chat.title;
+    const forwardUsername = msg.forward_from_chat.username;
 
-    // Link to the original channel by username if they have one.
     if (forwardUsername) {
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}

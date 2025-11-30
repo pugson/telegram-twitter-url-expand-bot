@@ -17,6 +17,7 @@ import {
   isTikTok,
   isThreads,
   isYouTubeShort,
+  isFacebook,
 } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
@@ -38,9 +39,9 @@ bot.on("message::url", async (ctx: Context) => {
   if (isBanned(chatId)) return;
 
   const msgId = ctx.msg?.message_id;
-  const isDeletable = !ctx.msg?.caption; // deletable if not a caption of media
-  const entities = ctx.entities(); // all links in message
-  const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
+  const isDeletable = !ctx.msg?.caption; 
+  const entities = ctx.entities(); 
+  const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; 
 
   // Get autoexpand settings for this chat
   let settings;
@@ -95,6 +96,7 @@ bot.on("message::url", async (ctx: Context) => {
       const spotify = isSpotify(url);
       const threads = isThreads(url);
       const youtube = isYouTubeShort(url);
+      const fb = isFacebook(url);
       const platform = insta
         ? "instagram"
         : instaShare
@@ -115,6 +117,8 @@ bot.on("message::url", async (ctx: Context) => {
         ? "threads"
         : youtube
         ? "youtube"
+        : fb
+        ? "facebook"
         : "twitter";
       trackEvent(`expand.auto.${platform}`);
     } else {
