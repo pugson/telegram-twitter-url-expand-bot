@@ -233,9 +233,7 @@ ${includedLink}`;
   }
 
   // Check if the original author of the message has a private profile.
-  // @ts-expect-error forward_sender_name is not defined for Message type
   if (msg?.forward_sender_name) {
-    // @ts-expect-error forward_sender_name is not defined for Message type
     return `<u>Forwarded from <i>${msg.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
 ${text}
 
@@ -243,11 +241,8 @@ ${includedLink}`;
   }
 
   // Check if the original author of the message is a channel.
-  // @ts-expect-error forward_from_chat is not defined for Message type
   if (msg?.forward_from_chat) {
-    // @ts-ignore
     const forwardName = msg.forward_from_chat.title;
-    // @ts-ignore
     const forwardUsername = msg.forward_from_chat.username;
 
     if (forwardUsername) {
