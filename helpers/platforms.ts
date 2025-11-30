@@ -27,6 +27,7 @@ export const isYouTubeShort = (link: string) =>
   checkLink(link, "youtube.com/shorts/") || checkLink(link, "koutube.com/shorts/");
 export const isFacebook = (link: string) => checkLink(link, "facebook.com") || checkDomains(link, FACEBOOK_DOMAINS);
 
+// Spotify helpers
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
 export const isSpotifyAlbum = (link: string) => checkLink(link, "open.spotify.com/album");
 export const isSpotifyPlaylist = (link: string) => checkLink(link, "open.spotify.com/playlist");
