@@ -54,6 +54,20 @@
     - https://threads.net/@username/post/post_id
     - https://www.threads.net/@username/post/post_id
 
+    * YouTube Shorts URLs, in the format:
+    - https://youtube.com/shorts/video_id
+
+    * Facebook URLs, strictly:
+    - /:username/posts/:hash
+    - /:username/videos/:id
+    - /share/r/:hash, /share/p/:hash, /share/v/:hash
+    - /reel/:id
+    - /photo?fbid=... (but not photo.php)
+    - /watch?v=...
+    - /story.php
+    - /permalink.php
+    - /groups/:id/posts/:hash, /groups/:id/permalink/:hash, /groups/:id?multi_permalinks=...
+
  */
 export const LINK_REGEX: RegExp =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|share|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:[a-z0-9-]+\.)?tiktok\.com\/(?:@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+|[A-Za-z0-9-_]+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?|reddit\.com\/(?:r\/[^\/]+\/(?:comments|s)\/[A-Za-z0-9]+(?:\/[^\/]*)?(?:\/[^\/]*)?|[A-Za-z0-9]+)(?:\?.*)?|threads\.(?:com|net)\/@[A-Za-z0-9_.]+\/post\/[A-Za-z0-9]+(?:\?.*)?|youtube\.com\/shorts\/([A-Za-z0-9_-]+)(?:\?.*)?|facebook\.com\/[^\s]+)/im;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|share|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:[a-z0-9-]+\.)?tiktok\.com\/(?:@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+|[A-Za-z0-9-_]+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?|reddit\.com\/(?:r\/[^\/]+\/(?:comments|s)\/[A-Za-z0-9]+(?:\/[^\/]*)?(?:\/[^\/]*)?|[A-Za-z0-9]+)(?:\?.*)?|threads\.(?:com|net)\/@[A-Za-z0-9_.]+\/post\/[A-Za-z0-9]+(?:\?.*)?|youtube\.com\/shorts\/([A-Za-z0-9_-]+)(?:\?.*)?|facebook\.com\/(?:[^\/]+\/(?:posts|videos)\/|groups\/[^\/]+\/(?:posts\/|permalink\/|\?.*multi_permalinks)|share\/(?:r|p|v)\/|reel\/|photo\/?\?|watch|story\.php|permalink\.php))/im;
