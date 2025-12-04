@@ -1,6 +1,6 @@
 import { InlineKeyboardButton } from "@grammyjs/types";
 
-type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads" | "youtube";
+type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads" | "youtube" | "facebook";
 
 type ButtonState = {
   buttons: InlineKeyboardButton[][];
@@ -19,7 +19,8 @@ export function getButtonState(
   platform: Platform,
   timeRemaining: number | null,
   userId: number,
-  url: string
+  url: string,
+  showUndo: boolean = true
 ): ButtonState {
   const platformName =
     platform === "twitter"
@@ -34,6 +35,8 @@ export function getButtonState(
       ? "Threads"
       : platform === "youtube"
       ? "YouTube"
+      : platform === "facebook"
+      ? "Facebook"
       : "...";
   const baseButtons: InlineKeyboardButton[] = [
     {
@@ -52,32 +55,39 @@ export function getButtonState(
 
   // Add undo button if not in final state
   const buttonsWithUndo = [
-    {
+    ...(showUndo ? [{
       text: "↩️ Undo",
       callback_data: "undo",
-    },
+    }] : []),
     ...baseButtons,
   ];
 
-  // If we have time remaining, add countdown
+  const fixButton: InlineKeyboardButton = {
+      text: "🖼 Embed not working?",
+      callback_data: `switch:${userId}:${platform}`
+  };
+
+  const isSupportedPlatform = ["twitter", "instagram", "tiktok", "instagram-share", "facebook"].includes(platform);
+  const rows: InlineKeyboardButton[][] = [];
+
   if (timeRemaining > 0) {
-    return {
-      buttons: [
-        [
-          {
-            text: `❌ Delete ${timeRemaining}s`,
-            callback_data: `destruct:${userId}:${timeRemaining}`,
-          },
-          ...buttonsWithUndo,
-        ],
-      ],
-      nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : 0,
-    };
+    rows.push([
+      {
+        text: `❌ Delete ${timeRemaining}s`,
+        callback_data: `destruct:${userId}:${timeRemaining}`,
+      },
+      ...buttonsWithUndo,
+    ]);
+  } else {
+    rows.push(buttonsWithUndo);
   }
 
-  // No time remaining but not final state
+  if (isSupportedPlatform) {
+    rows.push([fixButton]);
+  }
+
   return {
-    buttons: [buttonsWithUndo],
-    nextTimeout: null,
+    buttons: rows,
+    nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : 0,
   };
 }

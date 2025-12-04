@@ -8,6 +8,7 @@ import { handleLockSettings } from "./settings-lock";
 import { handleChangelogSettings } from "./settings-changelog";
 import { handlePermissionsSettings } from "./settings-permissions";
 import { handleUndo } from "./undo";
+import { handleSwitchService } from "./switch-service";
 import { isBanned } from "../helpers/banned";
 
 // Multiple bot.on("callback_query") functions cannot run in parallel.
@@ -25,6 +26,7 @@ bot.on("callback_query", async (ctx: Context) => {
   await handleManualExpand(ctx);
   await handleExpandedLinkDestruction(ctx);
   await handleUndo(ctx);
+  await handleSwitchService(ctx);
   await handleAutoexpandSettings(ctx);
   await handleLockSettings(ctx);
   await handleChangelogSettings(ctx);
