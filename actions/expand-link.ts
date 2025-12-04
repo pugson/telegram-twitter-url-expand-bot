@@ -48,7 +48,11 @@ function handleExpandedLinkDomain(link: string): string {
       return link.replace("posts.cv", "postscv.com");
     case isTweet(link):
       if (link.includes("fxtwitter.com") || TWITTER_DOMAINS.some(domain => link.includes(domain))) return link;
-      return link.replace("twitter.com", TWITTER_DOMAINS[0]).replace("x.com", TWITTER_DOMAINS[0]);
+      // Fix: Check specific domain presence to prevent double replacement (e.g. fixupfixupx.com)
+      if (link.includes("x.com")) {
+        return link.replace("x.com", TWITTER_DOMAINS[0]);
+      }
+      return link.replace("twitter.com", TWITTER_DOMAINS[0]);
     case isDribbble(link):
       return link.replace("dribbble.com", "dribbbletv.com");
     case isBluesky(link):

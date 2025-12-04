@@ -25,7 +25,12 @@ export const isThreads = (link: string) =>
   checkLink(link, "threads.com") || checkLink(link, "threads.net") || checkLink(link, "threadsez.com");
 export const isYouTubeShort = (link: string) =>
   checkLink(link, "youtube.com/shorts/") || checkLink(link, "koutube.com/shorts/");
-export const isFacebook = (link: string) => checkLink(link, "facebook.com") || checkDomains(link, FACEBOOK_DOMAINS);
+
+// Facebook Regex strictly matching the allowed patterns (synced with link-regex.ts)
+const FACEBOOK_REGEX = /facebook\.com\/(?:[^\/]+\/(?:posts|videos)\/|groups\/[^\/]+\/(?:posts\/|permalink\/|\?.*multi_permalinks)|share\/(?:r|p|v)\/|reel\/|photo\/?\?|watch|story\.php|permalink\.php)/im;
+
+export const isFacebook = (link: string) => 
+  FACEBOOK_REGEX.test(link) || checkDomains(link, FACEBOOK_DOMAINS);
 
 // Spotify helpers
 export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
