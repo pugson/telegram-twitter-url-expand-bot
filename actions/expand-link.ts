@@ -89,10 +89,32 @@ export async function expandLink(
     isTikTok(link) ||
     isSpotify(link) ||
     isThreads(link) ||
-    isYouTubeShort(link) ||
-    isFacebook(link)
+    isYouTubeShort(link)
   ) {
+    // For these platforms, we can safely strip everything after '?'
     linkWithNoTrackers = expandedLink.split("?")[0];
+  } else if (isFacebook(link)) {
+    // For Facebook, we must preserve specific parameters used for routing (v, fbid, etc.)
+    // while stripping tracking parameters (fbclid, __cft__, etc.)
+    try {
+      const url = new URL(linkWithNoTrackers);
+      const params = url.searchParams;
+      const newParams = new URLSearchParams();
+      const allowedParams = ["id", "story_fbid", "v", "fbid", "multi_permalinks"];
+      
+      allowedParams.forEach(key => {
+        const value = params.get(key);
+        if (value) newParams.set(key, value);
+      });
+      
+      // Update the URL with only the allowed parameters
+      url.search = newParams.toString();
+      linkWithNoTrackers = url.toString();
+    } catch (e) {
+      console.error("[Error] Could not clean Facebook parameters:", e);
+      // If parsing fails, we keep the original expanded link to avoid breaking it,
+      // even if it has trackers.
+    }
   }
 
   try {
