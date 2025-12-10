@@ -1,8 +1,7 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { peekFromCache } from "../helpers/cache";
-import { getButtonState } from "../helpers/button-states";
-import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/service-lists";
+import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/platforms";
 
 export async function handleSwitchService(ctx: Context) {
   const answer = ctx.update?.callback_query;

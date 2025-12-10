@@ -13,6 +13,10 @@ import {
   isThreads,
   isYouTubeShort,
   isFacebook,
+  FACEBOOK_DOMAINS,
+  INSTAGRAM_DOMAINS,
+  TIKTOK_DOMAINS,
+  TWITTER_DOMAINS,
 } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
 import { notifyAdmin } from "../helpers/notifier";
@@ -20,7 +24,6 @@ import { getOGMetadata } from "../helpers/og-metadata";
 import { saveToCache, deleteFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { resolveInstagramShare } from "../helpers/instagram-share";
-import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/service-lists";
 
 type UserInfoType = {
   username: string | undefined;
