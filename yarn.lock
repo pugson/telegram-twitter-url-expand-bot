@@ -390,9 +390,9 @@ gopd@^1.2.0:
   integrity sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==
 
 grammy@^1.14.1:
-  version "1.38.3"
-  resolved "https://registry.yarnpkg.com/grammy/-/grammy-1.38.3.tgz#0344df40502daa661877974489c3f3963d33c668"
-  integrity sha512-1eQwNfxrRQ0JOFqd3n1nKqyWkHvCQRCNiH8e5aYm27mIjGPobgss58XN8GORC2ejAWM2+NSdUknrMhYj87cjGg==
+  version "1.38.4"
+  resolved "https://registry.yarnpkg.com/grammy/-/grammy-1.38.4.tgz#f4703198edc21dd4feec2751508c966691ae8cb6"
+  integrity sha512-z07Kin3HgRwMdy40KUs+c9fmNBvGlSxGwcqY8NAH0a8KULGFYEMQaFAo3ge0V5tvmgr02Jgubkf54KjHLAMCbw==
   dependencies:
     "@grammyjs/types" "3.22.2"
     abort-controller "^3.0.0"
