@@ -39,9 +39,9 @@ bot.on("message::url", async (ctx: Context) => {
   if (isBanned(chatId)) return;
 
   const msgId = ctx.msg?.message_id;
-  const isDeletable = !ctx.msg?.caption; 
-  const entities = ctx.entities(); 
-  const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; 
+  const isDeletable = !ctx.msg?.caption; // deletable if not a caption of media
+  const entities = ctx.entities(); // all links in message
+  const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
 
   // Get autoexpand settings for this chat
   let settings;
