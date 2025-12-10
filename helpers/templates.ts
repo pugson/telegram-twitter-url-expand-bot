@@ -210,6 +210,7 @@ ${url ? url : ""}`;
   // Cast msg to any to avoid TypeScript errors with forward properties
   const msg = ctx.msg as any;
 
+  // Check if the original author of the message has a public profile.
   if (msg?.forward_from) {
     const forwardUserId = msg.forward_from.id;
     const forwardUsername = msg.forward_from.username;
@@ -218,14 +219,15 @@ ${url ? url : ""}`;
     const bothNames = forwardFirstName && forwardLastName;
     const nameTemplate = bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName;
 
+    // Link to the original author by username if they have one.
     if (forwardUsername) {
-      // Link to the original author by ID if they don’t have a username.
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}
 
 ${includedLink}`;
     }
 
+    // Link to the original author by ID if they don’t have a username.
     return `<u>Forwarded from <a href="tg://user?id=${forwardUserId}">${nameTemplate}</a> by ${usernameOrFullNameTag}</u> 
 ${text}
 
@@ -245,6 +247,7 @@ ${includedLink}`;
     const forwardName = msg.forward_from_chat.title;
     const forwardUsername = msg.forward_from_chat.username;
 
+    // Link to the original channel by username if they have one.
     if (forwardUsername) {
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
 ${text}

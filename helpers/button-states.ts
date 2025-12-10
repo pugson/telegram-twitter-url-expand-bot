@@ -55,21 +55,26 @@ export function getButtonState(
 
   // Add undo button if not in final state
   const buttonsWithUndo = [
-    ...(showUndo ? [{
-      text: "↩️ Undo",
-      callback_data: "undo",
-    }] : []),
+    ...(showUndo
+      ? [
+          {
+            text: "↩️ Undo",
+            callback_data: "undo",
+          },
+        ]
+      : []),
     ...baseButtons,
   ];
 
   const fixButton: InlineKeyboardButton = {
-      text: "🖼 Embed not working?",
-      callback_data: `switch:${userId}:${platform}`
+    text: "🖼 Embed not working?",
+    callback_data: `switch:${userId}:${platform}`,
   };
 
   const isSupportedPlatform = ["twitter", "instagram", "tiktok", "instagram-share", "facebook"].includes(platform);
   const rows: InlineKeyboardButton[][] = [];
 
+  // If we have time remaining, add countdown
   if (timeRemaining > 0) {
     rows.push([
       {
@@ -79,6 +84,7 @@ export function getButtonState(
       ...buttonsWithUndo,
     ]);
   } else {
+    // No time remaining but not final state
     rows.push(buttonsWithUndo);
   }
 
