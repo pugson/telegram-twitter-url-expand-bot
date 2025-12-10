@@ -7,7 +7,7 @@ export const INSTAGRAM_DOMAINS = [
   "uuinstagram.com",
 ];
 export const TIKTOK_DOMAINS = ["tnktok.com", "tfxktok.com", "kktiktok.com", "tiktxk.com", "tiktokez.com"];
-export const TWITTER_DOMAINS = ["fixupx.com", "fixvx.com", "twitterez.com"];
+export const TWITTER_DOMAINS = ["fxtwitter.com", "vxtwitter.com", "fixupx.com", "fixvx.com", "twitterez.com"];
 export const FACEBOOK_DOMAINS = ["facebed.com"];
 
 const checkLink = (link: string, platform: string) => {
