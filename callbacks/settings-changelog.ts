@@ -4,6 +4,7 @@ import { getSettings, updateSettings } from "../helpers/api";
 import { changelogSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
 import { checkAdminStatus } from "../helpers/admin";
+import { logger } from "../helpers/logger";
 
 const FIELD_NAME = "changelog";
 
@@ -27,19 +28,19 @@ export async function handleChangelogSettings(ctx: Context) {
   try {
     [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   } catch (error) {
-    console.error("Error getting settings:", error);
+    logger.error("Error getting settings: {error}", { error });
     return;
   }
   if (!isAdmin && settings?.settings_lock) {
     // return await ctx.reply("You need to be an admin to change Changelog settings.").catch(() => {
-    console.error(`[Error] [settings-changelog.ts:26] Failed to send message.`);
+    logger.error("Non-admin tried to change locked changelog settings");
     return;
     // });
   }
 
   if (data.includes("changelog:done")) {
     await ctx.answerCallbackQuery().catch(() => {
-      console.error(`[Error] Cannot answer callback query.`);
+      logger.error("Cannot answer changelog done callback query");
       return;
     });
     deleteMessage(chatId, messageId);
@@ -50,10 +51,10 @@ export async function handleChangelogSettings(ctx: Context) {
     try {
       await updateSettings(chatId, FIELD_NAME, false);
     } catch (error) {
-      console.error("Error updating settings:", error);
+      logger.error("Error updating changelog settings: {error}", { error });
     }
     await ctx.answerCallbackQuery().catch(() => {
-      console.error(`[Error] Cannot answer callback query.`);
+      logger.error("Cannot answer changelog off callback query");
       return;
     });
     await ctx.api.editMessageText(chatId, messageId, changelogSettingsTemplate(false), {
@@ -82,10 +83,10 @@ export async function handleChangelogSettings(ctx: Context) {
     try {
       await updateSettings(chatId, FIELD_NAME, true);
     } catch (error) {
-      console.error("Error updating settings:", error);
+      logger.error("Error updating changelog settings: {error}", { error });
     }
     await ctx.answerCallbackQuery().catch(() => {
-      console.error(`[Error] Cannot answer callback query.`);
+      logger.error("Cannot answer changelog on callback query");
       return;
     });
     await ctx.api
@@ -107,7 +108,7 @@ export async function handleChangelogSettings(ctx: Context) {
         },
       })
       .catch(() => {
-        console.error(`[Error] Cannot edit chanegelog settings.`);
+        logger.error("Cannot edit changelog on message");
         return;
       });
 

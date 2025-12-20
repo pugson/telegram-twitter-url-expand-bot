@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logger } from "./logger";
 
 export const getOGMetadata = async (link: string) => {
   if (!link) return;
@@ -9,6 +10,6 @@ export const getOGMetadata = async (link: string) => {
     });
     return response.data.data;
   } catch (error) {
-    console.error(error);
+    logger.error("Error fetching OG metadata: {error}", { error });
   }
 };

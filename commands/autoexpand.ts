@@ -9,6 +9,7 @@ import { handleMissingPermissions } from "../actions/missing-permissions";
 import { trackEvent } from "../helpers/analytics";
 import { isBanned } from "../helpers/banned";
 import { checkAdminStatus } from "../helpers/admin";
+import { logger } from "../helpers/logger";
 
 /**
  * Manage autoexpand settings
@@ -28,7 +29,7 @@ bot.command("autoexpand", async (ctx: Context) => {
   try {
     [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   } catch (error) {
-    console.error("Error getting settings:", error);
+    logger.error("Error getting settings: {error}", { error });
     return;
   }
   if (!isAdmin && settings?.settings_lock) {
@@ -38,7 +39,7 @@ bot.command("autoexpand", async (ctx: Context) => {
         disable_notification: true,
       });
     } catch (error) {
-      console.error(`[Error] [autoexpand.ts:37] Failed to send message.`, error);
+      logger.error("Failed to send autoexpand admin message: {error}", { error });
       return;
     }
   }
@@ -70,7 +71,7 @@ bot.command("autoexpand", async (ctx: Context) => {
           },
         });
       } catch (error) {
-        console.error(`[Error] [autoexpand.ts:60] Failed to send message.`, error);
+        logger.error("Failed to send autoexpand settings message: {error}", { error });
         return;
       }
 
@@ -83,7 +84,7 @@ bot.command("autoexpand", async (ctx: Context) => {
       try {
         await createSettings(chatId, true, true, false);
       } catch (error) {
-        console.error("Error creating settings:", error);
+        logger.error("Error creating settings: {error}", { error });
       }
       // Reply with template and buttons to control autoexpand settings (default: on)
       try {
@@ -107,14 +108,14 @@ bot.command("autoexpand", async (ctx: Context) => {
           },
         });
       } catch (error) {
-        console.error(`[Error] [autoexpand.ts:88] Failed to send message.`, error);
+        logger.error("Failed to send default autoexpand settings message: {error}", { error });
         return;
       }
 
       if (!privateChat) handleMissingPermissions(ctx);
     }
   } catch (error) {
-    console.error(`[Error] [autoexpand.ts:95] Failed to process autoexpand command.`, error);
+    logger.error("Failed to process autoexpand command: {error}", { error });
 
     // @ts-ignore
     if (error.description.includes("was blocked")) {

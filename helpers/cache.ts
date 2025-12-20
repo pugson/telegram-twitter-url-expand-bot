@@ -1,5 +1,6 @@
 import { Context } from "grammy";
 import NodeCache from "node-cache";
+import { logger } from "./logger";
 
 const memoryCache = new NodeCache({
   // Store message Context in memory for a longer duration
@@ -18,12 +19,14 @@ const memoryCache = new NodeCache({
 // Add cache stats logging every hour
 setInterval(() => {
   const stats = memoryCache.getStats();
-  console.log("[Cache Stats]", {
-    keys: stats.keys,
-    hits: stats.hits,
-    misses: stats.misses,
-    ksize: stats.ksize,
-    vsize: stats.vsize,
+  logger.debug("Cache stats: {stats}", {
+    stats: {
+      keys: stats.keys,
+      hits: stats.hits,
+      misses: stats.misses,
+      ksize: stats.ksize,
+      vsize: stats.vsize,
+    },
   });
 }, 60 * 60 * 1000);
 

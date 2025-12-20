@@ -4,6 +4,7 @@ import { deleteMessage } from "../actions/delete-message";
 import { checkIfCached, deleteFromCache, getFromCache } from "../helpers/cache";
 import { expandLink } from "../actions/expand-link";
 import { showBotActivity } from "../actions/show-bot-activity";
+import { logger } from "../helpers/logger";
 
 /**
  * Handle Yes/No button responses to expand links
@@ -27,7 +28,7 @@ export async function handleManualExpand(ctx: Context) {
     const identifier = `${originalChatId}:${originalMessageId}:${linkIndex}`;
 
     await ctx.answerCallbackQuery().catch(() => {
-      console.error(`[Error] Cannot answer callback query.`);
+      logger.error("Cannot answer expand no callback query");
     });
     // Delete message with buttons
     // Wipe it from cache
@@ -93,13 +94,12 @@ export async function handleManualExpand(ctx: Context) {
 
       trackEvent(`expand.yes.${platform}`);
     } catch (error) {
-      console.error(`[Error] Cannot answer expand callback query.`);
-      console.error(error);
+      logger.error("Cannot answer expand callback query: {error}", { error });
       return;
     }
 
     await ctx.answerCallbackQuery().catch(() => {
-      console.error(`[Error] Cannot answer callback query.`);
+      logger.error("Cannot answer expand yes callback query");
     });
     return;
   }

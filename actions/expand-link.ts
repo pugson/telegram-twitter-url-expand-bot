@@ -24,6 +24,7 @@ import { getOGMetadata } from "../helpers/og-metadata";
 import { saveToCache, deleteFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { resolveInstagramShare } from "../helpers/instagram-share";
+import { logger } from "../helpers/logger";
 
 type UserInfoType = {
   username: string | undefined;
@@ -122,7 +123,7 @@ export async function expandLink(
       url.search = newParams.toString();
       linkWithNoTrackers = url.toString();
     } catch (e) {
-      console.error("[Error] Could not clean Facebook parameters:", e);
+      logger.error("Could not clean Facebook parameters: {error}", { error: e });
       // If parsing fails, we keep the original expanded link to avoid breaking it,
       // even if it has trackers.
     }
@@ -201,7 +202,7 @@ export async function expandLink(
           });
         }
       } catch (error) {
-        console.error(error);
+        logger.error("Error sending Spotify content: {error}", { error });
         notifyAdmin(error);
 
         botReply = await ctx.api.sendMessage(
@@ -247,7 +248,7 @@ export async function expandLink(
             platform = "instagram-share"; // Track as Instagram share
           }
         } catch (error) {
-          console.error("[Error] Failed to resolve Instagram share link:", error);
+          logger.error("Failed to resolve Instagram share link: {error}", { error });
         }
       } else if (isInstagram(link)) {
         // Handle regular Instagram links (replace domain)
@@ -310,7 +311,7 @@ export async function expandLink(
             });
           }
         } catch (error) {
-          console.error(error);
+          logger.error("Error sending Spotify audio message: {error}", { error });
           notifyAdmin(error);
 
           botReply = await ctx.api.sendMessage(
@@ -430,11 +431,11 @@ export async function expandLink(
                 }
               } catch (error) {
                 if (error instanceof Error && error.message.includes("message to edit not found")) {
-                  console.warn("[Warning] Message has probably been already deleted.");
+                  logger.warn("Message has probably been already deleted");
                   // Clear all timeouts since we can't update this message anymore
                   timeouts.forEach((t) => clearTimeout(t));
                 } else {
-                  console.error("[Error] Failed to update buttons:", error);
+                  logger.error("Failed to update buttons: {error}", { error });
                 }
               }
             };
@@ -494,12 +495,12 @@ export async function expandLink(
               }, 60000);
               timeouts.push(finalTimeout);
             } catch (error) {
-              console.error("[Error] Failed to start button progression:", error);
+              logger.error("Failed to start button progression: {error}", { error });
               timeouts.forEach((t) => clearTimeout(t));
             }
           }
         } catch (error) {
-          console.error("[Error] Could not reply with an expanded link.", error);
+          logger.error("Could not reply with an expanded link: {error}", { error });
           throw error;
         }
       }
@@ -517,16 +518,14 @@ export async function expandLink(
         await saveToCache(identifier, ctx);
       }
     } catch (error) {
-      console.error("[Error] Could not delete original message or add to cache.", error);
+      logger.error("Could not delete original message or add to cache: {error}", { error });
     }
 
     if (topicId) {
       trackEvent(`expand.${expansionType}.inside-topic`);
     }
   } catch (error) {
-    console.error("[Error: expand-link.ts] Could not reply with an expanded link.");
-    // @ts-ignore
-    // console.error(error);
+    logger.error("Could not reply with an expanded link: {error}", { error });
     return;
   }
 }

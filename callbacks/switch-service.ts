@@ -2,6 +2,7 @@ import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { peekFromCache } from "../helpers/cache";
 import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/platforms";
+import { logger } from "../helpers/logger";
 
 export async function handleSwitchService(ctx: Context) {
   const answer = ctx.update?.callback_query;
@@ -110,7 +111,7 @@ export async function handleSwitchService(ctx: Context) {
         });
       }
     } catch (error) {
-      console.error(error);
+      logger.error("Error switching service: {error}", { error });
       await ctx.answerCallbackQuery({ text: "Error switching service." });
     }
   }

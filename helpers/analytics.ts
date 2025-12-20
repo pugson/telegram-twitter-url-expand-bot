@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logger } from "./logger";
 
 async function createEvent(event: string, timestamp: string, note?: string) {
   await axios.post(
@@ -29,7 +30,7 @@ export const trackEvent = async (event: string, note?: string) => {
     const timestamp = new Date().toISOString();
     await createEvent(event, timestamp, extraNote);
   } catch (error) {
-    console.error(error);
+    logger.error("Error tracking event: {error}", { error });
     return;
   }
 };

@@ -10,6 +10,7 @@ import { handlePermissionsSettings } from "./settings-permissions";
 import { handleUndo } from "./undo";
 import { handleSwitchService } from "./switch-service";
 import { isBanned } from "../helpers/banned";
+import { logger } from "../helpers/logger";
 
 // Multiple bot.on("callback_query") functions cannot run in parallel.
 // The bot will only register the first one and ignore the rest.
@@ -34,6 +35,6 @@ bot.on("callback_query", async (ctx: Context) => {
 
   // Save anonymous chat member count to database
   getMemberCount(chatId).catch(() => {
-    console.warn(`[Warning] Could not get member count for chat ${chatId}`);
+    logger.warn("Could not get member count for chat {chatId}", { chatId });
   });
 });

@@ -1,6 +1,7 @@
 // Thanks to @borodutch for this snippet.
 // https://github.com/backmeupplz/grammy-middlewares/blob/main/src/middlewares/onlyAdmin.ts
 import { Context } from "grammy";
+import { logger } from "./logger";
 
 export async function checkAdminStatus(ctx: Context) {
   try {
@@ -28,8 +29,7 @@ export async function checkAdminStatus(ctx: Context) {
     // Not an admin by default
     return false;
   } catch (e) {
-    console.error("[Error] Unable to check admin status.");
-    console.error(e);
+    logger.error("Unable to check admin status: {error}", { error: e });
     return false;
   }
 }

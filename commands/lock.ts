@@ -8,6 +8,7 @@ import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { isBanned } from "../helpers/banned";
 import { checkAdminStatus } from "../helpers/admin";
+import { logger } from "../helpers/logger";
 
 /**
  * Manage locking settings
@@ -26,7 +27,7 @@ bot.command("lock", async (ctx: Context) => {
   try {
     [settings, isAdmin] = await Promise.all([getSettings(chatId), checkAdminStatus(ctx)]);
   } catch (error) {
-    console.error("Error getting settings:", error);
+    logger.error("Error getting settings: {error}", { error });
     return;
   }
   if (!isAdmin && settings?.settings_lock) {
@@ -36,7 +37,7 @@ bot.command("lock", async (ctx: Context) => {
         disable_notification: true,
       });
     } catch (error) {
-      console.error(`[Error] [lock.ts:34] Failed to send message.`, error);
+      logger.error("Failed to send lock admin message: {error}", { error });
       return;
     }
   }
@@ -68,7 +69,7 @@ bot.command("lock", async (ctx: Context) => {
           },
         });
       } catch (error) {
-        console.error(`[Error] [lock.ts:58] Failed to send message.`, error);
+        logger.error("Failed to send lock settings message: {error}", { error });
         return;
       }
     } else {
@@ -77,7 +78,7 @@ bot.command("lock", async (ctx: Context) => {
       try {
         await createSettings(chatId, false, true, false);
       } catch (error) {
-        console.error("Error creating settings:", error);
+        logger.error("Error creating settings: {error}", { error });
       }
       // Reply with template and buttons to control settings_lock (default: off)
       try {
@@ -101,12 +102,12 @@ bot.command("lock", async (ctx: Context) => {
           },
         });
       } catch (error) {
-        console.error(`[Error] [lock.ts:84] Failed to send message.`, error);
+        logger.error("Failed to send default lock settings message: {error}", { error });
         return;
       }
     }
   } catch (error) {
-    console.error(`[Error] [lock.ts:91] Failed to process lock command.`, error);
+    logger.error("Failed to process lock command: {error}", { error });
 
     // @ts-ignore
     if (error.description.includes("was blocked")) {

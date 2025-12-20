@@ -24,6 +24,7 @@ import {
 } from "./platforms";
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
+import { logger } from "./logger";
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
@@ -202,7 +203,7 @@ ${link}
 
 ${url ? url : ""}`;
     } catch (error) {
-      console.error(error);
+      logger.error("Error fetching HN metadata for template: {error}", { error });
       notifyAdmin(error);
     }
   }

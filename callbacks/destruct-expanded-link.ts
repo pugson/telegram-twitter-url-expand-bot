@@ -2,6 +2,7 @@ import { Context } from "grammy";
 import { deleteMessage } from "../actions/delete-message";
 import { trackEvent } from "../helpers/analytics";
 import { getButtonState } from "../helpers/button-states";
+import { logger } from "../helpers/logger";
 
 /**
  * Handle responses to expanded link's "❌ Delete" button
@@ -29,7 +30,7 @@ export async function handleExpandedLinkDestruction(ctx: Context) {
           show_alert: true,
         })
         .catch(() => {
-          console.error(`[Error] Cannot answer callback query.`);
+          logger.error("Cannot answer destruct not-author callback query");
           return;
         });
 
@@ -39,7 +40,7 @@ export async function handleExpandedLinkDestruction(ctx: Context) {
 
     deleteMessage(chatId, messageId);
     await ctx.answerCallbackQuery().catch(() => {
-      console.error(`[Error] Cannot answer callback query.`);
+      logger.error("Cannot answer destruct callback query");
       return;
     });
     trackEvent(`destruct.${timeRemaining}.author`);

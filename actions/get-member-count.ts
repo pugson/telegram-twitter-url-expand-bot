@@ -1,5 +1,6 @@
 import { bot } from "..";
 import { updateSettings } from "../helpers/api";
+import { logger } from "../helpers/logger";
 
 /**
  * Save group chat size to database for anonymous analytics.
@@ -16,12 +17,10 @@ export const getMemberCount = async (chatId: number) => {
     try {
       await updateSettings(chatId, "chat_size", memberCount);
     } catch (error) {
-      console.error("Error updating chat size:", error);
+      logger.error("Error updating chat size: {error}", { error });
     }
   } catch (error) {
-    console.error(`[Error] Could not get member count.`);
-    // @ts-ignore
-    console.error(error.message);
+    logger.error("Could not get member count: {error}", { error });
     return;
   }
 };

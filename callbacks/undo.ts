@@ -3,6 +3,7 @@ import { trackEvent } from "../helpers/analytics";
 import { peekFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/platforms";
+import { logger } from "../helpers/logger";
 
 /**
  * Handle undo button for expanded links
@@ -17,7 +18,7 @@ export async function handleUndo(ctx: Context) {
 
   // Discard malformed messages
   if (!answer || !chatId || !messageId || !data) {
-    console.error("[Error] Missing data in undo callback", { chatId, messageId, data });
+    logger.error("Missing data in undo callback: {chatId} {messageId} {data}", { chatId, messageId, data });
     return;
   }
 
@@ -31,7 +32,7 @@ export async function handleUndo(ctx: Context) {
         // Get the message text or caption
         const messageText = answer.message?.text ?? answer.message?.caption;
         if (!messageText) {
-          console.error("[Error] No message text in undo callback");
+          logger.error("No message text in undo callback");
           return;
         }
 
@@ -97,7 +98,7 @@ export async function handleUndo(ctx: Context) {
         }
 
         if (!platform) {
-          console.error("[Error] Could not determine platform from message.");
+          logger.error("Could not determine platform from message");
           return;
         }
 
@@ -117,15 +118,12 @@ export async function handleUndo(ctx: Context) {
           const error = editError as Error;
           // Message not found errors are expected if message was deleted
           if (error.message.includes("message to edit not found")) {
-            console.warn("[Warning] Cannot update buttons. Message was probably deleted.");
+            logger.warn("Cannot update buttons. Message was probably deleted");
           } else {
-            console.error("[Error] Failed to edit message:", {
+            logger.error("Failed to edit message: {error} {chatId} {messageId}", {
               error: error.message,
-              parameters: {
-                chatId,
-                messageId,
-                undoText,
-              },
+              chatId,
+              messageId,
             });
           }
         }
@@ -140,12 +138,12 @@ export async function handleUndo(ctx: Context) {
         });
       }
     } catch (error) {
-      console.error("[Error] Cannot process undo", error);
+      logger.error("Cannot process undo: {error}", { error });
     }
   }
 
   // Answer the callback query to remove the loading state
   await ctx.answerCallbackQuery().catch(() => {
-    console.error("[Error] Cannot answer undo callback query.");
+    logger.error("Cannot answer undo callback query");
   });
 }
