@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logger } from "./logger";
 
 interface MetadataResponse {
   data: {
@@ -29,13 +30,13 @@ export async function resolveInstagramShare(shareUrl: string): Promise<string | 
     return null;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("[Error] Failed to resolve Instagram share URL:", {
+      logger.error("Failed to resolve Instagram share URL: {status} {statusText} {url}", {
         status: error.response?.status,
         statusText: error.response?.statusText,
         url: shareUrl
       });
     } else {
-      console.error("[Error] Unexpected error resolving Instagram share URL:", error);
+      logger.error("Unexpected error resolving Instagram share URL: {error}", { error });
     }
     return null;
   }

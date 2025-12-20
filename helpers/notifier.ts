@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logger } from "./logger";
 
 /**
  * Notify the admin on Telegram when an error occurs.
@@ -11,7 +12,6 @@ export const notifyAdmin = async (message: any): Promise<void> => {
       text: JSON.stringify(message),
     });
   } catch (error) {
-    console.error(`[Error] Could not send Adming Telegram notification.`);
-    console.error(error);
+    logger.error("Could not send admin Telegram notification: {error}", { error });
   }
 };

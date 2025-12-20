@@ -13,6 +13,7 @@ import {
 } from "../helpers/platforms";
 import { isBanned } from "../helpers/banned";
 import { askToExpandTemplate } from "../helpers/templates";
+import { logger } from "../helpers/logger";
 
 /**
  * Sends a reply in chat asking the user if they want to expand
@@ -84,17 +85,11 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
         },
       })
       .catch((error) => {
-        console.error(`[Error] Could not send ask-to-expand message.`);
-        console.error(error);
+        logger.error("Could not send ask-to-expand message: {error}", { error });
         return;
       });
   } catch (error) {
-    // @ts-ignore
-    console.error({
-      message: "Error sending ask-to-expand message",
-      // @ts-ignore
-      error: error.message,
-    });
+    logger.error("Error sending ask-to-expand message: {error}", { error });
     return;
   }
 };

@@ -5,6 +5,7 @@ import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { handleMissingPermissions } from "../actions/missing-permissions";
 import { isBanned } from "../helpers/banned";
+import { logger } from "../helpers/logger";
 
 bot.command("permissions", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -19,7 +20,7 @@ bot.command("permissions", async (ctx: Context) => {
     deleteMessage(chatId, msgId);
     handleMissingPermissions(ctx, true);
   } catch (error) {
-    console.error(`[Error] Cannot send permissions message.`, error);
+    logger.error("Cannot send permissions message: {error}", { error });
     return;
   }
 

@@ -1,5 +1,6 @@
 import { Context } from "grammy";
 import { bot } from "..";
+import { logger } from "../helpers/logger";
 // import { handleMissingPermissions } from "./missing-permissions";
 
 /**
@@ -13,7 +14,7 @@ export const deleteMessage = async (chatId: string | number, msgId: number, ctx?
   // Bot will crash if it tries to delete a message that it cannot delete.
   try {
     await bot.api.deleteMessage(chatId, msgId).catch(() => {
-      console.warn(`[Warning] Could not delete message.`);
+      logger.warn("Could not delete message");
       return;
     });
   } catch (error) {

@@ -7,6 +7,7 @@ import { isBanned } from "../helpers/banned";
 import { notifyAdmin } from "../helpers/notifier";
 import { safeReply } from "../helpers/templates";
 import { listOfAllPlatforms } from "../helpers/platforms";
+import { logger } from "../helpers/logger";
 
 bot.command("start", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -66,16 +67,13 @@ You can also add me to your channel and I will edit messages with links to expan
             }
       );
     } catch (replyError) {
-      console.error(`[Error] [start.ts:61] Failed to send start message.`, replyError);
+      logger.error("Failed to send start message: {error}", { error: replyError });
       return;
     }
 
     trackEvent("command.start");
   } catch (error) {
-    console.error({
-      message: "Error replying to the start command",
-      error,
-    });
+    logger.error("Error replying to the start command: {error}", { error });
 
     // @ts-ignore
     if (error.description.includes("was blocked")) {

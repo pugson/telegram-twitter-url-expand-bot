@@ -2,6 +2,7 @@ import { Context } from "grammy";
 import { notifyAdmin } from "../helpers/notifier";
 import { hasPermissionToDeleteMessageTemplate, missingPermissionToDeleteMessageTemplate } from "../helpers/templates";
 import { getSettings } from "../helpers/api";
+import { logger } from "../helpers/logger";
 
 /**
  * Check if bot has permission to delete messages and send a message if it doesn’t.
@@ -46,7 +47,7 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
           },
         })
         .catch(() => {
-          console.error(`[Error] [missing-permissions.ts:49] Failed to send permissions warning template.`);
+          logger.error("Failed to send permissions warning template");
           return;
         });
     };
@@ -68,12 +69,12 @@ export const handleMissingPermissions = async (ctx: Context, fromCommand?: boole
 
         await replyWithMessageAboutPermissions(missingPermissionToDeleteMessageTemplate);
       } catch (error) {
-        console.error(error);
+        logger.error("Error checking permissions settings: {error}", { error });
         notifyAdmin(error);
       }
     }
   } catch (error: any) {
-    console.error(error);
+    logger.error("Error handling missing permissions: {error}", { error });
     notifyAdmin(error);
     return;
   }

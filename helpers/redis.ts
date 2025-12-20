@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import { logger } from "./logger";
 
 let instance: Redis | undefined = undefined;
 
@@ -19,11 +20,11 @@ export const getRedisClient = () => {
   });
 
   instance.on("error", (err) => {
-    console.error("Redis connection error:", err);
+    logger.error("Redis connection error: {error}", { error: err });
   });
 
   instance.on("connect", () => {
-    console.log("Redis connected successfully");
+    logger.info("Redis connected successfully");
   });
 
   return instance;

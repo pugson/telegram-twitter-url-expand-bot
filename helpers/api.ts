@@ -1,5 +1,6 @@
 import fetch from "isomorphic-unfetch";
 import { getRedisClient } from "./redis";
+import { logger } from "./logger";
 
 // @ts-ignore
 globalThis.fetch = fetch;
@@ -39,7 +40,7 @@ const parseRedisHash = (hash: Record<string, string>): ChatSettings | null => {
  */
 export const getSettings = async (chatId: number): Promise<ChatSettings | null> => {
   try {
-    console.log("Getting settings for chat ID:", chatId);
+    logger.debug("Getting settings for chat ID: {chatId}", { chatId });
     const key = `chat:${chatId}`;
     const hash = await redis.hgetall(key);
     
@@ -50,7 +51,7 @@ export const getSettings = async (chatId: number): Promise<ChatSettings | null> 
 
     return parseRedisHash(hash);
   } catch (error) {
-    console.error(error);
+    logger.error("Error getting settings: {error}", { error });
     return null;
   }
 };
@@ -70,7 +71,7 @@ export const createSettings = async (
   settingsLockValue: boolean
 ): Promise<ChatSettings | null> => {
   try {
-    console.log("Creating settings for chat ID:", chatId);
+    logger.debug("Creating settings for chat ID: {chatId}", { chatId });
     const key = `chat:${chatId}`;
     
     const settings = {
@@ -94,7 +95,7 @@ export const createSettings = async (
       settings_lock: settingsLockValue,
     };
   } catch (error) {
-    console.error(error);
+    logger.error("Error creating settings: {error}", { error });
     return null;
   }
 };
@@ -112,14 +113,14 @@ export const updateSettings = async (
   value: ChatSettings[keyof ChatSettings]
 ): Promise<ChatSettings | null> => {
   try {
-    console.log("Updating settings for chat ID:", id);
+    logger.debug("Updating settings for chat ID: {id}", { id });
     const key = `chat:${id}`;
     
     // Check if chat exists
     const exists = await redis.exists(key);
     
     if (!exists) {
-      console.warn("[Error] Unable to get records. No settings found for chat ID:", id);
+      logger.warn("No settings found for chat ID: {id}", { id });
       return null;
     }
 
@@ -133,7 +134,7 @@ export const updateSettings = async (
     const hash = await redis.hgetall(key);
     return parseRedisHash(hash);
   } catch (error) {
-    console.error(error);
+    logger.error("Error updating settings: {error}", { error });
     return null;
   }
 };

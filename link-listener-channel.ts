@@ -4,6 +4,7 @@ import { LINK_REGEX } from "./helpers/link-regex";
 import { isDribbble, isInstagram, isPosts, isReddit, isTikTok, isThreads, isYouTubeShort, isFacebook } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { isBanned } from "./helpers/banned";
+import { logger } from "./helpers/logger";
 
 bot.on("channel_post::url", async (ctx: Context) => {
   const post = ctx.update.channel_post;
@@ -52,13 +53,13 @@ bot.on("channel_post::url", async (ctx: Context) => {
           caption: expandedLinksMessage,
         })
         .catch(() => {
-          console.error("[Error1] Channel message cannot be edited.");
+          logger.error("Channel caption cannot be edited");
           return;
         });
       trackEvent(`edit.channel.caption`);
     } else {
       await ctx.editMessageText(expandedLinksMessage).catch(() => {
-        console.error("[Error2] Channel message cannot be edited.");
+        logger.error("Channel message text cannot be edited");
         return;
       });
       trackEvent(`edit.channel.message`);
@@ -66,7 +67,7 @@ bot.on("channel_post::url", async (ctx: Context) => {
 
     trackEvent(`expand.channel.${platform}`);
   } catch (error) {
-    console.error("[Error] Channel message cannot be edited.");
+    logger.error("Channel message cannot be edited: {error}", { error });
     return;
   }
 });

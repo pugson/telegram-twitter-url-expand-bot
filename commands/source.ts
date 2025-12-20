@@ -5,6 +5,7 @@ import { deleteMessage } from "../actions/delete-message";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { isBanned } from "../helpers/banned";
 import { safeReply } from "../helpers/templates";
+import { logger } from "../helpers/logger";
 
 bot.command("source", async (ctx: Context) => {
   if (!ctx.msg) return;
@@ -30,7 +31,7 @@ For feature requests and bug reports please open an issue on GitHub.
       }
     );
   } catch (error) {
-    console.error(`[Error] Cannot send source message.`, error);
+    logger.error("Cannot send source message: {error}", { error });
     return;
   }
 

@@ -56,7 +56,8 @@ bot.on("message::url", async (ctx: Context) => {
       await createSettings(chatId, false, true, false);
     }
   } catch (error) {
-    console.error("Error handling settings:", error);
+    const { logger } = await import("./helpers/logger");
+    logger.error("Error handling settings: {error}", { error });
     // Default to manual expand if settings fail
     autoexpand = false;
   }
