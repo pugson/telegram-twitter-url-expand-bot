@@ -60,7 +60,7 @@ const ALL_PLATFORMS = [
   "Instagram",
   "TikTok",
   "Reddit",
-  "Spotify",
+  // "Spotify", // disabled for now
   "Hacker News",
   "Dribbble",
   "Bluesky",
