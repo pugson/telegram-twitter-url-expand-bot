@@ -56,7 +56,7 @@ export const isSpotifyEpisode = (link: string) => checkLink(link, "open.spotify.
 export const isSpotifyShow = (link: string) => checkLink(link, "open.spotify.com/show");
 
 const ALL_PLATFORMS = [
-  "Twitter",
+  "Twitter/X",
   "Instagram",
   "TikTok",
   "Reddit",
@@ -64,9 +64,16 @@ const ALL_PLATFORMS = [
   "Hacker News",
   "Dribbble",
   "Bluesky",
+  "Posts․cv",
   "Threads",
   "YouTube Shorts",
   "Facebook",
 ];
 
-export const listOfAllPlatforms = ALL_PLATFORMS.join(", ");
+/**
+ * Canonical, user-facing list of supported services.
+ * Keep this in sync with link detection + expanding logic.
+ */
+export const SUPPORTED_SERVICES = ALL_PLATFORMS as readonly string[];
+
+export const listOfAllPlatforms = SUPPORTED_SERVICES.join(", ");
