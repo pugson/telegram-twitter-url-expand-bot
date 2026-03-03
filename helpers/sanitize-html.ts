@@ -1,4 +1,16 @@
 /**
+ * Escape plain text for safe insertion into Telegram HTML messages.
+ * Use this for external plain text (titles, usernames, descriptions)
+ * that should render as literal text, not be parsed as HTML.
+ */
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/**
  * Sanitize HTML content for Telegram's supported HTML subset.
  * Converts block-level tags to newlines, keeps supported inline tags,
  * and strips everything else.
