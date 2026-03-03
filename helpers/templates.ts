@@ -195,12 +195,13 @@ export const expandedMessageTemplate = async (
     try {
       const hnPostId = link?.split("id=")[1];
       const metadata = await getHackerNewsMetadata(hnPostId);
-      const { title, user, time_ago, comments_count, url } = metadata.post;
+      const { title, user, time_ago, comments_count, url, content } = metadata.post;
+      const body = content && content.trim() !== "" ? `\n${content}\n` : "";
 
       includedLink = `<b>${title ? title : "Comment"}</b>
 ${comments_count} replies | ${time_ago} by ${user}
 ${link}
-
+${body}
 ${url ? url : ""}`;
     } catch (error) {
       logger.error("Error fetching HN metadata for template: {error}", { error });
