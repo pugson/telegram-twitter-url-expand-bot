@@ -25,6 +25,7 @@ import {
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
 import { logger } from "./logger";
+import { sanitizeHtmlForTelegram } from "./sanitize-html";
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
@@ -196,7 +197,9 @@ export const expandedMessageTemplate = async (
       const hnPostId = link?.split("id=")[1];
       const metadata = await getHackerNewsMetadata(hnPostId);
       const { title, user, time_ago, comments_count, url, content } = metadata.post;
-      const body = content && content.trim() !== "" ? `\n${content}\n` : "";
+      const sanitized = content ? sanitizeHtmlForTelegram(content) : "";
+      const truncated = sanitized.length > 3072 ? sanitized.slice(0, 3072) + "…" : sanitized;
+      const body = truncated !== "" ? `\n${truncated}\n` : "";
 
       includedLink = `<b>${title ? title : "Comment"}</b>
 ${comments_count} replies | ${time_ago} by ${user}
