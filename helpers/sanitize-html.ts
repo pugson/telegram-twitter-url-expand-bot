@@ -2,12 +2,25 @@
  * Escape plain text for safe insertion into Telegram HTML messages.
  * Use this for external plain text (titles, usernames, descriptions)
  * that should render as literal text, not be parsed as HTML.
+ * 
+ * Note: This escapes plain text. If the input might already contain HTML entities,
+ * use escapeHtmlSafe() instead to avoid double-encoding.
  */
 export function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+/**
+ * Safely escape text that might already contain HTML entities.
+ * Decodes any existing entities first, then re-escapes to avoid double-encoding.
+ * Use this for external API data that might be pre-encoded.
+ */
+export function escapeHtmlSafe(text: string): string {
+  const decoded = decodeHtmlEntities(text);
+  return escapeHtml(decoded);
 }
 
 /**
@@ -60,20 +73,58 @@ export function sanitizeHtmlForTelegram(html: string): string {
 }
 
 /**
+ * Decode HTML entities to their character equivalents.
+ */
+function decodeHtmlEntities(text: string): string {
+  const entities: Record<string, string> = {
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&quot;": '"',
+    "&apos;": "'",
+    "&nbsp;": " ",
+    "&ndash;": "–",
+    "&mdash;": "—",
+    "&hellip;": "…",
+    "&rsquo;": "'",
+    "&lsquo;": "'",
+    "&rdquo;": '"',
+    "&ldquo;": '"',
+    "&bull;": "•",
+    "&middot;": "·",
+    "&trade;": "™",
+    "&copy;": "©",
+    "&reg;": "®",
+    "&deg;": "°",
+    "&plusmn;": "±",
+    "&times;": "×",
+    "&divide;": "÷",
+    "&ne;": "≠",
+    "&le;": "≤",
+    "&ge;": "≥",
+    "&infin;": "∞",
+    "&asymp;": "≈",
+    "&equiv;": "≡",
+    "&larr;": "←",
+    "&rarr;": "→",
+    "&uarr;": "↑",
+    "&darr;": "↓",
+    "&harr;": "↔",
+  };
+
+  return text
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&[a-z]+;/gi, (match) => entities[match.toLowerCase()] || match);
+}
+
+/**
  * Safely truncate HTML content without breaking tags or entities.
  * Strips all HTML tags and decodes entities, truncates to maxLength, then adds ellipsis if needed.
  */
 export function truncateHtml(html: string, maxLength: number): string {
   let plainText = html.replace(/<[^>]*>/g, "");
-  
-  plainText = plainText
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'");
+  plainText = decodeHtmlEntities(plainText);
   
   if (plainText.length <= maxLength) {
     return plainText;

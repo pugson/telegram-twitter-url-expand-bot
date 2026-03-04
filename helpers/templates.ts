@@ -25,7 +25,7 @@ import {
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
 import { logger } from "./logger";
-import { sanitizeHtmlForTelegram, escapeHtml, truncateHtml } from "./sanitize-html";
+import { sanitizeHtmlForTelegram, escapeHtml, escapeHtmlSafe, truncateHtml } from "./sanitize-html";
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
@@ -201,8 +201,8 @@ export const expandedMessageTemplate = async (
       const truncated = truncateHtml(sanitized, 3072);
       const body = truncated !== "" ? `\n${escapeHtml(truncated)}\n` : "";
 
-      includedLink = `<b>${title ? escapeHtml(title) : "Comment"}</b>
-${comments_count} replies | ${time_ago} by ${user ? escapeHtml(user) : "unknown"}
+      includedLink = `<b>${title ? escapeHtmlSafe(title) : "Comment"}</b>
+${comments_count} replies | ${time_ago} by ${user ? escapeHtmlSafe(user) : "unknown"}
 ${link}
 ${body}
 ${url ? url : ""}`;

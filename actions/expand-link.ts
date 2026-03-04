@@ -25,7 +25,7 @@ import { saveToCache, deleteFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { resolveInstagramShare } from "../helpers/instagram-share";
 import { logger } from "../helpers/logger";
-import { escapeHtml } from "../helpers/sanitize-html";
+import { escapeHtmlSafe } from "../helpers/sanitize-html";
 
 type UserInfoType = {
   username: string | undefined;
@@ -177,7 +177,7 @@ export async function expandLink(
 
         botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
           ...replyOptions,
-          caption: template + `\n\n<b>${escapeHtml(truncatedTitle)}</b>\n${escapeHtml(truncatedDesc)}`,
+          caption: template + `\n\n<b>${escapeHtmlSafe(truncatedTitle)}</b>\n${escapeHtmlSafe(truncatedDesc)}`,
           parse_mode: "HTML",
         });
 
@@ -187,7 +187,7 @@ export async function expandLink(
           await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
             ...replyOptions,
             title: truncatedTitle,
-            caption: escapeHtml(audioDesc),
+            caption: escapeHtmlSafe(audioDesc),
             thumbnail: new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=200&h=200`)),
             parse_mode: "HTML",
             reply_markup: {
@@ -286,7 +286,7 @@ export async function expandLink(
 
           botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
             ...replyOptions,
-            caption: template + `\n\n<b>${escapeHtml(truncatedTitle)}</b>\n${escapeHtml(truncatedDesc)}`,
+            caption: template + `\n\n<b>${escapeHtmlSafe(truncatedTitle)}</b>\n${escapeHtmlSafe(truncatedDesc)}`,
             parse_mode: "HTML",
           });
 
@@ -296,7 +296,7 @@ export async function expandLink(
             await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
               ...replyOptions,
               title: truncatedTitle,
-              caption: escapeHtml(audioDesc),
+              caption: escapeHtmlSafe(audioDesc),
               thumbnail: new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=200&h=200`)),
               parse_mode: "HTML",
               reply_markup: {
