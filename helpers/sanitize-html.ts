@@ -47,31 +47,45 @@ export function sanitizeHtmlForTelegram(html: string): string {
   const allowedTags = /^\/?(b|strong|i|em|u|ins|s|strike|del|code|pre|blockquote|tg-spoiler)$/i;
   const allowedTagsWithAttrs = /^(a)\s/i;
 
-  // Strip all tags that are not in the allowed list
-  let openAnchorTags = 0;
+  // Strip all tags that are not in the allowed list and track balance
+  const openTags: string[] = [];
   result = result.replace(/<([^>]*)>/g, (match, inner: string) => {
     const tagContent = inner.trim();
 
     // Closing tag: </tagname>
     if (tagContent.startsWith("/")) {
-      const tagName = tagContent.slice(1).trim();
-      if (allowedTags.test("/" + tagName)) return match;
-      if (/^a$/i.test(tagName) && openAnchorTags > 0) {
-        openAnchorTags--;
-        return match;
+      const tagName = tagContent.slice(1).trim().toLowerCase();
+      if (allowedTags.test("/" + tagName) || tagName === "a") {
+        const lastOpenIndex = openTags.lastIndexOf(tagName);
+        if (lastOpenIndex !== -1) {
+          openTags.splice(lastOpenIndex, 1);
+          return match;
+        }
+        return "";
       }
       return "";
     }
 
     // Self-closing or opening tag
-    const tagName = tagContent.split(/[\s/>]/)[0];
-    if (allowedTags.test(tagName)) return match;
+    const tagName = tagContent.split(/[\s/>]/)[0].toLowerCase();
+    if (allowedTags.test(tagName)) {
+      if (!tagContent.includes("/")) {
+        openTags.push(tagName);
+      }
+      return match;
+    }
     if (allowedTagsWithAttrs.test(tagContent)) {
-      openAnchorTags++;
+      openTags.push(tagName);
       return match;
     }
     return "";
   });
+
+  // Close any remaining unclosed tags
+  while (openTags.length > 0) {
+    const tag = openTags.pop();
+    result += `</${tag}>`;
+  }
 
   // Collapse excessive newlines (more than 2 consecutive)
   result = result.replace(/\n{3,}/g, "\n\n");
