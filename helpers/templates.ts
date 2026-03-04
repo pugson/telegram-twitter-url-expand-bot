@@ -196,6 +196,7 @@ export const expandedMessageTemplate = async (
     try {
       const hnPostId = link?.split("id=")[1];
       const metadata = await getHackerNewsMetadata(hnPostId);
+      if (!metadata?.post) return expandedMessageTemplate;
       const { title, user, time_ago, comments_count, url, content } = metadata.post;
       const sanitized = content ? sanitizeHtmlForTelegram(content) : "";
       const { html: truncated, isPlainText } = truncateHtml(sanitized, 3072);
