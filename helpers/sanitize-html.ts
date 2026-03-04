@@ -35,7 +35,7 @@ export function sanitizeHtmlForTelegram(html: string): string {
   const allowedTagsWithAttrs = /^(a)\s/i;
 
   // Strip all tags that are not in the allowed list
-  result = result.replace(/<\/?([^>]*)>/g, (match, inner: string) => {
+  result = result.replace(/<([^>]*)>/g, (match, inner: string) => {
     const tagContent = inner.trim();
 
     // Closing tag: </tagname>
