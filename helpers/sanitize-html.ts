@@ -48,6 +48,7 @@ export function sanitizeHtmlForTelegram(html: string): string {
   const allowedTagsWithAttrs = /^(a)\s/i;
 
   // Strip all tags that are not in the allowed list
+  let openAnchorTags = 0;
   result = result.replace(/<([^>]*)>/g, (match, inner: string) => {
     const tagContent = inner.trim();
 
@@ -55,14 +56,20 @@ export function sanitizeHtmlForTelegram(html: string): string {
     if (tagContent.startsWith("/")) {
       const tagName = tagContent.slice(1).trim();
       if (allowedTags.test("/" + tagName)) return match;
-      if (/^a$/i.test(tagName)) return match;
+      if (/^a$/i.test(tagName) && openAnchorTags > 0) {
+        openAnchorTags--;
+        return match;
+      }
       return "";
     }
 
     // Self-closing or opening tag
     const tagName = tagContent.split(/[\s/>]/)[0];
     if (allowedTags.test(tagName)) return match;
-    if (allowedTagsWithAttrs.test(tagContent)) return match;
+    if (allowedTagsWithAttrs.test(tagContent)) {
+      openAnchorTags++;
+      return match;
+    }
     return "";
   });
 
@@ -148,6 +155,7 @@ export function truncateHtml(
   
   const plainText = html.replace(/<[^>]*>/g, "");
   const plainTextDecoded = decodeHtmlEntities(plainText);
-  
-  return { html: plainTextDecoded.slice(0, maxLength) + "…", isPlainText: true };
+  const needsTruncation = plainTextDecoded.length > maxLength;
+
+  return { html: plainTextDecoded.slice(0, maxLength) + (needsTruncation ? "…" : ""), isPlainText: true };
 }
