@@ -129,19 +129,19 @@ function decodeHtmlEntities(text: string): string {
 /**
  * Safely truncate HTML content without breaking tags or entities.
  * Returns { html: string, isPlainText: boolean } where:
- * - If content fits, returns original HTML with tags (isPlainText: false)
- * - If truncation needed, strips tags and returns decoded plain text (isPlainText: true)
+ * - If HTML itself fits within maxLength, returns it with tags preserved (isPlainText: false)
+ * - Otherwise strips tags/decodes entities and returns truncated plain text (isPlainText: true)
  */
 export function truncateHtml(
   html: string,
   maxLength: number
 ): { html: string; isPlainText: boolean } {
-  let plainText = html.replace(/<[^>]*>/g, "");
-  const plainTextDecoded = decodeHtmlEntities(plainText);
-  
-  if (plainTextDecoded.length <= maxLength) {
+  if (html.length <= maxLength) {
     return { html, isPlainText: false };
   }
+  
+  let plainText = html.replace(/<[^>]*>/g, "");
+  const plainTextDecoded = decodeHtmlEntities(plainText);
   
   return { html: plainTextDecoded.slice(0, maxLength) + "…", isPlainText: true };
 }
