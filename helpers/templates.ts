@@ -199,7 +199,7 @@ export const expandedMessageTemplate = async (
       const { title, user, time_ago, comments_count, url, content } = metadata.post;
       const sanitized = content ? sanitizeHtmlForTelegram(content) : "";
       const truncated = truncateHtml(sanitized, 3072);
-      const body = truncated !== "" ? `\n${truncated}\n` : "";
+      const body = truncated !== "" ? `\n${escapeHtml(truncated)}\n` : "";
 
       includedLink = `<b>${title ? escapeHtml(title) : "Comment"}</b>
 ${comments_count} replies | ${time_ago} by ${user ? escapeHtml(user) : "unknown"}
