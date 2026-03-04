@@ -53,15 +53,6 @@ export function sanitizeHtmlForTelegram(html: string): string {
     return "";
   });
 
-  // Decode common HTML entities
-  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)));
-  result = result.replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)));
-  result = result.replace(/&amp;/g, "&");
-  result = result.replace(/&lt;/g, "<");
-  result = result.replace(/&gt;/g, ">");
-  result = result.replace(/&quot;/g, '"');
-  result = result.replace(/&apos;/g, "'");
-
   // Collapse excessive newlines (more than 2 consecutive)
   result = result.replace(/\n{3,}/g, "\n\n");
 
