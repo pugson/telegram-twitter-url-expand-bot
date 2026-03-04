@@ -32,7 +32,7 @@ export function sanitizeHtmlForTelegram(html: string): string {
   let result = html;
 
   // Convert <p> tags to double newlines
-  result = result.replace(/<p[^>]*>/gi, "\n\n");
+  result = result.replace(/<p\b[^>]*>/gi, "\n\n");
   result = result.replace(/<\/p>/gi, "");
 
   // Convert <br> tags to newlines
