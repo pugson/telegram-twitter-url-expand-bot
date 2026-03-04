@@ -112,22 +112,36 @@ function decodeHtmlEntities(text: string): string {
     "&harr;": "↔",
   };
 
+  const MAX_CODE_POINT = 0x10ffff;
+
   return text
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
+      const codePoint = parseInt(hex, 16);
+      return codePoint <= MAX_CODE_POINT ? String.fromCodePoint(codePoint) : match;
+    })
+    .replace(/&#(\d+);/g, (match, dec) => {
+      const codePoint = parseInt(dec, 10);
+      return codePoint <= MAX_CODE_POINT ? String.fromCodePoint(codePoint) : match;
+    })
     .replace(/&[a-z]+;/gi, (match) => entities[match.toLowerCase()] || match);
 }
 
 /**
  * Safely truncate HTML content without breaking tags or entities.
- * Strips all HTML tags and decodes entities, truncates to maxLength, then adds ellipsis if needed.
+ * Returns { html: string, isPlainText: boolean } where:
+ * - If content fits, returns original HTML with tags (isPlainText: false)
+ * - If truncation needed, strips tags and returns decoded plain text (isPlainText: true)
  */
-export function truncateHtml(html: string, maxLength: number): string {
+export function truncateHtml(
+  html: string,
+  maxLength: number
+): { html: string; isPlainText: boolean } {
   let plainText = html.replace(/<[^>]*>/g, "");
-  plainText = decodeHtmlEntities(plainText);
+  const plainTextDecoded = decodeHtmlEntities(plainText);
   
-  if (plainText.length <= maxLength) {
-    return plainText;
+  if (plainTextDecoded.length <= maxLength) {
+    return { html, isPlainText: false };
   }
-  return plainText.slice(0, maxLength) + "…";
+  
+  return { html: plainTextDecoded.slice(0, maxLength) + "…", isPlainText: true };
 }
