@@ -182,7 +182,7 @@ export const expandedMessageTemplate = async (
   lastName?: string,
   text?: string,
   link?: string
-) => {
+): Promise<string> => {
   // TODO: this function is a clusterfuck of ugly template literals. refactor in the future.
   const bothNames = firstName && lastName;
   const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
@@ -196,18 +196,19 @@ export const expandedMessageTemplate = async (
     try {
       const hnPostId = link?.split("id=")[1];
       const metadata = await getHackerNewsMetadata(hnPostId);
-      if (!metadata?.post) return expandedMessageTemplate;
-      const { title, user, time_ago, comments_count, url, content } = metadata.post;
-      const sanitized = content ? sanitizeHtmlForTelegram(content) : "";
-      const { html: truncated, isPlainText } = truncateHtml(sanitized, 3072);
-      const body = truncated !== "" ? `\n${isPlainText ? escapeHtml(truncated) : truncated}\n` : "";
+      if (metadata?.post) {
+        const { title, user, time_ago, comments_count, url, content } = metadata.post;
+        const sanitized = content ? sanitizeHtmlForTelegram(content) : "";
+        const { html: truncated, isPlainText } = truncateHtml(sanitized, 3072);
+        const body = truncated !== "" ? `\n${isPlainText ? escapeHtml(truncated) : truncated}\n` : "";
 
-      const timeAgoText = time_ago ? `${escapeHtmlSafe(time_ago)} ` : "";
-      includedLink = `<b>${title ? escapeHtmlSafe(title) : "Comment"}</b>
+        const timeAgoText = time_ago ? `${escapeHtmlSafe(time_ago)} ` : "";
+        includedLink = `<b>${title ? escapeHtmlSafe(title) : "Comment"}</b>
 ${comments_count ?? 0} replies | ${timeAgoText}by ${user ? escapeHtmlSafe(user) : "unknown"}
 ${escapeHtml(link)}
 ${body}
 ${url ? escapeHtmlSafe(url) : ""}`;
+      }
     } catch (error) {
       logger.error("Error fetching HN metadata for template: {error}", { error });
       notifyAdmin(error);
