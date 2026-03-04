@@ -60,14 +60,23 @@ export function sanitizeHtmlForTelegram(html: string): string {
 }
 
 /**
- * Safely truncate HTML content without breaking tags.
- * Strips all HTML tags, truncates to maxLength, then adds ellipsis if needed.
+ * Safely truncate HTML content without breaking tags or entities.
+ * Strips all HTML tags and decodes entities, truncates to maxLength, then adds ellipsis if needed.
  */
 export function truncateHtml(html: string, maxLength: number): string {
-  const plainText = html.replace(/<[^>]*>/g, "");
+  let plainText = html.replace(/<[^>]*>/g, "");
+  
+  plainText = plainText
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+  
   if (plainText.length <= maxLength) {
-    return html;
+    return plainText;
   }
-  const stripped = plainText.slice(0, maxLength);
-  return stripped + "…";
+  return plainText.slice(0, maxLength) + "…";
 }
