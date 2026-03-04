@@ -6,7 +6,8 @@
  * Note: This escapes plain text. If the input might already contain HTML entities,
  * use escapeHtmlSafe() instead to avoid double-encoding.
  */
-export function escapeHtml(text: string): string {
+export function escapeHtml(text: string | null | undefined): string {
+  if (!text) return "";
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -18,7 +19,8 @@ export function escapeHtml(text: string): string {
  * Decodes any existing entities first, then re-escapes to avoid double-encoding.
  * Use this for external API data that might be pre-encoded.
  */
-export function escapeHtmlSafe(text: string): string {
+export function escapeHtmlSafe(text: string | null | undefined): string {
+  if (!text) return "";
   const decoded = decodeHtmlEntities(text);
   return escapeHtml(decoded);
 }

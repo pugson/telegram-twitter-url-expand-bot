@@ -201,8 +201,9 @@ export const expandedMessageTemplate = async (
       const { html: truncated, isPlainText } = truncateHtml(sanitized, 3072);
       const body = truncated !== "" ? `\n${isPlainText ? escapeHtml(truncated) : truncated}\n` : "";
 
+      const timeAgoText = time_ago ? `${escapeHtmlSafe(time_ago)} ` : "";
       includedLink = `<b>${title ? escapeHtmlSafe(title) : "Comment"}</b>
-${comments_count} replies | ${escapeHtmlSafe(time_ago)} by ${user ? escapeHtmlSafe(user) : "unknown"}
+${comments_count ?? 0} replies | ${timeAgoText}by ${user ? escapeHtmlSafe(user) : "unknown"}
 ${escapeHtml(link)}
 ${body}
 ${url ? escapeHtmlSafe(url) : ""}`;
