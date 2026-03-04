@@ -202,7 +202,7 @@ export const expandedMessageTemplate = async (
       const body = truncated !== "" ? `\n${truncated}\n` : "";
 
       includedLink = `<b>${title ? escapeHtml(title) : "Comment"}</b>
-${comments_count} replies | ${time_ago} by ${escapeHtml(user)}
+${comments_count} replies | ${time_ago} by ${user ? escapeHtml(user) : "unknown"}
 ${link}
 ${body}
 ${url ? url : ""}`;
