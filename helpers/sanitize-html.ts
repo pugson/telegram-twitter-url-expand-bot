@@ -39,7 +39,7 @@ export function sanitizeHtmlForTelegram(html: string): string {
   result = result.replace(/<br\s*\/?>/gi, "\n");
 
   // Convert <img> tags — extract src as a link if present, otherwise strip
-  result = result.replace(/<img[^>]*\bsrc="([^"]*)"[^>]*>/gi, "[$1]");
+  result = result.replace(/<img[^>]*\bsrc=["']([^"']*)["'][^>]*>/gi, "[$1]");
 
   // Telegram supported tags (with attributes for <a> and <pre>):
   // <b>, <strong>, <i>, <em>, <u>, <ins>, <s>, <strike>, <del>,
@@ -114,16 +114,22 @@ function decodeHtmlEntities(text: string): string {
 
   const MAX_CODE_POINT = 0x10ffff;
 
-  return text
-    .replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
+  // Single-pass replacement to avoid cascading decodes (e.g. &#x26;lt; → & → <)
+  return text.replace(/&#x([0-9a-fA-F]+);|&#(\d+);|&([a-z]+);/gi, (match, hex, dec, named) => {
+    if (hex !== undefined) {
       const codePoint = parseInt(hex, 16);
       return codePoint <= MAX_CODE_POINT ? String.fromCodePoint(codePoint) : match;
-    })
-    .replace(/&#(\d+);/g, (match, dec) => {
+    }
+    if (dec !== undefined) {
       const codePoint = parseInt(dec, 10);
       return codePoint <= MAX_CODE_POINT ? String.fromCodePoint(codePoint) : match;
-    })
-    .replace(/&[a-z]+;/gi, (match) => entities[match.toLowerCase()] || match);
+    }
+    if (named !== undefined) {
+      const key = `&${named.toLowerCase()};`;
+      return entities[key] || match;
+    }
+    return match;
+  });
 }
 
 /**
@@ -140,7 +146,7 @@ export function truncateHtml(
     return { html, isPlainText: false };
   }
   
-  let plainText = html.replace(/<[^>]*>/g, "");
+  const plainText = html.replace(/<[^>]*>/g, "");
   const plainTextDecoded = decodeHtmlEntities(plainText);
   
   return { html: plainTextDecoded.slice(0, maxLength) + "…", isPlainText: true };
