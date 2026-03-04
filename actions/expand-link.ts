@@ -183,7 +183,7 @@ export async function expandLink(
 
         if (audio) {
           // Also limit the audio caption
-          const audioDesc = description.length > 250 ? description.slice(0, 250) + "..." : description;
+          const audioDesc = description && description.length > 250 ? description.slice(0, 250) + "..." : (description || "");
           await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
             ...replyOptions,
             title: truncatedTitle,
