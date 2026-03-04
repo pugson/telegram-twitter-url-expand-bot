@@ -68,14 +68,18 @@ export function sanitizeHtmlForTelegram(html: string): string {
 
     // Self-closing or opening tag
     const tagName = tagContent.split(/[\s/>]/)[0].toLowerCase();
+    const isSelfClosing = tagContent.endsWith("/");
+    
     if (allowedTags.test(tagName)) {
-      if (!tagContent.includes("/")) {
+      if (!isSelfClosing) {
         openTags.push(tagName);
       }
       return match;
     }
     if (allowedTagsWithAttrs.test(tagContent)) {
-      openTags.push(tagName);
+      if (!isSelfClosing) {
+        openTags.push(tagName);
+      }
       return match;
     }
     return "";

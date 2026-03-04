@@ -202,10 +202,10 @@ export const expandedMessageTemplate = async (
       const body = truncated !== "" ? `\n${isPlainText ? escapeHtml(truncated) : truncated}\n` : "";
 
       includedLink = `<b>${title ? escapeHtmlSafe(title) : "Comment"}</b>
-${comments_count} replies | ${escapeHtml(time_ago)} by ${user ? escapeHtmlSafe(user) : "unknown"}
+${comments_count} replies | ${escapeHtmlSafe(time_ago)} by ${user ? escapeHtmlSafe(user) : "unknown"}
 ${escapeHtml(link)}
 ${body}
-${url ? escapeHtml(url) : ""}`;
+${url ? escapeHtmlSafe(url) : ""}`;
     } catch (error) {
       logger.error("Error fetching HN metadata for template: {error}", { error });
       notifyAdmin(error);
