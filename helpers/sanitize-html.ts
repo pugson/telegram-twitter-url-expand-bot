@@ -58,3 +58,16 @@ export function sanitizeHtmlForTelegram(html: string): string {
 
   return result.trim();
 }
+
+/**
+ * Safely truncate HTML content without breaking tags.
+ * Strips all HTML tags, truncates to maxLength, then adds ellipsis if needed.
+ */
+export function truncateHtml(html: string, maxLength: number): string {
+  const plainText = html.replace(/<[^>]*>/g, "");
+  if (plainText.length <= maxLength) {
+    return html;
+  }
+  const stripped = plainText.slice(0, maxLength);
+  return stripped + "…";
+}
