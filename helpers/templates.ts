@@ -25,6 +25,7 @@ import {
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
 import { logger } from "./logger";
+import { sanitizeHtmlForTelegram, escapeHtml, escapeHtmlSafe, truncateHtml } from "./sanitize-html";
 
 export const hasPermissionToDeleteMessageTemplate = `✅ I have permissions to automatically delete original messages when expanding links.`;
 export const missingPermissionToDeleteMessageTemplate = `🔐 An admin of this chat needs to give me permissions to automatically delete messages when expanding links.`;
@@ -181,7 +182,7 @@ export const expandedMessageTemplate = async (
   lastName?: string,
   text?: string,
   link?: string
-) => {
+): Promise<string> => {
   // TODO: this function is a clusterfuck of ugly template literals. refactor in the future.
   const bothNames = firstName && lastName;
   const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
@@ -195,14 +196,19 @@ export const expandedMessageTemplate = async (
     try {
       const hnPostId = link?.split("id=")[1];
       const metadata = await getHackerNewsMetadata(hnPostId);
-      const { title, user, time_ago, comments_count, url, content } = metadata.post;
-      const body = content && content.trim() !== "" ? `\n${content}\n` : "";
+      if (metadata?.post) {
+        const { title, user, time_ago, comments_count, url, content } = metadata.post;
+        const sanitized = content ? sanitizeHtmlForTelegram(content) : "";
+        const { html: truncated, isPlainText } = truncateHtml(sanitized, 3072);
+        const body = truncated !== "" ? `\n${isPlainText ? escapeHtml(truncated) : truncated}\n` : "";
 
-      includedLink = `<b>${title ? title : "Comment"}</b>
-${comments_count} replies | ${time_ago} by ${user}
-${link}
+        const timeAgoText = time_ago ? `${escapeHtmlSafe(time_ago)} ` : "";
+        includedLink = `<b>${title ? escapeHtmlSafe(title) : "Comment"}</b>
+${comments_count ?? 0} replies | ${timeAgoText}by ${user ? escapeHtmlSafe(user) : "unknown"}
+${escapeHtml(link)}
 ${body}
-${url ? url : ""}`;
+${url ? escapeHtmlSafe(url) : ""}`;
+      }
     } catch (error) {
       logger.error("Error fetching HN metadata for template: {error}", { error });
       notifyAdmin(error);

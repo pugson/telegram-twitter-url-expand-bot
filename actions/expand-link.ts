@@ -25,6 +25,7 @@ import { saveToCache, deleteFromCache } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { resolveInstagramShare } from "../helpers/instagram-share";
 import { logger } from "../helpers/logger";
+import { escapeHtmlSafe } from "../helpers/sanitize-html";
 
 type UserInfoType = {
   username: string | undefined;
@@ -170,23 +171,23 @@ export async function expandLink(
         const titleMaxLength = Math.min(50, Math.floor(remainingSpace * 0.3));
         const descMaxLength = Math.floor(remainingSpace * 0.7);
 
-        const truncatedTitle = title.length > titleMaxLength ? title.slice(0, titleMaxLength) + "..." : title;
+        const truncatedTitle = title && title.length > titleMaxLength ? title.slice(0, titleMaxLength) + "..." : (title || "");
         const truncatedDesc =
-          description.length > descMaxLength ? description.slice(0, descMaxLength) + "..." : description;
+          description && description.length > descMaxLength ? description.slice(0, descMaxLength) + "..." : (description || "");
 
         botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
           ...replyOptions,
-          caption: template + `\n\n<b>${truncatedTitle}</b>\n${truncatedDesc}`,
+          caption: template + `\n\n<b>${escapeHtmlSafe(truncatedTitle)}</b>\n${escapeHtmlSafe(truncatedDesc)}`,
           parse_mode: "HTML",
         });
 
         if (audio) {
           // Also limit the audio caption
-          const audioDesc = description.length > 250 ? description.slice(0, 250) + "..." : description;
+          const audioDesc = description && description.length > 250 ? description.slice(0, 250) + "..." : (description || "");
           await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
             ...replyOptions,
             title: truncatedTitle,
-            caption: audioDesc,
+            caption: escapeHtmlSafe(audioDesc),
             thumbnail: new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=200&h=200`)),
             parse_mode: "HTML",
             reply_markup: {
@@ -279,23 +280,23 @@ export async function expandLink(
           const titleMaxLength = Math.min(50, Math.floor(remainingSpace * 0.3)); // Max 50 chars for title
           const descMaxLength = Math.floor(remainingSpace * 0.7); // Rest for description
 
-          const truncatedTitle = title.length > titleMaxLength ? title.slice(0, titleMaxLength) + "..." : title;
+          const truncatedTitle = title && title.length > titleMaxLength ? title.slice(0, titleMaxLength) + "..." : (title || "");
           const truncatedDesc =
-            description.length > descMaxLength ? description.slice(0, descMaxLength) + "..." : description;
+            description && description.length > descMaxLength ? description.slice(0, descMaxLength) + "..." : (description || "");
 
           botReply = await ctx.api.sendPhoto(chatId, new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=600`)), {
             ...replyOptions,
-            caption: template + `\n\n<b>${truncatedTitle}</b>\n${truncatedDesc}`,
+            caption: template + `\n\n<b>${escapeHtmlSafe(truncatedTitle)}</b>\n${escapeHtmlSafe(truncatedDesc)}`,
             parse_mode: "HTML",
           });
 
           if (audio) {
             // Also limit the audio caption
-            const audioDesc = description.length > 250 ? description.slice(0, 250) + "..." : description;
+            const audioDesc = description && description.length > 250 ? description.slice(0, 250) + "..." : (description || "");
             await ctx.api.sendAudio(chatId, new InputFile(new URL(audio)), {
               ...replyOptions,
               title: truncatedTitle,
-              caption: audioDesc,
+              caption: escapeHtmlSafe(audioDesc),
               thumbnail: new InputFile(new URL(`https://wsrv.nl/?url=${image}&w=200&h=200`)),
               parse_mode: "HTML",
               reply_markup: {
