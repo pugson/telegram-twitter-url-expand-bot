@@ -47,6 +47,8 @@
     - https://reddit.com/r/:subreddit/comments/:id
     - https://reddit.com/r/:subreddit/s/:id
     - https://reddit.com/:id
+ *
+ * Spotify URLs (disabled for now)
 
     * Threads URLs, in the format:
     - https://threads.com/@username/post/post_id
