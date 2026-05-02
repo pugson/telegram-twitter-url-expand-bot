@@ -21,6 +21,7 @@ import {
   isThreads,
   isYouTubeShort,
   isFacebook,
+  listOfAllPlatforms,
 } from "./platforms";
 import { getHackerNewsMetadata } from "./hacker-news-metadata";
 import { notifyAdmin } from "./notifier";
@@ -40,7 +41,7 @@ export const autoexpandSettingsTemplate = (enabled: boolean) => {
   
 I will ${
     enabled ? "expand" : "reply to"
-  } Twitter, Instagram, Bluesky, TikTok, Reddit, Hacker News, Dribbble, and Posts․cv links\\.
+  } ${listOfAllPlatforms} links\\.
       
 ${
   enabled
