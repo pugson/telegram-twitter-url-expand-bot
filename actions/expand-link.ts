@@ -41,8 +41,9 @@ type UserInfoType = {
  */
 function handleExpandedLinkDomain(link: string): string {
   // If multiple URLs are accidentally concatenated, take only the first one
-  if (link.includes("http", 1)) {
-    link = link.split("http")[0];
+  const match = link.match(/https?:\/\/.*?(?=https?:\/\/|\s|$)/);
+  if (match) {
+    link = match[0];
   }
 
   switch (true) {
