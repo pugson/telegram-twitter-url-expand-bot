@@ -7,7 +7,7 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 ## Supported platforms
 
 - _Twitter / X_ using [fxtwitter.com](https://fxtwitter.com) and [vxtwitter.com](https://vxtwitter.com)
-- _Instagram_ using [eeinstagram.com](https://eeinstagram.com), [fxstagram.com](https://fxstagram.com), [uuinstagram.com](https://uuinstagram.com), [vxinstagram.com](https://vxinstagram.com) and [kkinstagram.com](https://kkinstagram.com)
+- _Instagram_ using [eeinstagram.com](https://eeinstagram.com), [xnstagram.com](https://xnstagram.com), [vxinstagram.com](https://vxinstagram.com), [zzinstagram.com](https://zzinstagram.com) and [kkclip.com](https://kkclip.com)
 - _TikTok_ using [tfxktok.com](https://tfxktok.com), [kktiktok.com](https://kktiktok.com), [tiktokez.com](https://tiktokez.com) and [tnktok.com](https://tnktok.com)
 - _Bluesky_ using [fxbsky.app](https://fxbsky.app)
 - _Reddit_ using [rxddit.com](https://rxddit.com)
