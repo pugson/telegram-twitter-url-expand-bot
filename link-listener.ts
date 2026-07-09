@@ -37,17 +37,19 @@ bot.on("message::url", async (ctx: Context) => {
 
   try {
     settings = await getSettings(chatId);
-    autoexpand = settings?.autoexpand ?? false;
 
     // Create default settings for this chat if they don't exist
     if (!settings) {
-      await createSettings(chatId, false, true, false);
+      settings = await createSettings(chatId, false, true, false);
     }
+
+    autoexpand = settings?.autoexpand ?? false;
   } catch (error) {
     const { logger } = await import("./helpers/logger");
     logger.error("Error handling settings: {error}", { error });
-    // Default to manual expand if settings fail
-    autoexpand = false;
+    // Skip the message entirely — without settings we can't tell
+    // whether autoexpand is on or which platforms are disabled.
+    return;
   }
 
   // Loop through all links in message

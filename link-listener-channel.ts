@@ -41,6 +41,9 @@ bot.on("channel_post::url", async (ctx: Context) => {
       disabledPlatforms = settings?.disabled_platforms ?? [];
     } catch (error) {
       logger.error("Error getting channel settings: {error}", { error });
+      // Don't rewrite anything when we can't tell which platforms
+      // are disabled for this channel.
+      return;
     }
   }
 

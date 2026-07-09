@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
-import { checkIfCached, deleteFromCache, getFromCache } from "../helpers/cache";
+import { checkIfCached, deleteFromCache, getFromCache, saveToCache } from "../helpers/cache";
 import { getSettings } from "../helpers/api";
 import { getTogglePlatformKey } from "../helpers/platforms";
 import { expandLink } from "../actions/expand-link";
@@ -71,7 +71,19 @@ export async function handleManualExpand(ctx: Context) {
         // whether this platform was disabled after the button was posted.
         const togglePlatform = getTogglePlatformKey(url);
         if (togglePlatform) {
-          const settings = await getSettings(chatId);
+          let settings;
+          try {
+            settings = await getSettings(chatId);
+          } catch (error) {
+            logger.error("Error getting settings for manual expand: {error}", { error });
+            // Leave the buttons in place so the user can retry, but put
+            // the message context back since getFromCache removed it.
+            await saveToCache(identifier, contextFromCache);
+            await ctx.answerCallbackQuery({ text: "Something went wrong. Please try again." }).catch(() => {
+              logger.error("Cannot answer manual expand settings error callback query");
+            });
+            return;
+          }
           if (settings?.disabled_platforms?.includes(togglePlatform)) {
             await ctx
               .answerCallbackQuery({ text: "Expanding links from this platform has been disabled in this chat." })
