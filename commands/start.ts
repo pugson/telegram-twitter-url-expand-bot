@@ -32,6 +32,7 @@ bot.command("start", async (ctx: Context) => {
 
 Commands:
 /autoexpand - Configure link expanding
+/platforms - Choose which platforms get expanded
 /changelog - Configure receiving changelog updates
 
 You can also add me to your channel and I will edit messages with links to expand them automatically.

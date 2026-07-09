@@ -24,6 +24,10 @@ async function main() {
         description: "Manage link autoexpand settings for this chat.",
       },
       {
+        command: "platforms",
+        description: "Choose which platforms get expanded in this chat.",
+      },
+      {
         command: "lock",
         description: "[Admin] Lock / unlock bot settings for this chat.",
       },

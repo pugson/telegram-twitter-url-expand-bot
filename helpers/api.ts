@@ -14,6 +14,10 @@ export interface ChatSettings {
   chat_size: number;
   ignore_permissions_warning: boolean;
   settings_lock: boolean;
+  // Platform keys disabled with /platforms, stored as a CSV string in Redis.
+  // Missing field means all platforms are enabled, so new platforms
+  // added in the future are enabled by default in every chat.
+  disabled_platforms: string[];
 }
 
 /**
@@ -30,6 +34,7 @@ const parseRedisHash = (hash: Record<string, string>): ChatSettings | null => {
     chat_size: parseInt(hash.chat_size || "0"),
     ignore_permissions_warning: hash.ignore_permissions_warning === "true",
     settings_lock: hash.settings_lock === "true",
+    disabled_platforms: hash.disabled_platforms ? hash.disabled_platforms.split(",").filter(Boolean) : [],
   };
 };
 
@@ -80,10 +85,11 @@ export const createSettings = async (
       chat_size: "0",
       ignore_permissions_warning: "false",
       settings_lock: settingsLockValue.toString(),
+      disabled_platforms: "",
     };
 
     await redis.hset(key, settings);
-    
+
     // Set initial TTL to 1 year
     await redis.expire(key, ONE_YEAR_IN_SECONDS);
 
@@ -93,6 +99,7 @@ export const createSettings = async (
       chat_size: 0,
       ignore_permissions_warning: false,
       settings_lock: settingsLockValue,
+      disabled_platforms: [],
     };
   } catch (error) {
     logger.error("Error creating settings: {error}", { error });
@@ -124,8 +131,9 @@ export const updateSettings = async (
       return null;
     }
 
-    // Update the field
-    await redis.hset(key, property, value.toString());
+    // Update the field (arrays are stored as CSV strings)
+    const serialized = Array.isArray(value) ? value.join(",") : value.toString();
+    await redis.hset(key, property, serialized);
     
     // Refresh TTL to 1 year
     await redis.expire(key, ONE_YEAR_IN_SECONDS);

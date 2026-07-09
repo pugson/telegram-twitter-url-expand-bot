@@ -2,6 +2,8 @@ import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
 import { checkIfCached, deleteFromCache, getFromCache } from "../helpers/cache";
+import { getSettings } from "../helpers/api";
+import { getTogglePlatformKey } from "../helpers/platforms";
 import { expandLink } from "../actions/expand-link";
 import { showBotActivity } from "../actions/show-bot-activity";
 import { logger } from "../helpers/logger";
@@ -65,6 +67,22 @@ export async function handleManualExpand(ctx: Context) {
       // Only expand when a message has been cached, otherwise ignore the callback
       // because it will throw an error when trying to delete the message.
       if (contextFromCache) {
+        // An expand button can outlive a settings change, so re-check
+        // whether this platform was disabled after the button was posted.
+        const togglePlatform = getTogglePlatformKey(url);
+        if (togglePlatform) {
+          const settings = await getSettings(chatId);
+          if (settings?.disabled_platforms?.includes(togglePlatform)) {
+            await ctx
+              .answerCallbackQuery({ text: "Expanding links from this platform has been disabled in this chat." })
+              .catch(() => {
+                logger.error("Cannot answer disabled platform callback query");
+              });
+            deleteMessage(chatId, messageId); // bot’s [yes][no] message
+            deleteFromCache(identifier);
+            return;
+          }
+        }
         const entities = contextFromCache.entities() || contextFromCache.caption_entities();
         const messageWithNoLinks = entities.reduce((msg: string, entity: { type: string; text: any }) => {
           if (entity.type === "url" && entity.text === url) {

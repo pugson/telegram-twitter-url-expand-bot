@@ -8,7 +8,6 @@ import {
   isDribbble,
   isHackerNews,
   isInstagram,
-  isPosts,
   isReddit,
   isSpotify,
   isSpotifyTrack,
@@ -50,6 +49,24 @@ ${
 };
 
 /**
+ * Message sent when a user sends the /platforms command.
+ * @param disabledCount Number of platforms currently disabled
+ * @returns
+ */
+export const platformsSettingsTemplate = (disabledCount: number) => {
+  const status =
+    disabledCount === 0
+      ? "✅ All platforms are enabled in this chat\\."
+      : `❌ *${disabledCount}* platform${disabledCount === 1 ? " is" : "s are"} disabled in this chat\\.`;
+
+  return `Choose which platforms I should expand links from\\.
+
+${status}
+
+I will completely ignore links from disabled platforms — no autoexpanding and no reply asking to expand\\.`;
+};
+
+/**
  * Message sent when a user sends the /lock command.
  * @param enabled
  * @returns
@@ -84,7 +101,6 @@ ${
 export const askToExpandTemplate = (link: string) => {
   const insta = isInstagram(link);
   const tiktok = isTikTok(link);
-  const posts = isPosts(link);
   const hn = isHackerNews(link);
   const dribbble = isDribbble(link);
   const bluesky = isBluesky(link);
@@ -100,10 +116,6 @@ export const askToExpandTemplate = (link: string) => {
 
   if (tiktok) {
     return `Expand this TikTok?`;
-  }
-
-  if (posts) {
-    return `Expand this Post?`;
   }
 
   if (hn) {

@@ -29,7 +29,6 @@ export const isInstagram = (link: string) =>
 export const isInstagramShare = (link: string) => link.includes("instagram.com/share/");
 export const isTikTok = (link: string) =>
   checkLink(link, "tiktok.com") || checkLink(link, "tiktokez.com") || checkDomains(link, TIKTOK_DOMAINS);
-export const isPosts = (link: string) => checkLink(link, "posts.cv") || checkLink(link, "postscv.com");
 export const isHackerNews = (link: string) => checkLink(link, "news.ycombinator.com");
 export const isDribbble = (link: string) => checkLink(link, "dribbble.com") || checkLink(link, "dribbbletv.com");
 export const isBluesky = (link: string) => checkLink(link, "bsky.app") || checkLink(link, "fxbsky.app");
@@ -69,3 +68,66 @@ const ALL_PLATFORMS = [
 ];
 
 export const listOfAllPlatforms = ALL_PLATFORMS.join(", ");
+
+export type PlatformKey =
+  | "twitter"
+  | "instagram"
+  | "instagram-share"
+  | "tiktok"
+  | "hackernews"
+  | "dribbble"
+  | "bluesky"
+  | "reddit"
+  | "spotify"
+  | "threads"
+  | "youtube"
+  | "facebook";
+
+// Platforms that admins can enable/disable per chat with /platforms.
+// instagram-share is folded into instagram, and spotify is excluded
+// because Spotify links are not matched by LINK_REGEX in chats.
+export type TogglePlatformKey = Exclude<PlatformKey, "instagram-share" | "spotify">;
+
+export const TOGGLEABLE_PLATFORMS: { key: TogglePlatformKey; label: string }[] = [
+  { key: "twitter", label: "Twitter / X" },
+  { key: "instagram", label: "Instagram" },
+  { key: "tiktok", label: "TikTok" },
+  { key: "reddit", label: "Reddit" },
+  { key: "threads", label: "Threads" },
+  { key: "facebook", label: "Facebook" },
+  { key: "youtube", label: "YouTube Shorts" },
+  { key: "bluesky", label: "Bluesky" },
+  { key: "hackernews", label: "Hacker News" },
+  { key: "dribbble", label: "Dribbble" },
+];
+
+/**
+ * Detect which platform a link belongs to.
+ * Single source of truth replacing the ternary chains that were
+ * duplicated across listeners and actions.
+ */
+export const getPlatformKey = (link: string): PlatformKey => {
+  if (isInstagramShare(link)) return "instagram-share";
+  if (isInstagram(link)) return "instagram";
+  if (isTikTok(link)) return "tiktok";
+  if (isHackerNews(link)) return "hackernews";
+  if (isDribbble(link)) return "dribbble";
+  if (isBluesky(link)) return "bluesky";
+  if (isReddit(link)) return "reddit";
+  if (isSpotify(link)) return "spotify";
+  if (isThreads(link)) return "threads";
+  if (isYouTubeShort(link)) return "youtube";
+  if (isFacebook(link)) return "facebook";
+  return "twitter";
+};
+
+/**
+ * Map a link to the platform key used by the /platforms toggles.
+ * Returns null for platforms that cannot be disabled.
+ */
+export const getTogglePlatformKey = (link: string): TogglePlatformKey | null => {
+  const key = getPlatformKey(link);
+  if (key === "instagram-share") return "instagram";
+  if (key === "spotify") return null;
+  return key;
+};

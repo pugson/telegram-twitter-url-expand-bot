@@ -13,7 +13,6 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 - _Reddit_ using [rxddit.com](https://rxddit.com)
 - _Hacker News_ using a custom API
 - _Dribbble_ using [dribbbletv.com](https://dribbbletv.com)
-- _Posts.cv_ using [postscv.com](https://postscv.com)
 - _Facebook_ using [facebed.com](https://facebed.com)
 - ~_Spotify_ using a custom API~ (disabled for now)
 - _Threads_ using [threadsez.com](https://threadsez.com)
@@ -69,6 +68,7 @@ https://user-images.githubusercontent.com/6843656/182036672-5b566200-cba4-462d-b
 3. Send a message that includes a tweet, TikTok, or Instagram URL.
 4. Click "Yes" or "No" when the bot replies to your message.
 5. Configure automatically expanding links in your group chat by sending `/autoexpand` and changing your settings.
+6. Choose which platforms should get expanded in your chat by sending `/platforms` and toggling each platform. Links from disabled platforms are ignored completely.
 
 <img width="253" alt="image" src="https://user-images.githubusercontent.com/6843656/181651653-a6421462-2321-4344-8605-f5f32edc5047.png">
 

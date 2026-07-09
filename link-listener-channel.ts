@@ -1,50 +1,58 @@
 import { Context } from "grammy";
 import { bot } from ".";
 import { LINK_REGEX } from "./helpers/link-regex";
-import { isDribbble, isInstagram, isPosts, isReddit, isTikTok, isThreads, isYouTubeShort, isFacebook } from "./helpers/platforms";
+import { getPlatformKey, TogglePlatformKey } from "./helpers/platforms";
+import { getSettings } from "./helpers/api";
 import { trackEvent } from "./helpers/analytics";
 import { isBanned } from "./helpers/banned";
 import { logger } from "./helpers/logger";
+
+// Domain replacements per platform, applied in order.
+// The tiktok.com replacement must come after the vt./lite. subdomains.
+const DOMAIN_REPLACEMENTS: { platform: TogglePlatformKey; from: string; to: string }[] = [
+  { platform: "twitter", from: "twitter.com/", to: "fxtwitter.com/" },
+  { platform: "twitter", from: "x.com/", to: "fxtwitter.com/" },
+  { platform: "instagram", from: "instagram.com/", to: "eeinstagram.com/" },
+  { platform: "tiktok", from: "vt.tiktok.com/", to: "vm.tfxktok.com/" },
+  { platform: "tiktok", from: "lite.tiktok.com/", to: "tiktokez.com/" },
+  { platform: "tiktok", from: "tiktok.com/", to: "tfxktok.com/" },
+  { platform: "dribbble", from: "dribbble.com/", to: "dribbbletv.com/" },
+  { platform: "reddit", from: "reddit.com/", to: "rxddit.com/" },
+  { platform: "threads", from: "threads.com/", to: "threadsez.com/" },
+  { platform: "threads", from: "threads.net/", to: "threadsez.com/" },
+  { platform: "youtube", from: "youtube.com/shorts/", to: "koutube.com/shorts/" },
+  { platform: "facebook", from: "facebook.com/", to: "facebed.com/" },
+];
 
 bot.on("channel_post::url", async (ctx: Context) => {
   const post = ctx.update.channel_post;
   const caption = post?.caption;
   const message = post?.text ?? caption ?? "";
+  const chatId = ctx.chat?.id;
 
-  if (ctx && ctx.chat && isBanned(ctx.chat?.id)) return;
+  if (chatId && isBanned(chatId)) return;
   if (!LINK_REGEX.test(message)) return;
 
-  const platform = isInstagram(message)
-    ? "instagram"
-    : isTikTok(message)
-    ? "tiktok"
-    : isPosts(message)
-    ? "posts"
-    : isDribbble(message)
-    ? "dribbble"
-    : isReddit(message)
-    ? "reddit"
-    : isThreads(message)
-    ? "threads"
-    : isYouTubeShort(message)
-    ? "youtube"
-    : isFacebook(message)
-    ? "facebook"
-    : "twitter";
-  const expandedLinksMessage = message
-    .replace("twitter.com/", "fxtwitter.com/")
-    .replace("x.com/", "fxtwitter.com/")
-    .replace("instagram.com/", "eeinstagram.com/")
-    .replace("vt.tiktok.com/", "vm.tfxktok.com/")
-    .replace("lite.tiktok.com/", "tiktokez.com/")
-    .replace("tiktok.com/", "tfxktok.com/")
-    .replace("posts.cv/", "postscv.com/")
-    .replace("dribbble.com/", "dribbbletv.com/")
-    .replace("reddit.com/", "rxddit.com/")
-    .replace("threads.com/", "threadsez.com/")
-    .replace("threads.net/", "threadsez.com/")
-    .replace("youtube.com/shorts/", "koutube.com/shorts/")
-    .replace("facebook.com/", "facebed.com/");
+  // Skip platforms disabled with /platforms in this channel
+  let disabledPlatforms: string[] = [];
+  if (chatId) {
+    try {
+      const settings = await getSettings(chatId);
+      disabledPlatforms = settings?.disabled_platforms ?? [];
+    } catch (error) {
+      logger.error("Error getting channel settings: {error}", { error });
+    }
+  }
+
+  const platform = getPlatformKey(message);
+  const expandedLinksMessage = DOMAIN_REPLACEMENTS.reduce((msg, replacement) => {
+    if (disabledPlatforms.includes(replacement.platform)) return msg;
+    return msg.replace(replacement.from, replacement.to);
+  }, message);
+
+  // Nothing was replaced (e.g. all matched platforms are disabled),
+  // so don't edit the message.
+  if (expandedLinksMessage === message) return;
 
   try {
     if (caption) {
