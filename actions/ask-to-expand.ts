@@ -1,16 +1,5 @@
 import { Context } from "grammy";
-import {
-  isInstagram,
-  isTikTok,
-  isPosts,
-  isHackerNews,
-  isDribbble,
-  isBluesky,
-  isReddit,
-  isSpotify,
-  isThreads,
-  isYouTubeShort,
-} from "../helpers/platforms";
+import { getPlatformKey, getTogglePlatformKey } from "../helpers/platforms";
 import { isBanned } from "../helpers/banned";
 import { askToExpandTemplate } from "../helpers/templates";
 import { logger } from "../helpers/logger";
@@ -30,37 +19,9 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
   const chatId = ctx.chat?.id;
   if (isBanned(chatId)) return;
 
-  const insta = isInstagram(link);
-  const tiktok = isTikTok(link);
-  const posts = isPosts(link);
-  const hn = isHackerNews(link);
-  const dribbble = isDribbble(link);
-  const bluesky = isBluesky(link);
-  const reddit = isReddit(link);
-  const spotify = isSpotify(link);
-  const threads = isThreads(link);
-  const youtube = isYouTubeShort(link);
-  const platform = insta
-    ? "instagram"
-    : tiktok
-    ? "tiktok"
-    : posts
-    ? "posts"
-    : hn
-    ? "hackernews"
-    : dribbble
-    ? "dribbble"
-    : bluesky
-    ? "bluesky"
-    : reddit
-    ? "reddit"
-    : spotify
-    ? "spotify"
-    : threads
-    ? "threads"
-    : youtube
-    ? "youtube"
-    : "twitter";
+  // Use the toggle key (instagram-share folds into instagram) to keep
+  // callback_data short — it has a 64 byte limit.
+  const platform = getTogglePlatformKey(link) ?? getPlatformKey(link);
 
   try {
     const originalReplyId = ctx.update?.message?.reply_to_message?.message_id;

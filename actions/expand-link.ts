@@ -2,7 +2,6 @@ import { Context, InputFile } from "grammy";
 import { expandedMessageTemplate } from "../helpers/templates";
 import {
   isInstagram,
-  isPosts,
   isReddit,
   isTikTok,
   isTweet,
@@ -56,8 +55,6 @@ function handleExpandedLinkDomain(link: string): string {
         .replace("vt.tiktok.com", "vm." + tiktokDomain)
         .replace("lite.tiktok.com", tiktokDomain)
         .replace("tiktok.com", tiktokDomain);
-    case isPosts(link):
-      return link.replace("posts.cv", "postscv.com");
     case isTweet(link):
       if (link.includes("fxtwitter.com") || TWITTER_DOMAINS.some((domain) => link.includes(domain))) return link;
       // Fix: Check specific domain presence to prevent double replacement (e.g. fixupfixupx.com)

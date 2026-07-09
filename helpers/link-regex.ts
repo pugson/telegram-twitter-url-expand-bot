@@ -28,9 +28,6 @@
     - https://lite.tiktok.com/@username/video/video_id
     - Any subdomain.tiktok.com URLs
 
-   * Posts.cv URLs, in the format:
-    - https://posts.cv/username/post_id
-
    * Hacker News URLs, in the format:
     - https://news.ycombinator.com/item?id=post_id
 
@@ -70,4 +67,4 @@
 
  */
 export const LINK_REGEX: RegExp =
-  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|share|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:[a-z0-9-]+\.)?tiktok\.com\/(?:@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+|[A-Za-z0-9-_]+)(?:\?.*)?|posts\.cv\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?|reddit\.com\/(?:r\/[^\/]+\/(?:comments|s)\/[A-Za-z0-9]+(?:\/[^\/]*)?(?:\/[^\/]*)?|[A-Za-z0-9]+)(?:\?.*)?|threads\.(?:com|net)\/@[A-Za-z0-9_.]+\/post\/[A-Za-z0-9]+(?:\?.*)?|youtube\.com\/shorts\/([A-Za-z0-9_-]+)(?:\?.*)?|(?:m\.)?facebook\.com\/(?:[^\/]+\/(?:posts|videos)\/|groups\/[^\/]+\/(?:posts\/|permalink\/|\?.*multi_permalinks)|share\/(?:r|p|v)\/|reel\/|photo\/?\?|watch|story\.php|permalink\.php))/im;
+  /https?:\/\/(?:www\.)?(?:mobile\.)?(?:(?:twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)(?:\?.*)?|instagram\.com\/(?:p|reel|reels|share|stories\/[^\/]+)\/([A-Za-z0-9-_]+)(?:\?.*)?|(?:[a-z0-9-]+\.)?tiktok\.com\/(?:@[\w.-]+\/video\/\d+|v\/\d+|t\/\w+|[A-Za-z0-9-_]+)(?:\?.*)?|news\.ycombinator\.com\/item\?id=\d+(?:\?.*)?|dribbble\.com\/shots\/([A-Za-z0-9-_]+)(?:\?.*)?|bsky\.app\/([A-Za-z0-9_]+)\/([A-Za-z0-9]+)(?:\?.*)?|bsky\.app\/profile\/([A-Za-z0-9_]+)\/post\/([A-Za-z0-9]+)(?:\?.*)?|reddit\.com\/(?:r\/[^\/]+\/(?:comments|s)\/[A-Za-z0-9]+(?:\/[^\/]*)?(?:\/[^\/]*)?|[A-Za-z0-9]+)(?:\?.*)?|threads\.(?:com|net)\/@[A-Za-z0-9_.]+\/post\/[A-Za-z0-9]+(?:\?.*)?|youtube\.com\/shorts\/([A-Za-z0-9_-]+)(?:\?.*)?|(?:m\.)?facebook\.com\/(?:[^\/]+\/(?:posts|videos)\/|groups\/[^\/]+\/(?:posts\/|permalink\/|\?.*multi_permalinks)|share\/(?:r|p|v)\/|reel\/|photo\/?\?|watch|story\.php|permalink\.php))/im;

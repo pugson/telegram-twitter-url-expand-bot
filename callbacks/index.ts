@@ -4,6 +4,7 @@ import { getMemberCount } from "../actions/get-member-count";
 import { handleManualExpand } from "./manual-expand";
 import { handleExpandedLinkDestruction } from "./destruct-expanded-link";
 import { handleAutoexpandSettings } from "./settings-autoexpand";
+import { handlePlatformsSettings } from "./settings-platforms";
 import { handleLockSettings } from "./settings-lock";
 import { handleChangelogSettings } from "./settings-changelog";
 import { handlePermissionsSettings } from "./settings-permissions";
@@ -29,6 +30,7 @@ bot.on("callback_query", async (ctx: Context) => {
   await handleUndo(ctx);
   await handleSwitchService(ctx);
   await handleAutoexpandSettings(ctx);
+  await handlePlatformsSettings(ctx);
   await handleLockSettings(ctx);
   await handleChangelogSettings(ctx);
   await handlePermissionsSettings(ctx);

@@ -3,22 +3,10 @@ import { bot } from ".";
 import { askToExpand } from "./actions/ask-to-expand";
 import { saveToCache } from "./helpers/cache";
 import { LINK_REGEX } from "./helpers/link-regex";
-import { createSettings, getSettings } from "./helpers/api";
+import { ChatSettings, createSettings, getSettings } from "./helpers/api";
 import { expandLink } from "./actions/expand-link";
 import { deleteMessage } from "./actions/delete-message";
-import {
-  isDribbble,
-  isHackerNews,
-  isInstagram,
-  isInstagramShare,
-  isPosts,
-  isReddit,
-  isSpotify,
-  isTikTok,
-  isThreads,
-  isYouTubeShort,
-  isFacebook,
-} from "./helpers/platforms";
+import { getPlatformKey, getTogglePlatformKey } from "./helpers/platforms";
 import { trackEvent } from "./helpers/analytics";
 import { showBotActivity } from "./actions/show-bot-activity";
 import { isBanned } from "./helpers/banned";
@@ -44,21 +32,24 @@ bot.on("message::url", async (ctx: Context) => {
   const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
 
   // Get autoexpand settings for this chat
-  let settings;
+  let settings: ChatSettings | null = null;
   let autoexpand: boolean;
 
   try {
     settings = await getSettings(chatId);
-    autoexpand = settings?.autoexpand ?? false;
 
     // Create default settings for this chat if they don't exist
     if (!settings) {
-      await createSettings(chatId, false, true, false);
+      settings = await createSettings(chatId, false, true, false);
     }
+
+    autoexpand = settings?.autoexpand ?? false;
   } catch (error) {
     const { logger } = await import("./helpers/logger");
     logger.error("Error handling settings: {error}", { error });
-    // Default to manual expand if settings fail
+    // Degrade to manual ask-to-expand prompts when settings can't be
+    // read. A disabled platform might get a prompt during a Redis
+    // outage, but nothing expands without someone clicking Yes.
     autoexpand = false;
   }
 
@@ -69,6 +60,10 @@ bot.on("message::url", async (ctx: Context) => {
 
     // Ignore if not a link from supported sites
     if (!matchingLink) return;
+
+    // Ignore links from platforms disabled with /platforms in this chat
+    const togglePlatform = getTogglePlatformKey(url);
+    if (togglePlatform && settings?.disabled_platforms?.includes(togglePlatform)) return;
 
     const messageWithNoLinks = entities.reduce((msg, e) => {
       if (e.type === "url" && e.text === url) {
@@ -87,41 +82,7 @@ bot.on("message::url", async (ctx: Context) => {
       if (isDeletable) deleteMessage(chatId, msgId, ctx);
 
       // Track autoexpand event and platform
-      const insta = isInstagram(url);
-      const instaShare = isInstagramShare(url);
-      const tiktok = isTikTok(url);
-      const posts = isPosts(url);
-      const hn = isHackerNews(url);
-      const dribbble = isDribbble(url);
-      const reddit = isReddit(url);
-      const spotify = isSpotify(url);
-      const threads = isThreads(url);
-      const youtube = isYouTubeShort(url);
-      const fb = isFacebook(url);
-      const platform = insta
-        ? "instagram"
-        : instaShare
-        ? "instagram-share"
-        : tiktok
-        ? "tiktok"
-        : posts
-        ? "posts"
-        : hn
-        ? "hackernews"
-        : dribbble
-        ? "dribbble"
-        : reddit
-        ? "reddit"
-        : spotify
-        ? "spotify"
-        : threads
-        ? "threads"
-        : youtube
-        ? "youtube"
-        : fb
-        ? "facebook"
-        : "twitter";
-      trackEvent(`expand.auto.${platform}`);
+      trackEvent(`expand.auto.${getPlatformKey(url)}`);
     } else {
       // Save message context to cache then ask to expand
       await saveToCache(identifier, ctx);

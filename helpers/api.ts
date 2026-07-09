@@ -14,6 +14,10 @@ export interface ChatSettings {
   chat_size: number;
   ignore_permissions_warning: boolean;
   settings_lock: boolean;
+  // Platform keys disabled with /platforms, stored as a CSV string in Redis.
+  // Missing field means all platforms are enabled, so new platforms
+  // added in the future are enabled by default in every chat.
+  disabled_platforms: string[];
 }
 
 /**
@@ -30,30 +34,29 @@ const parseRedisHash = (hash: Record<string, string>): ChatSettings | null => {
     chat_size: parseInt(hash.chat_size || "0"),
     ignore_permissions_warning: hash.ignore_permissions_warning === "true",
     settings_lock: hash.settings_lock === "true",
+    disabled_platforms: hash.disabled_platforms ? hash.disabled_platforms.split(",").filter(Boolean) : [],
   };
 };
 
 /**
  * Get chat settings from Redis.
+ * Throws on Redis errors so callers can tell a failed read apart from
+ * a chat that has no settings record — treating an error as "no record"
+ * would bypass or overwrite saved settings.
  * @param chatId Telegram Chat ID
- * @returns Chat settings record
+ * @returns Chat settings record, or null when the chat has none
  */
 export const getSettings = async (chatId: number): Promise<ChatSettings | null> => {
-  try {
-    logger.debug("Getting settings for chat ID: {chatId}", { chatId });
-    const key = `chat:${chatId}`;
-    const hash = await redis.hgetall(key);
-    
-    // Refresh TTL to 1 year on read
-    if (hash && Object.keys(hash).length > 0) {
-      await redis.expire(key, ONE_YEAR_IN_SECONDS);
-    }
+  logger.debug("Getting settings for chat ID: {chatId}", { chatId });
+  const key = `chat:${chatId}`;
+  const hash = await redis.hgetall(key);
 
-    return parseRedisHash(hash);
-  } catch (error) {
-    logger.error("Error getting settings: {error}", { error });
-    return null;
+  // Refresh TTL to 1 year on read
+  if (hash && Object.keys(hash).length > 0) {
+    await redis.expire(key, ONE_YEAR_IN_SECONDS);
   }
+
+  return parseRedisHash(hash);
 };
 
 /**
@@ -73,17 +76,29 @@ export const createSettings = async (
   try {
     logger.debug("Creating settings for chat ID: {chatId}", { chatId });
     const key = `chat:${chatId}`;
-    
+
+    // Never overwrite an existing record — concurrent handlers can race
+    // to create settings for the same chat, and writing defaults over an
+    // existing hash would reset autoexpand, /platforms disables, and the
+    // settings lock.
+    const exists = await redis.exists(key);
+    if (exists) {
+      const hash = await redis.hgetall(key);
+      await redis.expire(key, ONE_YEAR_IN_SECONDS);
+      return parseRedisHash(hash);
+    }
+
     const settings = {
       autoexpand: autoexpandValue.toString(),
       changelog: changelogValue.toString(),
       chat_size: "0",
       ignore_permissions_warning: "false",
       settings_lock: settingsLockValue.toString(),
+      disabled_platforms: "",
     };
 
     await redis.hset(key, settings);
-    
+
     // Set initial TTL to 1 year
     await redis.expire(key, ONE_YEAR_IN_SECONDS);
 
@@ -93,6 +108,7 @@ export const createSettings = async (
       chat_size: 0,
       ignore_permissions_warning: false,
       settings_lock: settingsLockValue,
+      disabled_platforms: [],
     };
   } catch (error) {
     logger.error("Error creating settings: {error}", { error });
@@ -124,8 +140,9 @@ export const updateSettings = async (
       return null;
     }
 
-    // Update the field
-    await redis.hset(key, property, value.toString());
+    // Update the field (arrays are stored as CSV strings)
+    const serialized = Array.isArray(value) ? value.join(",") : value.toString();
+    await redis.hset(key, property, serialized);
     
     // Refresh TTL to 1 year
     await redis.expire(key, ONE_YEAR_IN_SECONDS);
