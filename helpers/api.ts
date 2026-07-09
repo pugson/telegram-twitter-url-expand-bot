@@ -78,7 +78,18 @@ export const createSettings = async (
   try {
     logger.debug("Creating settings for chat ID: {chatId}", { chatId });
     const key = `chat:${chatId}`;
-    
+
+    // Never overwrite an existing record. getSettings also returns null
+    // on transient Redis read errors, so callers can end up here for
+    // chats that already have settings — writing defaults would reset
+    // autoexpand, /platforms disables, and the settings lock.
+    const exists = await redis.exists(key);
+    if (exists) {
+      const hash = await redis.hgetall(key);
+      await redis.expire(key, ONE_YEAR_IN_SECONDS);
+      return parseRedisHash(hash);
+    }
+
     const settings = {
       autoexpand: autoexpandValue.toString(),
       changelog: changelogValue.toString(),
