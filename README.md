@@ -26,6 +26,12 @@ When expanding a link, if the embed doesn't load properly, click the **"🖼 Emb
 
 <img width="500" height="100" alt="Switch service demo" src="https://github.com/user-attachments/assets/fb353352-ed6f-432a-a06c-bf3e7a473a00" />
 
+## ✨🆕✨ Configure the bot for each chat with /platforms!
+
+Every chat can now decide which platforms the bot should expand. Send `/platforms` to open a settings menu with a toggle button for every supported platform — turn off the ones your chat doesn't want (like TikTok) and the bot will completely ignore those links: no autoexpanding and no reply asking to expand. Everything is enabled by default and each chat has its own independent settings.
+
+Combine it with `/lock` if you want only admins to be able to change these settings.
+
 ## Support for Spotify links!
 
 When you send a Spotify link, the bot will reply with a photo of the artwork and info about the track / album / playlist / artist / podcast / show.
