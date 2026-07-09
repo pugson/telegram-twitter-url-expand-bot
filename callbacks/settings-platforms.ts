@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { InlineKeyboardButton } from "@grammyjs/types";
 import { trackEvent } from "../helpers/analytics";
-import { getSettings, updateSettings } from "../helpers/api";
+import { ChatSettings, getSettings, updateSettings } from "../helpers/api";
 import { TOGGLEABLE_PLATFORMS } from "../helpers/platforms";
 import { platformsSettingsTemplate } from "../helpers/templates";
 import { deleteMessage } from "../actions/delete-message";
@@ -89,11 +89,26 @@ export async function handlePlatformsSettings(ctx: Context) {
       disabled.delete(key);
     }
 
+    // updateSettings returns null instead of throwing when the save fails
+    // (missing chat record or Redis error), so only refresh the UI with
+    // the state that was actually persisted.
+    let updated: ChatSettings | null = null;
     try {
-      await updateSettings(chatId, FIELD_NAME, Array.from(disabled));
+      updated = await updateSettings(chatId, FIELD_NAME, Array.from(disabled));
     } catch (error) {
       logger.error("Error updating platform settings: {error}", { error });
     }
+
+    if (!updated) {
+      logger.error("Platform settings were not saved for chat {chatId}", { chatId });
+      await ctx.answerCallbackQuery({ text: "Could not save settings. Please try again." }).catch(() => {
+        logger.error("Cannot answer platforms toggle callback query");
+        return;
+      });
+      return;
+    }
+
+    const savedDisabled = updated.disabled_platforms;
 
     await ctx.answerCallbackQuery().catch(() => {
       logger.error("Cannot answer platforms toggle callback query");
@@ -101,10 +116,10 @@ export async function handlePlatformsSettings(ctx: Context) {
     });
 
     await ctx.api
-      .editMessageText(chatId, messageId, platformsSettingsTemplate(disabled.size), {
+      .editMessageText(chatId, messageId, platformsSettingsTemplate(savedDisabled.length), {
         parse_mode: "MarkdownV2",
         reply_markup: {
-          inline_keyboard: platformsSettingsKeyboard(Array.from(disabled)),
+          inline_keyboard: platformsSettingsKeyboard(savedDisabled),
         },
       })
       .catch(() => {
