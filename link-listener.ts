@@ -47,9 +47,10 @@ bot.on("message::url", async (ctx: Context) => {
   } catch (error) {
     const { logger } = await import("./helpers/logger");
     logger.error("Error handling settings: {error}", { error });
-    // Skip the message entirely — without settings we can't tell
-    // whether autoexpand is on or which platforms are disabled.
-    return;
+    // Degrade to manual ask-to-expand prompts when settings can't be
+    // read. A disabled platform might get a prompt during a Redis
+    // outage, but nothing expands without someone clicking Yes.
+    autoexpand = false;
   }
 
   // Loop through all links in message

@@ -1,8 +1,8 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
-import { checkIfCached, deleteFromCache, getFromCache, saveToCache } from "../helpers/cache";
-import { getSettings } from "../helpers/api";
+import { checkIfCached, deleteFromCache, getFromCache } from "../helpers/cache";
+import { ChatSettings, getSettings } from "../helpers/api";
 import { getTogglePlatformKey } from "../helpers/platforms";
 import { expandLink } from "../actions/expand-link";
 import { showBotActivity } from "../actions/show-bot-activity";
@@ -71,18 +71,14 @@ export async function handleManualExpand(ctx: Context) {
         // whether this platform was disabled after the button was posted.
         const togglePlatform = getTogglePlatformKey(url);
         if (togglePlatform) {
-          let settings;
+          let settings: ChatSettings | null = null;
           try {
             settings = await getSettings(chatId);
           } catch (error) {
             logger.error("Error getting settings for manual expand: {error}", { error });
-            // Leave the buttons in place so the user can retry, but put
-            // the message context back since getFromCache removed it.
-            await saveToCache(identifier, contextFromCache);
-            await ctx.answerCallbackQuery({ text: "Something went wrong. Please try again." }).catch(() => {
-              logger.error("Cannot answer manual expand settings error callback query");
-            });
-            return;
+            // Degrade gracefully during a Redis outage: the user explicitly
+            // clicked Yes, so expand even though the /platforms disables
+            // can't be checked right now.
           }
           if (settings?.disabled_platforms?.includes(togglePlatform)) {
             await ctx
