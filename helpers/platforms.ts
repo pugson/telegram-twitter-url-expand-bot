@@ -1,7 +1,7 @@
 export const INSTAGRAM_DOMAINS = [
+  "zzinstagram.com",
   "vxinstagram.com",
   "eeinstagram.com",
-  "zzinstagram.com",
   "kkclip.com",
   "xnstagram.com",
 ];
