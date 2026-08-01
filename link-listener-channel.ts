@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { bot } from ".";
 import { LINK_REGEX } from "./helpers/link-regex";
-import { getPlatformKey, TogglePlatformKey } from "./helpers/platforms";
+import { getPlatformKey, INSTAGRAM_HOST_PATTERN, TogglePlatformKey } from "./helpers/platforms";
 import { getSettings } from "./helpers/api";
 import { trackEvent } from "./helpers/analytics";
 import { isBanned } from "./helpers/banned";
@@ -9,10 +9,13 @@ import { logger } from "./helpers/logger";
 
 // Domain replacements per platform, applied in order.
 // The tiktok.com replacement must come after the vt./lite. subdomains.
-const DOMAIN_REPLACEMENTS: { platform: TogglePlatformKey; from: string; to: string }[] = [
+const DOMAIN_REPLACEMENTS: { platform: TogglePlatformKey; from: string | RegExp; to: string }[] = [
   { platform: "twitter", from: "twitter.com/", to: "fxtwitter.com/" },
   { platform: "twitter", from: "x.com/", to: "fxtwitter.com/" },
-  { platform: "instagram", from: "instagram.com/", to: "zzinstagram.com/" },
+  // Matches the host prefixes too. A bare instagram.com/ swap would leave
+  // www.adobe.lol / mobile.adobe.lol, which are separate hosts from the apex
+  // and resolve nowhere.
+  { platform: "instagram", from: new RegExp(`${INSTAGRAM_HOST_PATTERN.source}/`), to: "adobe.lol/" },
   { platform: "tiktok", from: "vt.tiktok.com/", to: "vm.tfxktok.com/" },
   { platform: "tiktok", from: "lite.tiktok.com/", to: "tiktokez.com/" },
   { platform: "tiktok", from: "tiktok.com/", to: "tfxktok.com/" },

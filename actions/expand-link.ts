@@ -16,6 +16,7 @@ import {
   INSTAGRAM_DOMAINS,
   TIKTOK_DOMAINS,
   TWITTER_DOMAINS,
+  rewriteInstagramDomain,
 } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
 import { notifyAdmin } from "../helpers/notifier";
@@ -48,7 +49,7 @@ function handleExpandedLinkDomain(link: string): string {
   switch (true) {
     case isInstagram(link):
       if (INSTAGRAM_DOMAINS.some((domain) => link.includes(domain))) return link;
-      return link.replace("instagram.com", INSTAGRAM_DOMAINS[0]);
+      return rewriteInstagramDomain(link);
     case isTikTok(link):
       const tiktokDomain = TIKTOK_DOMAINS[0];
       return link
@@ -239,7 +240,7 @@ export async function expandLink(
         try {
           const resolvedUrl = await resolveInstagramShare(link);
           if (resolvedUrl) {
-            const finalUrl = resolvedUrl.replace(/instagram\.com/g, INSTAGRAM_DOMAINS[0]);
+            const finalUrl = rewriteInstagramDomain(resolvedUrl);
             // Replace the share URL with the resolved URL and convert
             linkWithNoTrackers = finalUrl; // Update the link used in the template
             link = finalUrl;
@@ -251,7 +252,7 @@ export async function expandLink(
         }
       } else if (isInstagram(link)) {
         // Handle regular Instagram links (replace domain)
-        link = link.replace(/instagram\.com/g, INSTAGRAM_DOMAINS[0]);
+        link = rewriteInstagramDomain(link);
       }
 
       // Handle Spotify links
