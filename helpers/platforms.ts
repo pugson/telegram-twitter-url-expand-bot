@@ -13,12 +13,17 @@ export const FACEBOOK_DOMAINS = ["facebed.com"];
 /**
  * Rewrites instagram.com links to an embed service domain.
  *
- * The `www.` prefix is dropped deliberately: a plain string swap would produce
- * www.adobe.lol, which has no DNS record (it is apex-only), and Instagram's own
- * share sheet hands out www URLs. Dropping it is harmless for the other hosts.
+ * Host prefixes are dropped deliberately. A plain string swap would turn
+ * www.instagram.com into www.adobe.lol and mobile.instagram.com into
+ * mobile.adobe.lol; adobe.lol is apex-only, so both are dead hosts. Instagram's
+ * share sheet hands out www URLs and LINK_REGEX accepts mobile ones, so these
+ * are the common case rather than an edge case. Dropping the prefix is harmless
+ * for the other embed hosts and yields one canonical hostname.
  */
+export const INSTAGRAM_HOST_PATTERN = /(?:www\.)?(?:mobile\.|m\.)?instagram\.com/;
+
 export const rewriteInstagramDomain = (link: string, domain: string = INSTAGRAM_DOMAINS[0]) =>
-  link.replace(/(?:www\.)?instagram\.com/g, domain);
+  link.replace(new RegExp(INSTAGRAM_HOST_PATTERN.source, "g"), domain);
 
 const checkLink = (link: string, platform: string) => {
   const isMatch = link.includes(platform);

@@ -1,7 +1,13 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { peekFromCache } from "../helpers/cache";
-import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/platforms";
+import {
+  INSTAGRAM_DOMAINS,
+  TIKTOK_DOMAINS,
+  TWITTER_DOMAINS,
+  FACEBOOK_DOMAINS,
+  rewriteInstagramDomain,
+} from "../helpers/platforms";
 import { logger } from "../helpers/logger";
 
 export async function handleSwitchService(ctx: Context) {
@@ -73,7 +79,7 @@ export async function handleSwitchService(ctx: Context) {
             .replace(/lite\.tiktok\.com/g, nextDomain)
             .replace(/tiktok\.com/g, nextDomain);
         } else if ((platform === "instagram" || platform === "instagram-share") && baseDomainMatch) {
-          newText = messageText.replace(/(?:www\.)?instagram\.com/g, nextDomain);
+          newText = rewriteInstagramDomain(messageText, nextDomain);
         } else if (platform === "facebook" && baseDomainMatch) {
           newText = messageText.replace(/facebook\.com/g, nextDomain);
         }
