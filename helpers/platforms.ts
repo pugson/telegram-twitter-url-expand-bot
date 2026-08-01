@@ -1,4 +1,5 @@
 export const INSTAGRAM_DOMAINS = [
+  "adobe.lol",
   "zzinstagram.com",
   "vxinstagram.com",
   "eeinstagram.com",
@@ -8,6 +9,16 @@ export const INSTAGRAM_DOMAINS = [
 export const TIKTOK_DOMAINS = ["tnktok.com", "tfxktok.com", "kktiktok.com", "tiktxk.com", "tiktokez.com"];
 export const TWITTER_DOMAINS = ["fxtwitter.com", "vxtwitter.com", "fixupx.com", "fixvx.com", "twitterez.com"];
 export const FACEBOOK_DOMAINS = ["facebed.com"];
+
+/**
+ * Rewrites instagram.com links to an embed service domain.
+ *
+ * The `www.` prefix is dropped deliberately: a plain string swap would produce
+ * www.adobe.lol, which has no DNS record (it is apex-only), and Instagram's own
+ * share sheet hands out www URLs. Dropping it is harmless for the other hosts.
+ */
+export const rewriteInstagramDomain = (link: string, domain: string = INSTAGRAM_DOMAINS[0]) =>
+  link.replace(/(?:www\.)?instagram\.com/g, domain);
 
 const checkLink = (link: string, platform: string) => {
   const isMatch = link.includes(platform);

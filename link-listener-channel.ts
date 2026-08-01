@@ -12,7 +12,10 @@ import { logger } from "./helpers/logger";
 const DOMAIN_REPLACEMENTS: { platform: TogglePlatformKey; from: string; to: string }[] = [
   { platform: "twitter", from: "twitter.com/", to: "fxtwitter.com/" },
   { platform: "twitter", from: "x.com/", to: "fxtwitter.com/" },
-  { platform: "instagram", from: "instagram.com/", to: "zzinstagram.com/" },
+  // The www. entry must come first: a bare instagram.com/ swap would leave
+  // www.adobe.lol, which is a separate host from the apex.
+  { platform: "instagram", from: "www.instagram.com/", to: "adobe.lol/" },
+  { platform: "instagram", from: "instagram.com/", to: "adobe.lol/" },
   { platform: "tiktok", from: "vt.tiktok.com/", to: "vm.tfxktok.com/" },
   { platform: "tiktok", from: "lite.tiktok.com/", to: "tiktokez.com/" },
   { platform: "tiktok", from: "tiktok.com/", to: "tfxktok.com/" },

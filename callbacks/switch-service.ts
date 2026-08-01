@@ -73,7 +73,7 @@ export async function handleSwitchService(ctx: Context) {
             .replace(/lite\.tiktok\.com/g, nextDomain)
             .replace(/tiktok\.com/g, nextDomain);
         } else if ((platform === "instagram" || platform === "instagram-share") && baseDomainMatch) {
-          newText = messageText.replace(/instagram\.com/g, nextDomain);
+          newText = messageText.replace(/(?:www\.)?instagram\.com/g, nextDomain);
         } else if (platform === "facebook" && baseDomainMatch) {
           newText = messageText.replace(/facebook\.com/g, nextDomain);
         }
