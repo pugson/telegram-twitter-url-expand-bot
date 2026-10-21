@@ -1,10 +1,9 @@
 export const INSTAGRAM_DOMAINS = [
+  "ins.so",
   "adobe.lol",
   "zzinstagram.com",
   "vxinstagram.com",
   "eeinstagram.com",
-  "kkclip.com",
-  "xnstagram.com",
 ];
 export const TIKTOK_DOMAINS = ["tnktok.com", "tfxktok.com", "kktiktok.com", "tiktxk.com", "tiktokez.com"];
 export const TWITTER_DOMAINS = ["fxtwitter.com", "vxtwitter.com", "fixupx.com", "fixvx.com", "twitterez.com"];
