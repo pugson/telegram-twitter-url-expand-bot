@@ -32,6 +32,7 @@ export const getMemberCount = async (chatId: number) => {
     }
   } catch (error) {
     logger.error("Could not get member count: {error}", { error });
-    return;
+    // Allow another try on the next click instead of waiting a day
+    lastRefreshedAt.delete(chatId);
   }
 };

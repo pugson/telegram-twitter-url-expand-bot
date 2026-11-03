@@ -13,10 +13,20 @@ import { handleSwitchService } from "./switch-service";
 import { isBanned } from "../helpers/banned";
 import { logger } from "../helpers/logger";
 
-// Multiple bot.on("callback_query") functions cannot run in parallel.
-// The bot will only register the first one and ignore the rest.
-// This file runs the bot.on("callback_query") listener and imports functions
-// that are specific to the callback_query data to keep it more clean.
+// Button callback data starts with the name of the feature it belongs to,
+// e.g. "expand:yes:..." or "lock:on", which picks the handler.
+const handlers = new Map<string, (ctx: Context) => Promise<unknown>>([
+  ["expand", handleManualExpand],
+  ["destruct", handleExpandedLinkDestruction],
+  ["undo", handleUndo],
+  ["switch", handleSwitchService],
+  ["autoexpand", handleAutoexpandSettings],
+  ["platforms", handlePlatformsSettings],
+  ["lock", handleLockSettings],
+  ["changelog", handleChangelogSettings],
+  ["permissions", handlePermissionsSettings],
+]);
+
 bot.on("callback_query", async (ctx: Context) => {
   const chatId = ctx.update?.callback_query?.message?.chat.id;
   const data = ctx.update?.callback_query?.data;
@@ -36,16 +46,7 @@ bot.on("callback_query", async (ctx: Context) => {
   });
 
   try {
-    // Handle expand callbacks
-    await handleManualExpand(ctx);
-    await handleExpandedLinkDestruction(ctx);
-    await handleUndo(ctx);
-    await handleSwitchService(ctx);
-    await handleAutoexpandSettings(ctx);
-    await handlePlatformsSettings(ctx);
-    await handleLockSettings(ctx);
-    await handleChangelogSettings(ctx);
-    await handlePermissionsSettings(ctx);
+    await handlers.get(data.split(":")[0])?.(ctx);
   } finally {
     if (!answered) {
       await ctx.answerCallbackQuery().catch(() => {

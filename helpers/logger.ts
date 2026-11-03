@@ -1,6 +1,15 @@
 import { configure, getConsoleSink, getLogger, getTextFormatter, isLogLevel } from "@logtape/logtape";
 
 /**
+ * Hide the bot token in text that leaves the process. Network errors from
+ * grammY quote the request URL, which is api.telegram.org/bot<token>/...
+ */
+export function redactToken(text: string): string {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  return token ? text.replaceAll(token, "<redacted>") : text;
+}
+
+/**
  * Log errors as their stack trace instead of inspecting the whole object.
  * Axios and grammY errors carry request configs, headers and message payloads,
  * which are huge and can contain secrets or user content.
@@ -15,14 +24,15 @@ function formatError(error: Error): string {
 }
 
 export async function setupLogger() {
-  const level = process.env.LOG_LEVEL;
+  // LogTape calls this level "warning", so accept the common "warn" spelling too
+  const level = process.env.LOG_LEVEL === "warn" ? "warning" : process.env.LOG_LEVEL;
 
   await configure({
     sinks: {
       console: getConsoleSink({
         formatter: getTextFormatter({
           timestamp: "time",
-          value: (value, inspect) => (value instanceof Error ? formatError(value) : inspect(value)),
+          value: (value, inspect) => redactToken(value instanceof Error ? formatError(value) : inspect(value)),
         }),
       }),
     },

@@ -31,9 +31,6 @@ bot.on("message::url", async (ctx: Context) => {
   const entities = ctx.entities(); // all links in message
   const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
 
-  // Most messages only have unsupported links, so skip them before touching Redis
-  if (!entities.some((entity) => LINK_REGEX.test(entity.text))) return;
-
   // Get autoexpand settings for this chat
   let settings: ChatSettings | null = null;
   let autoexpand: boolean;
@@ -56,16 +53,17 @@ bot.on("message::url", async (ctx: Context) => {
     autoexpand = false;
   }
 
-  // Loop through all links in message
-  entities.forEach(async (entity, index) => {
+  // Loop through all links in message. Awaited one by one so replies keep
+  // the order of the links, and the next message in this chat waits for them.
+  for (const [index, entity] of entities.entries()) {
     const url = entity.text;
     const matchingLink = LINK_REGEX.test(url);
 
     // Ignore if not a link from supported sites
-    if (!matchingLink) return;
+    if (!matchingLink) continue;
 
     // Ignore links from platforms disabled with /platforms in this chat
-    if (settings?.disabled_platforms?.includes(getTogglePlatformKey(url))) return;
+    if (settings?.disabled_platforms?.includes(getTogglePlatformKey(url))) continue;
 
     const messageWithNoLinks = entities.reduce((msg, e) => {
       if (e.type === "url" && e.text === url) {
@@ -90,5 +88,5 @@ bot.on("message::url", async (ctx: Context) => {
       await saveToCache(identifier, ctx);
       await askToExpand(ctx, identifier, url, isDeletable);
     }
-  });
+  }
 });

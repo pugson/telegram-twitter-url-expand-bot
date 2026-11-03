@@ -1,5 +1,5 @@
 import axios from "axios";
-import { logger } from "./logger";
+import { logger, redactToken } from "./logger";
 
 /**
  * Notify the admin on Telegram when an error occurs.
@@ -11,7 +11,7 @@ export const notifyAdmin = async (message: any): Promise<void> => {
       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
         chat_id: process.env.ADMIN_TELEGRAM_ID,
-        text: JSON.stringify(message),
+        text: redactToken(JSON.stringify(message)),
       },
       { timeout: 10_000 }
     );

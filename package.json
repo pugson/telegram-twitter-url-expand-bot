@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node --max-old-space-size=192 dist/index.js",
+    "start": "node --max-old-space-size=512 dist/index.js",
     "dev": "DEV=true tsx watch index.ts",
     "dev:debug": "DEV=true DEBUG=\"grammy*\" yarn dev"
   },

@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
-import { peekFromCache } from "../helpers/cache";
+import { isRecentlyExpanded } from "../helpers/cache";
 import {
   INSTAGRAM_DOMAINS,
   TIKTOK_DOMAINS,
@@ -9,6 +9,7 @@ import {
   rewriteInstagramDomain,
 } from "../helpers/platforms";
 import { logger } from "../helpers/logger";
+import { formattingEntities } from "../helpers/templates";
 
 export async function handleSwitchService(ctx: Context) {
   const answer = ctx.update?.callback_query;
@@ -25,10 +26,7 @@ export async function handleSwitchService(ctx: Context) {
     const clickerId = ctx.from?.id;
 
     try {
-      const identifier = `${chatId}:${messageId}`;
-      const cached = await peekFromCache(identifier);
-
-      if (cached) {
+      if (isRecentlyExpanded(`${chatId}:${messageId}`)) {
         const messageText = answer.message?.text || answer.message?.caption;
         if (!messageText) return;
 
@@ -98,12 +96,12 @@ export async function handleSwitchService(ctx: Context) {
         if (answer.message?.caption) {
           await ctx.api.editMessageCaption(chatId, messageId, {
             caption: newText,
-            parse_mode: "HTML",
+            caption_entities: formattingEntities(answer.message?.caption_entities),
             reply_markup: answer.message?.reply_markup,
           });
         } else {
           await ctx.api.editMessageText(chatId, messageId, newText, {
-            parse_mode: "HTML",
+            entities: formattingEntities(answer.message?.entities),
             reply_markup: answer.message?.reply_markup,
           });
         }

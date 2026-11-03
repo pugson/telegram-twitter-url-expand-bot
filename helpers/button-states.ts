@@ -59,7 +59,7 @@ export function getButtonState(
       ? [
           {
             text: "↩️ Undo",
-            callback_data: "undo",
+            callback_data: `undo:${userId}`,
           },
         ]
       : []),

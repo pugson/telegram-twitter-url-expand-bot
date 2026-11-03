@@ -59,15 +59,6 @@ export async function getFromCache(key: string) {
 }
 
 /**
- * Read message from in-memory cache without removing it.
- * @param key Unique identifier for the message (chatId:messageId:linkIndex)
- * @returns Telegram Context
- */
-export async function peekFromCache(key: string) {
-  return read(key);
-}
-
-/**
  * Delete message from in-memory cache immediately.
  * @param key Unique identifier for the message (chatId:messageId:linkIndex)
  */
@@ -82,4 +73,32 @@ export async function deleteFromCache(key: string) {
  */
 export async function checkIfCached(key: string) {
   return read(key) !== undefined;
+}
+
+// Bot replies with expanded links keep their Undo and "Embed not working?"
+// buttons for 60 seconds. Only the message key is kept, separate from the
+// cache above, so a burst of expansions can't push out unanswered prompts.
+const EXPANDED_TTL_MS = 60 * 1000;
+const expandedUntil = new Map<string, number>();
+
+/**
+ * Start the 60 second window for the buttons on an expanded link reply.
+ * @param key Bot reply identifier (chatId:messageId)
+ */
+export function markExpanded(key: string) {
+  const now = Date.now();
+  // Every entry gets the same TTL, so expired entries are always at the front
+  for (const [oldKey, expiresAt] of expandedUntil) {
+    if (expiresAt > now) break;
+    expandedUntil.delete(oldKey);
+  }
+  expandedUntil.set(key, now + EXPANDED_TTL_MS);
+}
+
+/**
+ * Check if the buttons on an expanded link reply still work.
+ * @param key Bot reply identifier (chatId:messageId)
+ */
+export function isRecentlyExpanded(key: string) {
+  return (expandedUntil.get(key) ?? 0) > Date.now();
 }
