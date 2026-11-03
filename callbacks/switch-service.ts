@@ -118,7 +118,9 @@ export async function handleSwitchService(ctx: Context) {
       }
     } catch (error) {
       logger.error("Error switching service: {error}", { error });
-      await ctx.answerCallbackQuery({ text: "Error switching service." });
+      await ctx.answerCallbackQuery({ text: "Error switching service." }).catch(() => {
+        logger.error("Cannot answer switch service error callback query");
+      });
     }
   }
 }

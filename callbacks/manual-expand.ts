@@ -107,13 +107,13 @@ export async function handleManualExpand(ctx: Context) {
         };
 
         showBotActivity(ctx, chatId);
-        await expandLink(ctx, url, messageWithNoLinks, userInfo, "manual", replyId);
+        const sent = await expandLink(ctx, url, messageWithNoLinks, userInfo, "manual", replyId);
         deleteMessage(chatId, messageId); // bot’s [yes][no] message
         deleteFromCache(identifier);
 
         // When multiple links are in the message the bot will send a reply for each link.
         // Delete the original message only if it's the last link in the message.
-        if (!hasPrevLink && !hasNextLink) {
+        if (sent && !hasPrevLink && !hasNextLink) {
           if (isDeletable) await deleteMessage(originalChatId, Number(originalMessageId), ctx);
         }
       }

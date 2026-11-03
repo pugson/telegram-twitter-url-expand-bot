@@ -2,11 +2,22 @@ import { bot } from "..";
 import { updateSettings } from "../helpers/api";
 import { logger } from "../helpers/logger";
 
+// Chat size only feeds anonymous analytics, so refresh it at most once a day per chat
+// instead of on every button click.
+const REFRESH_INTERVAL_MS = 24 * 60 * 60 * 1000;
+const MAX_TRACKED_CHATS = 10_000;
+const lastRefreshedAt = new Map<number, number>();
+
 /**
  * Save group chat size to database for anonymous analytics.
  * @param chatId Telegram Chat ID
  */
 export const getMemberCount = async (chatId: number) => {
+  const now = Date.now();
+  if (now - (lastRefreshedAt.get(chatId) ?? 0) < REFRESH_INTERVAL_MS) return;
+  if (lastRefreshedAt.size >= MAX_TRACKED_CHATS) lastRefreshedAt.clear();
+  lastRefreshedAt.set(chatId, now);
+
   try {
     const count = await bot.api.getChatMemberCount(chatId);
     // Set count as 0 if there are 2 or less members in the chat

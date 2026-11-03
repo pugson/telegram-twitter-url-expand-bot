@@ -94,6 +94,8 @@ export function getButtonState(
 
   return {
     buttons: rows,
-    nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : 0,
+    // Countdown 15 → 10 → 5 → 0, then stop. Re-sending the 0 state would
+    // be an identical edit that Telegram rejects as "message is not modified".
+    nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : timeRemaining === 5 ? 0 : null,
   };
 }

@@ -1,34 +1,23 @@
 import { Context } from "grammy";
-import NodeCache from "node-cache";
-import { logger } from "./logger";
 
-const memoryCache = new NodeCache({
-  // Store message Context in memory for a longer duration
-  // if necessary, otherwise the button to expand links
-  // will not work if the message has expired from cache.
-  stdTTL: 60 * 60 * 8, // 8 hours
-  // Most of the time, the message will be cached only
-  // for a few seconds while the bot is processing it,
-  // or when the user is in the process of clicking
-  // the button that expands links in the message.
-  checkperiod: 300, // Check for expired keys every 5 minutes
-  maxKeys: 1000, // Max 1000 items in cache
-  deleteOnExpire: true,
-});
+// Store message Context in memory for a longer duration
+// if necessary, otherwise the button to expand links
+// will not work if the message has expired from cache.
+const TTL_MS = 60 * 60 * 8 * 1000; // 8 hours
+// When full, the oldest entry is evicted so new messages can always be cached.
+const MAX_ENTRIES = 1000;
 
-// Add cache stats logging every hour
-setInterval(() => {
-  const stats = memoryCache.getStats();
-  logger.debug("Cache stats: {stats}", {
-    stats: {
-      keys: stats.keys,
-      hits: stats.hits,
-      misses: stats.misses,
-      ksize: stats.ksize,
-      vsize: stats.vsize,
-    },
-  });
-}, 60 * 60 * 1000);
+const memoryCache = new Map<string, { value: Context; expiresAt: number }>();
+
+function read(key: string) {
+  const entry = memoryCache.get(key);
+  if (!entry) return undefined;
+  if (entry.expiresAt <= Date.now()) {
+    memoryCache.delete(key);
+    return undefined;
+  }
+  return entry.value;
+}
 
 /**
  * Cache messages in memory to be able to process them later.
@@ -52,7 +41,10 @@ setInterval(() => {
  * @param value Telegram Context
  */
 export async function saveToCache(key: string, value: Context) {
-  return memoryCache.set(key, value);
+  memoryCache.set(key, { value, expiresAt: Date.now() + TTL_MS });
+  if (memoryCache.size > MAX_ENTRIES) {
+    memoryCache.delete(memoryCache.keys().next().value!);
+  }
 }
 
 /**
@@ -61,7 +53,9 @@ export async function saveToCache(key: string, value: Context) {
  * @returns Telegram Context
  */
 export async function getFromCache(key: string) {
-  return memoryCache.take(key);
+  const value = read(key);
+  memoryCache.delete(key);
+  return value;
 }
 
 /**
@@ -70,7 +64,7 @@ export async function getFromCache(key: string) {
  * @returns Telegram Context
  */
 export async function peekFromCache(key: string) {
-  return memoryCache.get(key);
+  return read(key);
 }
 
 /**
@@ -78,7 +72,7 @@ export async function peekFromCache(key: string) {
  * @param key Unique identifier for the message (chatId:messageId:linkIndex)
  */
 export async function deleteFromCache(key: string) {
-  return memoryCache.del(key);
+  memoryCache.delete(key);
 }
 
 /**
@@ -87,5 +81,5 @@ export async function deleteFromCache(key: string) {
  * @returns boolean
  */
 export async function checkIfCached(key: string) {
-  return memoryCache.has(key);
+  return read(key) !== undefined;
 }

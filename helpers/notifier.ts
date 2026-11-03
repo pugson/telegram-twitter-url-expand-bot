@@ -7,10 +7,14 @@ import { logger } from "./logger";
  *  */
 export const notifyAdmin = async (message: any): Promise<void> => {
   try {
-    await axios.post(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      chat_id: process.env.ADMIN_TELEGRAM_ID,
-      text: JSON.stringify(message),
-    });
+    await axios.post(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        chat_id: process.env.ADMIN_TELEGRAM_ID,
+        text: JSON.stringify(message),
+      },
+      { timeout: 10_000 }
+    );
   } catch (error) {
     logger.error("Could not send admin Telegram notification: {error}", { error });
   }

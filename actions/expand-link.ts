@@ -81,6 +81,11 @@ function handleExpandedLinkDomain(link: string): string {
   }
 }
 
+/**
+ * Reply with the expanded link.
+ * @returns Whether the reply was sent. Callers only delete messages
+ * after a successful reply, so nothing is lost when expanding fails.
+ */
 export async function expandLink(
   ctx: Context,
   link: string,
@@ -88,8 +93,8 @@ export async function expandLink(
   userInfo: UserInfoType,
   expansionType: "auto" | "manual",
   replyId?: number
-) {
-  if (!ctx || !ctx.chat?.id) return;
+): Promise<boolean> {
+  if (!ctx || !ctx.chat?.id) return false;
   // Return correct link based on platform
   const expandedLink = handleExpandedLinkDomain(link);
   let linkWithNoTrackers = expandedLink;
@@ -506,26 +511,13 @@ export async function expandLink(
       }
     }
 
-    try {
-      // Delete the original message only after we've successfully sent our reply
-      if (ctx.msg?.message_id && botReply) {
-        await ctx.api.deleteMessage(chatId, ctx.msg.message_id);
-      }
-
-      // Add message to cache for undo functionality
-      if (botReply) {
-        const identifier = `${chatId}:${botReply.message_id}`;
-        await saveToCache(identifier, ctx);
-      }
-    } catch (error) {
-      logger.error("Could not delete original message or add to cache: {error}", { error });
-    }
-
     if (topicId) {
       trackEvent(`expand.${expansionType}.inside-topic`);
     }
+
+    return Boolean(botReply);
   } catch (error) {
     logger.error("Could not reply with an expanded link: {error}", { error });
-    return;
+    return false;
   }
 }

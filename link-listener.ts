@@ -31,6 +31,9 @@ bot.on("message::url", async (ctx: Context) => {
   const entities = ctx.entities(); // all links in message
   const message = ctx.msg?.text ?? ctx.msg?.caption ?? ""; // text or caption
 
+  // Most messages only have unsupported links, so skip them before touching Redis
+  if (!entities.some((entity) => LINK_REGEX.test(entity.text))) return;
+
   // Get autoexpand settings for this chat
   let settings: ChatSettings | null = null;
   let autoexpand: boolean;
@@ -77,9 +80,9 @@ bot.on("message::url", async (ctx: Context) => {
 
     if (autoexpand) {
       // Expand link automatically with provided context
-      await expandLink(ctx, url, messageWithNoLinks, userInfo, "auto");
-      // Delete message if it’s not a caption
-      if (isDeletable) deleteMessage(chatId, msgId, ctx);
+      const sent = await expandLink(ctx, url, messageWithNoLinks, userInfo, "auto");
+      // Delete message if it’s not a caption of media
+      if (sent && isDeletable) deleteMessage(chatId, msgId, ctx);
 
       // Track autoexpand event and platform
       trackEvent(`expand.auto.${getPlatformKey(url)}`);

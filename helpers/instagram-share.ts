@@ -20,7 +20,8 @@ export async function resolveInstagramShare(shareUrl: string): Promise<string | 
     const normalizedShareUrl = shareUrl.replace(/\/?$/, '/');
 
     const response = await axios.get<MetadataResponse>(
-      `https://og.metadata.vision/${encodeURIComponent(normalizedShareUrl)}`
+      `https://og.metadata.vision/${encodeURIComponent(normalizedShareUrl)}`,
+      { timeout: 10_000 }
     );
 
     if (response.data?.data?.url) {

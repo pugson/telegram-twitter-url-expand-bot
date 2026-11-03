@@ -13,6 +13,7 @@ async function createEvent(event: string, timestamp: string, note?: string) {
       headers: {
         Authorization: `Bearer ${process.env.ANALYTICS_KEY}`,
       },
+      timeout: 10_000,
     }
   );
 }

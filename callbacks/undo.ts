@@ -141,9 +141,4 @@ export async function handleUndo(ctx: Context) {
       logger.error("Cannot process undo: {error}", { error });
     }
   }
-
-  // Answer the callback query to remove the loading state
-  await ctx.answerCallbackQuery().catch(() => {
-    logger.error("Cannot answer undo callback query");
-  });
 }

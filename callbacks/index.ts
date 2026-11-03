@@ -24,16 +24,35 @@ bot.on("callback_query", async (ctx: Context) => {
   if (!chatId || !data) return;
   if (isBanned(chatId)) return;
 
-  // Handle expand callbacks
-  await handleManualExpand(ctx);
-  await handleExpandedLinkDestruction(ctx);
-  await handleUndo(ctx);
-  await handleSwitchService(ctx);
-  await handleAutoexpandSettings(ctx);
-  await handlePlatformsSettings(ctx);
-  await handleLockSettings(ctx);
-  await handleChangelogSettings(ctx);
-  await handlePermissionsSettings(ctx);
+  // Telegram accepts one answer per callback query, and the button keeps
+  // spinning until it gets one. Handlers answer when they have something to
+  // show; anything left unanswered (e.g. locked settings, stale buttons)
+  // gets an empty answer at the end. ctx.api is per-update, so this
+  // transformer only sees calls made for this callback.
+  let answered = false;
+  ctx.api.config.use((prev, method, payload, signal) => {
+    if (method === "answerCallbackQuery") answered = true;
+    return prev(method, payload, signal);
+  });
+
+  try {
+    // Handle expand callbacks
+    await handleManualExpand(ctx);
+    await handleExpandedLinkDestruction(ctx);
+    await handleUndo(ctx);
+    await handleSwitchService(ctx);
+    await handleAutoexpandSettings(ctx);
+    await handlePlatformsSettings(ctx);
+    await handleLockSettings(ctx);
+    await handleChangelogSettings(ctx);
+    await handlePermissionsSettings(ctx);
+  } finally {
+    if (!answered) {
+      await ctx.answerCallbackQuery().catch(() => {
+        logger.warn("Cannot answer callback query");
+      });
+    }
+  }
 
   // Save anonymous chat member count to database
   getMemberCount(chatId).catch(() => {
