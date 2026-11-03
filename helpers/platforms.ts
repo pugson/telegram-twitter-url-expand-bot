@@ -48,7 +48,6 @@ export const isHackerNews = (link: string) => checkLink(link, "news.ycombinator.
 export const isDribbble = (link: string) => checkLink(link, "dribbble.com") || checkLink(link, "dribbbletv.com");
 export const isBluesky = (link: string) => checkLink(link, "bsky.app") || checkLink(link, "fxbsky.app");
 export const isReddit = (link: string) => checkLink(link, "reddit.com") || checkLink(link, "rxddit.com");
-export const isSpotify = (link: string) => checkLink(link, "open.spotify.com");
 export const isThreads = (link: string) =>
   checkLink(link, "threads.com") || checkLink(link, "threads.net") || checkLink(link, "threadsez.com");
 export const isYouTubeShort = (link: string) =>
@@ -60,20 +59,11 @@ const FACEBOOK_REGEX =
 
 export const isFacebook = (link: string) => FACEBOOK_REGEX.test(link) || checkDomains(link, FACEBOOK_DOMAINS);
 
-// Spotify helpers
-export const isSpotifyTrack = (link: string) => checkLink(link, "open.spotify.com/track");
-export const isSpotifyAlbum = (link: string) => checkLink(link, "open.spotify.com/album");
-export const isSpotifyPlaylist = (link: string) => checkLink(link, "open.spotify.com/playlist");
-export const isSpotifyArtist = (link: string) => checkLink(link, "open.spotify.com/artist");
-export const isSpotifyEpisode = (link: string) => checkLink(link, "open.spotify.com/episode");
-export const isSpotifyShow = (link: string) => checkLink(link, "open.spotify.com/show");
-
 const ALL_PLATFORMS = [
   "Twitter",
   "Instagram",
   "TikTok",
   "Reddit",
-  "Spotify",
   "Hacker News",
   "Dribbble",
   "Bluesky",
@@ -93,15 +83,13 @@ export type PlatformKey =
   | "dribbble"
   | "bluesky"
   | "reddit"
-  | "spotify"
   | "threads"
   | "youtube"
   | "facebook";
 
 // Platforms that admins can enable/disable per chat with /platforms.
-// instagram-share is folded into instagram, and spotify is excluded
-// because Spotify links are not matched by LINK_REGEX in chats.
-export type TogglePlatformKey = Exclude<PlatformKey, "instagram-share" | "spotify">;
+// instagram-share is folded into instagram.
+export type TogglePlatformKey = Exclude<PlatformKey, "instagram-share">;
 
 export const TOGGLEABLE_PLATFORMS: { key: TogglePlatformKey; label: string }[] = [
   { key: "twitter", label: "Twitter / X" },
@@ -129,7 +117,6 @@ export const getPlatformKey = (link: string): PlatformKey => {
   if (isDribbble(link)) return "dribbble";
   if (isBluesky(link)) return "bluesky";
   if (isReddit(link)) return "reddit";
-  if (isSpotify(link)) return "spotify";
   if (isThreads(link)) return "threads";
   if (isYouTubeShort(link)) return "youtube";
   if (isFacebook(link)) return "facebook";
@@ -138,11 +125,8 @@ export const getPlatformKey = (link: string): PlatformKey => {
 
 /**
  * Map a link to the platform key used by the /platforms toggles.
- * Returns null for platforms that cannot be disabled.
  */
-export const getTogglePlatformKey = (link: string): TogglePlatformKey | null => {
+export const getTogglePlatformKey = (link: string): TogglePlatformKey => {
   const key = getPlatformKey(link);
-  if (key === "instagram-share") return "instagram";
-  if (key === "spotify") return null;
-  return key;
+  return key === "instagram-share" ? "instagram" : key;
 };

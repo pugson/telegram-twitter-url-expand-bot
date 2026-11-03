@@ -65,8 +65,7 @@ bot.on("message::url", async (ctx: Context) => {
     if (!matchingLink) return;
 
     // Ignore links from platforms disabled with /platforms in this chat
-    const togglePlatform = getTogglePlatformKey(url);
-    if (togglePlatform && settings?.disabled_platforms?.includes(togglePlatform)) return;
+    if (settings?.disabled_platforms?.includes(getTogglePlatformKey(url))) return;
 
     const messageWithNoLinks = entities.reduce((msg, e) => {
       if (e.type === "url" && e.text === url) {

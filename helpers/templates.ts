@@ -9,13 +9,6 @@ import {
   isHackerNews,
   isInstagram,
   isReddit,
-  isSpotify,
-  isSpotifyTrack,
-  isSpotifyAlbum,
-  isSpotifyPlaylist,
-  isSpotifyArtist,
-  isSpotifyEpisode,
-  isSpotifyShow,
   isTikTok,
   isThreads,
   isYouTubeShort,
@@ -105,7 +98,6 @@ export const askToExpandTemplate = (link: string) => {
   const dribbble = isDribbble(link);
   const bluesky = isBluesky(link);
   const reddit = isReddit(link);
-  const spotify = isSpotify(link);
   const threads = isThreads(link);
   const ytShort = isYouTubeShort(link);
   const fb = isFacebook(link);
@@ -136,39 +128,6 @@ export const askToExpandTemplate = (link: string) => {
 
   if (fb) {
     return `Expand this Facebook post?`;
-  }
-
-  if (spotify) {
-    const track = isSpotifyTrack(link);
-    const album = isSpotifyAlbum(link);
-    const playlist = isSpotifyPlaylist(link);
-    const artist = isSpotifyArtist(link);
-    const episode = isSpotifyEpisode(link);
-    const show = isSpotifyShow(link);
-
-    if (track) {
-      return `Expand this Spotify track?`;
-    }
-
-    if (album) {
-      return `Expand this Spotify album?`;
-    }
-
-    if (playlist) {
-      return `Expand this Spotify playlist?`;
-    }
-
-    if (artist) {
-      return `Expand this Spotify artist?`;
-    }
-
-    if (episode) {
-      return `Expand this Spotify episode?`;
-    }
-
-    if (show) {
-      return `Expand this Spotify show?`;
-    }
   }
 
   if (threads) {

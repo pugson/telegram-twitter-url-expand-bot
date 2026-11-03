@@ -1,5 +1,5 @@
 import { Context } from "grammy";
-import { getPlatformKey, getTogglePlatformKey } from "../helpers/platforms";
+import { getTogglePlatformKey } from "../helpers/platforms";
 import { isBanned } from "../helpers/banned";
 import { askToExpandTemplate } from "../helpers/templates";
 import { logger } from "../helpers/logger";
@@ -21,7 +21,7 @@ export const askToExpand = async (ctx: Context, identifier: string, link: string
 
   // Use the toggle key (instagram-share folds into instagram) to keep
   // callback_data short — it has a 64 byte limit.
-  const platform = getTogglePlatformKey(link) ?? getPlatformKey(link);
+  const platform = getTogglePlatformKey(link);
 
   try {
     const originalReplyId = ctx.update?.message?.reply_to_message?.message_id;

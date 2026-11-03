@@ -69,27 +69,24 @@ export async function handleManualExpand(ctx: Context) {
       if (contextFromCache) {
         // An expand button can outlive a settings change, so re-check
         // whether this platform was disabled after the button was posted.
-        const togglePlatform = getTogglePlatformKey(url);
-        if (togglePlatform) {
-          let settings: ChatSettings | null = null;
-          try {
-            settings = await getSettings(chatId);
-          } catch (error) {
-            logger.error("Error getting settings for manual expand: {error}", { error });
-            // Degrade gracefully during a Redis outage: the user explicitly
-            // clicked Yes, so expand even though the /platforms disables
-            // can't be checked right now.
-          }
-          if (settings?.disabled_platforms?.includes(togglePlatform)) {
-            await ctx
-              .answerCallbackQuery({ text: "Expanding links from this platform has been disabled in this chat." })
-              .catch(() => {
-                logger.error("Cannot answer disabled platform callback query");
-              });
-            deleteMessage(chatId, messageId); // bot’s [yes][no] message
-            deleteFromCache(identifier);
-            return;
-          }
+        let settings: ChatSettings | null = null;
+        try {
+          settings = await getSettings(chatId);
+        } catch (error) {
+          logger.error("Error getting settings for manual expand: {error}", { error });
+          // Degrade gracefully during a Redis outage: the user explicitly
+          // clicked Yes, so expand even though the /platforms disables
+          // can't be checked right now.
+        }
+        if (settings?.disabled_platforms?.includes(getTogglePlatformKey(url))) {
+          await ctx
+            .answerCallbackQuery({ text: "Expanding links from this platform has been disabled in this chat." })
+            .catch(() => {
+              logger.error("Cannot answer disabled platform callback query");
+            });
+          deleteMessage(chatId, messageId); // bot’s [yes][no] message
+          deleteFromCache(identifier);
+          return;
         }
         const entities = contextFromCache.entities() || contextFromCache.caption_entities();
         const messageWithNoLinks = entities.reduce((msg: string, entity: { type: string; text: any }) => {
