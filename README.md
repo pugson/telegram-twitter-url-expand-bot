@@ -14,7 +14,6 @@ Some Twitter links stopped expanding inside Telegram which made it extremely ann
 - _Hacker News_ using a custom API
 - _Dribbble_ using [dribbbletv.com](https://dribbbletv.com)
 - _Facebook_ using [facebed.com](https://facebed.com)
-- ~_Spotify_ using a custom API~ (disabled for now)
 - _Threads_ using [threadsez.com](https://threadsez.com)
 - _YouTube Shorts_ using [koutube.com](https://koutube.com)
 

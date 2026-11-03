@@ -53,17 +53,17 @@ bot.on("message::url", async (ctx: Context) => {
     autoexpand = false;
   }
 
-  // Loop through all links in message
-  entities.forEach(async (entity, index) => {
+  // Loop through all links in message. Awaited one by one so replies keep
+  // the order of the links, and the next message in this chat waits for them.
+  for (const [index, entity] of entities.entries()) {
     const url = entity.text;
     const matchingLink = LINK_REGEX.test(url);
 
     // Ignore if not a link from supported sites
-    if (!matchingLink) return;
+    if (!matchingLink) continue;
 
     // Ignore links from platforms disabled with /platforms in this chat
-    const togglePlatform = getTogglePlatformKey(url);
-    if (togglePlatform && settings?.disabled_platforms?.includes(togglePlatform)) return;
+    if (settings?.disabled_platforms?.includes(getTogglePlatformKey(url))) continue;
 
     const messageWithNoLinks = entities.reduce((msg, e) => {
       if (e.type === "url" && e.text === url) {
@@ -77,9 +77,9 @@ bot.on("message::url", async (ctx: Context) => {
 
     if (autoexpand) {
       // Expand link automatically with provided context
-      await expandLink(ctx, url, messageWithNoLinks, userInfo, "auto");
-      // Delete message if it’s not a caption
-      if (isDeletable) deleteMessage(chatId, msgId, ctx);
+      const sent = await expandLink(ctx, url, messageWithNoLinks, userInfo, "auto");
+      // Delete message if it’s not a caption of media
+      if (sent && isDeletable) deleteMessage(chatId, msgId, ctx);
 
       // Track autoexpand event and platform
       trackEvent(`expand.auto.${getPlatformKey(url)}`);
@@ -88,5 +88,5 @@ bot.on("message::url", async (ctx: Context) => {
       await saveToCache(identifier, ctx);
       await askToExpand(ctx, identifier, url, isDeletable);
     }
-  });
+  }
 });

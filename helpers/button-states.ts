@@ -1,4 +1,4 @@
-import { InlineKeyboardButton } from "@grammyjs/types";
+import { InlineKeyboardButton } from "grammy/types";
 
 type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads" | "youtube" | "facebook";
 
@@ -13,6 +13,8 @@ type ButtonState = {
  * @param timeRemaining Time remaining in seconds, or null for final state
  * @param userId User ID for analytics
  * @param url URL to open
+ * @param showUndo Whether to show the Undo button
+ * @param showSwitch Whether to show the "Embed not working?" button
  * @returns Button state with buttons and next timeout
  */
 export function getButtonState(
@@ -20,7 +22,8 @@ export function getButtonState(
   timeRemaining: number | null,
   userId: number,
   url: string,
-  showUndo: boolean = true
+  showUndo: boolean = true,
+  showSwitch: boolean = true
 ): ButtonState {
   const platformName =
     platform === "twitter"
@@ -59,7 +62,7 @@ export function getButtonState(
       ? [
           {
             text: "↩️ Undo",
-            callback_data: "undo",
+            callback_data: `undo:${userId}`,
           },
         ]
       : []),
@@ -88,12 +91,14 @@ export function getButtonState(
     rows.push(buttonsWithUndo);
   }
 
-  if (isSupportedPlatform) {
+  if (isSupportedPlatform && showSwitch) {
     rows.push([fixButton]);
   }
 
   return {
     buttons: rows,
-    nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : 0,
+    // Countdown 15 → 10 → 5 → 0, then stop. Re-sending the 0 state would
+    // be an identical edit that Telegram rejects as "message is not modified".
+    nextTimeout: timeRemaining === 15 ? 10 : timeRemaining === 10 ? 5 : timeRemaining === 5 ? 0 : null,
   };
 }

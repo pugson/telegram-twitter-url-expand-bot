@@ -17,5 +17,5 @@ export const errorHandler: ErrorHandler = (err) => {
 
   // Log unexpected errors and notify admin
   logger.error("Unexpected error in bot: {error}", { error: err });
-  notifyAdmin(`Unexpected error in bot: ${err.message}`).catch((e) => logger.error("Failed to notify admin: {error}", { error: e }));
+  notifyAdmin(err).catch((e) => logger.error("Failed to notify admin: {error}", { error: e }));
 };

@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
 import { deleteMessage } from "../actions/delete-message";
-import { checkIfCached, deleteFromCache, getFromCache } from "../helpers/cache";
+import { checkIfCached, deleteFromCache, getFromCache, saveToCache } from "../helpers/cache";
 import { ChatSettings, getSettings } from "../helpers/api";
 import { getTogglePlatformKey } from "../helpers/platforms";
 import { expandLink } from "../actions/expand-link";
@@ -69,27 +69,23 @@ export async function handleManualExpand(ctx: Context) {
       if (contextFromCache) {
         // An expand button can outlive a settings change, so re-check
         // whether this platform was disabled after the button was posted.
-        const togglePlatform = getTogglePlatformKey(url);
-        if (togglePlatform) {
-          let settings: ChatSettings | null = null;
-          try {
-            settings = await getSettings(chatId);
-          } catch (error) {
-            logger.error("Error getting settings for manual expand: {error}", { error });
-            // Degrade gracefully during a Redis outage: the user explicitly
-            // clicked Yes, so expand even though the /platforms disables
-            // can't be checked right now.
-          }
-          if (settings?.disabled_platforms?.includes(togglePlatform)) {
-            await ctx
-              .answerCallbackQuery({ text: "Expanding links from this platform has been disabled in this chat." })
-              .catch(() => {
-                logger.error("Cannot answer disabled platform callback query");
-              });
-            deleteMessage(chatId, messageId); // bot’s [yes][no] message
-            deleteFromCache(identifier);
-            return;
-          }
+        let settings: ChatSettings | null = null;
+        try {
+          settings = await getSettings(chatId);
+        } catch (error) {
+          logger.error("Error getting settings for manual expand: {error}", { error });
+          // Degrade gracefully during a Redis outage: the user explicitly
+          // clicked Yes, so expand even though the /platforms disables
+          // can't be checked right now.
+        }
+        if (settings?.disabled_platforms?.includes(getTogglePlatformKey(url))) {
+          await ctx
+            .answerCallbackQuery({ text: "Expanding links from this platform has been disabled in this chat." })
+            .catch(() => {
+              logger.error("Cannot answer disabled platform callback query");
+            });
+          deleteMessage(chatId, messageId); // bot’s [yes][no] message
+          return;
         }
         const entities = contextFromCache.entities() || contextFromCache.caption_entities();
         const messageWithNoLinks = entities.reduce((msg: string, entity: { type: string; text: any }) => {
@@ -107,15 +103,33 @@ export async function handleManualExpand(ctx: Context) {
         };
 
         showBotActivity(ctx, chatId);
-        await expandLink(ctx, url, messageWithNoLinks, userInfo, "manual", replyId);
+        const sent = await expandLink(ctx, url, messageWithNoLinks, userInfo, "manual", replyId);
+        if (!sent) {
+          // Keep the prompt and put the message back in the cache so Yes can be tried again
+          await saveToCache(identifier, contextFromCache);
+          await ctx
+            .answerCallbackQuery({ text: "Could not expand this link. Please try again.", show_alert: true })
+            .catch(() => {
+              logger.error("Cannot answer failed expand callback query");
+            });
+          return;
+        }
         deleteMessage(chatId, messageId); // bot’s [yes][no] message
-        deleteFromCache(identifier);
 
         // When multiple links are in the message the bot will send a reply for each link.
         // Delete the original message only if it's the last link in the message.
-        if (!hasPrevLink && !hasNextLink) {
-          if (isDeletable) await deleteMessage(originalChatId, Number(originalMessageId), ctx);
+        if (!hasPrevLink && !hasNextLink && isDeletable) {
+          await deleteMessage(originalChatId, Number(originalMessageId), ctx);
         }
+      } else {
+        // The message is gone from the cache: the bot restarted, or the prompt is over 8 hours old
+        await ctx
+          .answerCallbackQuery({ text: "This prompt has expired. Send the link again to expand it.", show_alert: true })
+          .catch(() => {
+            logger.error("Cannot answer expired prompt callback query");
+          });
+        deleteMessage(chatId, messageId); // bot’s [yes][no] message
+        return;
       }
 
       trackEvent(`expand.yes.${platform}`);

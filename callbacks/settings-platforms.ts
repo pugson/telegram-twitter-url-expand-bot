@@ -1,5 +1,5 @@
 import { Context } from "grammy";
-import { InlineKeyboardButton } from "@grammyjs/types";
+import { InlineKeyboardButton } from "grammy/types";
 import { trackEvent } from "../helpers/analytics";
 import { ChatSettings, getSettings, updateSettings } from "../helpers/api";
 import { TOGGLEABLE_PLATFORMS } from "../helpers/platforms";

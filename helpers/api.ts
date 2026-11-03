@@ -1,9 +1,5 @@
-import fetch from "isomorphic-unfetch";
 import { getRedisClient } from "./redis";
 import { logger } from "./logger";
-
-// @ts-ignore
-globalThis.fetch = fetch;
 
 const redis = getRedisClient();
 const ONE_YEAR_IN_SECONDS = 31536000; // 1 year TTL
@@ -49,14 +45,14 @@ const parseRedisHash = (hash: Record<string, string>): ChatSettings | null => {
 export const getSettings = async (chatId: number): Promise<ChatSettings | null> => {
   logger.debug("Getting settings for chat ID: {chatId}", { chatId });
   const key = `chat:${chatId}`;
-  const hash = await redis.hgetall(key);
 
-  // Refresh TTL to 1 year on read
-  if (hash && Object.keys(hash).length > 0) {
-    await redis.expire(key, ONE_YEAR_IN_SECONDS);
-  }
+  // Read and refresh the 1 year TTL in a single round trip.
+  // EXPIRE is a no-op when the key doesn't exist.
+  const results = await redis.pipeline().hgetall(key).expire(key, ONE_YEAR_IN_SECONDS).exec();
+  const [error, hash] = results?.[0] ?? [new Error("Redis pipeline returned no results")];
+  if (error) throw error;
 
-  return parseRedisHash(hash);
+  return parseRedisHash(hash as Record<string, string>);
 };
 
 /**

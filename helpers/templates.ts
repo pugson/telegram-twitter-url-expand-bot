@@ -3,19 +3,13 @@
 //! to display properly in Telegram
 
 import { Context } from "grammy";
+import { MessageEntity } from "grammy/types";
 import {
   isBluesky,
   isDribbble,
   isHackerNews,
   isInstagram,
   isReddit,
-  isSpotify,
-  isSpotifyTrack,
-  isSpotifyAlbum,
-  isSpotifyPlaylist,
-  isSpotifyArtist,
-  isSpotifyEpisode,
-  isSpotifyShow,
   isTikTok,
   isThreads,
   isYouTubeShort,
@@ -105,7 +99,6 @@ export const askToExpandTemplate = (link: string) => {
   const dribbble = isDribbble(link);
   const bluesky = isBluesky(link);
   const reddit = isReddit(link);
-  const spotify = isSpotify(link);
   const threads = isThreads(link);
   const ytShort = isYouTubeShort(link);
   const fb = isFacebook(link);
@@ -138,39 +131,6 @@ export const askToExpandTemplate = (link: string) => {
     return `Expand this Facebook post?`;
   }
 
-  if (spotify) {
-    const track = isSpotifyTrack(link);
-    const album = isSpotifyAlbum(link);
-    const playlist = isSpotifyPlaylist(link);
-    const artist = isSpotifyArtist(link);
-    const episode = isSpotifyEpisode(link);
-    const show = isSpotifyShow(link);
-
-    if (track) {
-      return `Expand this Spotify track?`;
-    }
-
-    if (album) {
-      return `Expand this Spotify album?`;
-    }
-
-    if (playlist) {
-      return `Expand this Spotify playlist?`;
-    }
-
-    if (artist) {
-      return `Expand this Spotify artist?`;
-    }
-
-    if (episode) {
-      return `Expand this Spotify episode?`;
-    }
-
-    if (show) {
-      return `Expand this Spotify show?`;
-    }
-  }
-
   if (threads) {
     return `Expand this Threads post?`;
   }
@@ -197,10 +157,12 @@ export const expandedMessageTemplate = async (
 ): Promise<string> => {
   // TODO: this function is a clusterfuck of ugly template literals. refactor in the future.
   const bothNames = firstName && lastName;
-  const nameTemplate = bothNames ? `${firstName} ${lastName}` : firstName ?? lastName;
+  const nameTemplate = escapeHtml(bothNames ? `${firstName} ${lastName}` : firstName ?? lastName);
   const usernameOrFullNameTag = username ? `@${username}` : `<a href="tg://user?id=${userId}">${nameTemplate}</a>`;
   const isHackerNewsLink = link ? isHackerNews(link) : false;
-  let includedLink = link;
+  // Names and the message text are plain text, so escape them for parse_mode HTML
+  const escapedText = escapeHtml(text);
+  let includedLink = escapeHtml(link);
 
   // Replace message template with HN metadata inline
   // This is ugly as hell but it works.
@@ -237,27 +199,27 @@ ${url ? escapeHtmlSafe(url) : ""}`;
     const forwardFirstName = msg.forward_from.first_name;
     const forwardLastName = msg.forward_from.last_name;
     const bothNames = forwardFirstName && forwardLastName;
-    const nameTemplate = bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName;
+    const nameTemplate = escapeHtml(bothNames ? `${forwardFirstName} ${forwardLastName}` : forwardFirstName ?? forwardLastName);
 
     // Link to the original author by username if they have one.
     if (forwardUsername) {
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
-${text}
+${escapedText}
 
 ${includedLink}`;
     }
 
     // Link to the original author by ID if they don’t have a username.
     return `<u>Forwarded from <a href="tg://user?id=${forwardUserId}">${nameTemplate}</a> by ${usernameOrFullNameTag}</u> 
-${text}
+${escapedText}
 
 ${includedLink}`;
   }
 
   // Check if the original author of the message has a private profile.
   if (msg?.forward_sender_name) {
-    return `<u>Forwarded from <i>${msg.forward_sender_name}</i> by ${usernameOrFullNameTag}</u>   
-${text}
+    return `<u>Forwarded from <i>${escapeHtml(msg.forward_sender_name)}</i> by ${usernameOrFullNameTag}</u>   
+${escapedText}
 
 ${includedLink}`;
   }
@@ -270,23 +232,36 @@ ${includedLink}`;
     // Link to the original channel by username if they have one.
     if (forwardUsername) {
       return `<u>Forwarded from @${forwardUsername} by ${usernameOrFullNameTag}</u>
-${text}
+${escapedText}
 
 ${includedLink}`;
     }
 
     // Make the channel name italic if they don’t have a username.
-    return `<u>Forwarded from <i>${forwardName}</i> by ${usernameOrFullNameTag}</u>
-${text}
+    return `<u>Forwarded from <i>${escapeHtml(forwardName)}</i> by ${usernameOrFullNameTag}</u>
+${escapedText}
 
 ${includedLink}`;
   }
 
   // If the message was not forwarded, handle it normally.
-  return `${usernameOrFullNameTag} 💬 ${text}
+  return `${usernameOrFullNameTag} 💬 ${escapedText}
 
 ${includedLink}`;
 };
+
+// Telegram finds these in the text by itself. Copied back after a domain in
+// the text was replaced, they would point at the wrong characters.
+const AUTO_DETECTED_ENTITIES = new Set(["mention", "hashtag", "cashtag", "bot_command", "url", "email", "phone_number"]);
+
+/**
+ * Formatting (underline, name links) to keep when editing the text of a
+ * received message. Sending its plain text with parse_mode HTML would drop
+ * the formatting and fail on any "<" in the text.
+ */
+export function formattingEntities(entities: MessageEntity[] = []): MessageEntity[] {
+  return entities.filter((entity) => !AUTO_DETECTED_ENTITIES.has(entity.type));
+}
 
 /**
  * Safely send a reply message, handling the case where the message thread doesn't exist

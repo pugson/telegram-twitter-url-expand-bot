@@ -1,9 +1,9 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
-import { peekFromCache } from "../helpers/cache";
-import { getButtonState } from "../helpers/button-states";
+import { forgetExpanded, isRecentlyExpanded } from "../helpers/cache";
 import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/platforms";
 import { logger } from "../helpers/logger";
+import { formattingEntities } from "../helpers/templates";
 
 /**
  * Handle undo button for expanded links
@@ -22,13 +22,21 @@ export async function handleUndo(ctx: Context) {
     return;
   }
 
-  if (data === "undo") {
-    try {
-      const identifier = `${chatId}:${messageId}`;
+  if (data.startsWith("undo:")) {
+    // undo:authorId — the same author check as the Delete button
+    const authorId = Number(data.split(":")[1]);
+    if (answer.from.id !== authorId) {
+      await ctx.answerCallbackQuery({
+        text: "This link can only be undone by the person who sent it.",
+        show_alert: true,
+      });
+      return;
+    }
 
-      // Check if message is still in cache (within 35 second window)
-      const cached = await peekFromCache(identifier);
-      if (cached) {
+    try {
+      // Ignore clicks on buttons left over from an old reply
+      const replyKey = `${chatId}:${messageId}`;
+      if (isRecentlyExpanded(replyKey)) {
         // Get the message text or caption
         const messageText = answer.message?.text ?? answer.message?.caption;
         if (!messageText) {
@@ -103,16 +111,17 @@ export async function handleUndo(ctx: Context) {
         }
 
         try {
-          // Extract URL from the message text
-          const urlMatch = undoText.match(/(https?:\/\/[^\s]+)/);
-          const url = urlMatch ? urlMatch[1] : "";
+          // Undo and "Embed not working?" no longer apply. Keep the Delete
+          // countdown and Open button; the countdown carries on without them.
+          forgetExpanded(replyKey);
+          const keyboard = (answer.message?.reply_markup?.inline_keyboard ?? [])
+            .map((row) => row.filter((button) => !("callback_data" in button && /^(undo|switch):/.test(button.callback_data))))
+            .filter((row) => row.length > 0);
 
           // Edit the message to show the original URL
           await ctx.api.editMessageText(chatId, messageId, undoText, {
-            parse_mode: "HTML",
-            reply_markup: {
-              inline_keyboard: getButtonState(platform as any, 15, ctx.from?.id || 0, url).buttons,
-            },
+            entities: formattingEntities(answer.message?.entities),
+            reply_markup: { inline_keyboard: keyboard },
           });
         } catch (editError) {
           const error = editError as Error;
@@ -141,9 +150,4 @@ export async function handleUndo(ctx: Context) {
       logger.error("Cannot process undo: {error}", { error });
     }
   }
-
-  // Answer the callback query to remove the loading state
-  await ctx.answerCallbackQuery().catch(() => {
-    logger.error("Cannot answer undo callback query");
-  });
 }
