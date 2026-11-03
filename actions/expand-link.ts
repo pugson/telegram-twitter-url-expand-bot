@@ -18,7 +18,7 @@ import {
   rewriteInstagramDomain,
 } from "../helpers/platforms";
 import { trackEvent } from "../helpers/analytics";
-import { markExpanded } from "../helpers/cache";
+import { isRecentlyExpanded, markExpanded } from "../helpers/cache";
 import { getButtonState } from "../helpers/button-states";
 import { resolveInstagramShare } from "../helpers/instagram-share";
 import { logger } from "../helpers/logger";
@@ -201,10 +201,13 @@ export async function expandLink(
     // For supported platforms, count down the Delete button, remove Undo
     // after 35 seconds and leave only the Open button after 60 seconds
     if (platform) {
-      markExpanded(`${chatId}:${botReply.message_id}`);
+      const replyKey = `${chatId}:${botReply.message_id}`;
+      markExpanded(replyKey);
       const timeouts: NodeJS.Timeout[] = [];
       const showButtons = (timeRemaining: number | null, showUndo = true) => {
-        const state = getButtonState(platform, timeRemaining, authorId, originalLink, showUndo);
+        // After Undo the countdown goes on without Undo and "Embed not working?"
+        const active = isRecentlyExpanded(replyKey);
+        const state = getButtonState(platform, timeRemaining, authorId, originalLink, showUndo && active, active);
         return ctx.api
           .editMessageReplyMarkup(chatId, botReply.message_id, { reply_markup: { inline_keyboard: state.buttons } })
           .then(() => state.nextTimeout);

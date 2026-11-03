@@ -121,6 +121,15 @@ export async function handleManualExpand(ctx: Context) {
         if (!hasPrevLink && !hasNextLink && isDeletable) {
           await deleteMessage(originalChatId, Number(originalMessageId), ctx);
         }
+      } else {
+        // The message is gone from the cache: the bot restarted, or the prompt is over 8 hours old
+        await ctx
+          .answerCallbackQuery({ text: "This prompt has expired. Send the link again to expand it.", show_alert: true })
+          .catch(() => {
+            logger.error("Cannot answer expired prompt callback query");
+          });
+        deleteMessage(chatId, messageId); // bot’s [yes][no] message
+        return;
       }
 
       trackEvent(`expand.yes.${platform}`);

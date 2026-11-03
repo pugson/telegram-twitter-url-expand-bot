@@ -1,7 +1,6 @@
 import { Context } from "grammy";
 import { trackEvent } from "../helpers/analytics";
-import { isRecentlyExpanded } from "../helpers/cache";
-import { getButtonState } from "../helpers/button-states";
+import { forgetExpanded, isRecentlyExpanded } from "../helpers/cache";
 import { INSTAGRAM_DOMAINS, TIKTOK_DOMAINS, TWITTER_DOMAINS, FACEBOOK_DOMAINS } from "../helpers/platforms";
 import { logger } from "../helpers/logger";
 import { formattingEntities } from "../helpers/templates";
@@ -36,7 +35,8 @@ export async function handleUndo(ctx: Context) {
 
     try {
       // Ignore clicks on buttons left over from an old reply
-      if (isRecentlyExpanded(`${chatId}:${messageId}`)) {
+      const replyKey = `${chatId}:${messageId}`;
+      if (isRecentlyExpanded(replyKey)) {
         // Get the message text or caption
         const messageText = answer.message?.text ?? answer.message?.caption;
         if (!messageText) {
@@ -111,16 +111,17 @@ export async function handleUndo(ctx: Context) {
         }
 
         try {
-          // Extract URL from the message text
-          const urlMatch = undoText.match(/(https?:\/\/[^\s]+)/);
-          const url = urlMatch ? urlMatch[1] : "";
+          // Undo and "Embed not working?" no longer apply. Keep the Delete
+          // countdown and Open button; the countdown carries on without them.
+          forgetExpanded(replyKey);
+          const keyboard = (answer.message?.reply_markup?.inline_keyboard ?? [])
+            .map((row) => row.filter((button) => !("callback_data" in button && /^(undo|switch):/.test(button.callback_data))))
+            .filter((row) => row.length > 0);
 
           // Edit the message to show the original URL
           await ctx.api.editMessageText(chatId, messageId, undoText, {
             entities: formattingEntities(answer.message?.entities),
-            reply_markup: {
-              inline_keyboard: getButtonState(platform, 15, authorId, url).buttons,
-            },
+            reply_markup: { inline_keyboard: keyboard },
           });
         } catch (editError) {
           const error = editError as Error;

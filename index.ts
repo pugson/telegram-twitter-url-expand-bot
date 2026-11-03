@@ -10,7 +10,9 @@ if (!process.env.TELEGRAM_BOT_TOKEN) {
   throw new Error("TELEGRAM_BOT_TOKEN env variable is not defined");
 }
 
-export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+// grammY waits up to 500s for Telegram by default, and a stuck call holds up
+// every later update in its chat. 60s stays above the 30s long polling timeout.
+export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { client: { timeoutSeconds: 60 } });
 
 // Catch all errors with middleware
 bot.catch(errorHandler);
@@ -67,10 +69,11 @@ async function main() {
   const runner = run(bot, { runner: { silent: true } });
 
   // Updates fetched from Telegram are already confirmed and won't be sent
-  // again, so finish the ones in progress before exiting.
+  // again, so give the ones in progress up to 10 seconds to finish.
   const stop = async (exitCode: number) => {
     await runner.stop();
-    while (runner.size() > 0) await new Promise((resolve) => setTimeout(resolve, 100));
+    const deadline = Date.now() + 10_000;
+    while (runner.size() > 0 && Date.now() < deadline) await new Promise((resolve) => setTimeout(resolve, 100));
     process.exit(exitCode);
   };
 

@@ -13,6 +13,8 @@ type ButtonState = {
  * @param timeRemaining Time remaining in seconds, or null for final state
  * @param userId User ID for analytics
  * @param url URL to open
+ * @param showUndo Whether to show the Undo button
+ * @param showSwitch Whether to show the "Embed not working?" button
  * @returns Button state with buttons and next timeout
  */
 export function getButtonState(
@@ -20,7 +22,8 @@ export function getButtonState(
   timeRemaining: number | null,
   userId: number,
   url: string,
-  showUndo: boolean = true
+  showUndo: boolean = true,
+  showSwitch: boolean = true
 ): ButtonState {
   const platformName =
     platform === "twitter"
@@ -88,7 +91,7 @@ export function getButtonState(
     rows.push(buttonsWithUndo);
   }
 
-  if (isSupportedPlatform) {
+  if (isSupportedPlatform && showSwitch) {
     rows.push([fixButton]);
   }
 

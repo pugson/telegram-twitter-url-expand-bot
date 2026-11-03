@@ -96,6 +96,14 @@ export function markExpanded(key: string) {
 }
 
 /**
+ * End the window early, e.g. after Undo.
+ * @param key Bot reply identifier (chatId:messageId)
+ */
+export function forgetExpanded(key: string) {
+  expandedUntil.delete(key);
+}
+
+/**
  * Check if the buttons on an expanded link reply still work.
  * @param key Bot reply identifier (chatId:messageId)
  */

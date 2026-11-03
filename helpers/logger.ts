@@ -14,7 +14,7 @@ export function redactToken(text: string): string {
  * Axios and grammY errors carry request configs, headers and message payloads,
  * which are huge and can contain secrets or user content.
  */
-function formatError(error: Error): string {
+export function formatError(error: Error): string {
   let text = error.stack ?? `${error.name}: ${error.message}`;
   // grammY wraps the underlying error in BotError/HttpError's `error` property
   const { error: wrapped, cause } = error as { error?: unknown; cause?: unknown };
@@ -37,6 +37,8 @@ export async function setupLogger() {
       }),
     },
     loggers: [
+      // Only LogTape's own problems, not its startup notice
+      { category: ["logtape", "meta"], lowestLevel: "warning", sinks: ["console"] },
       {
         category: ["bot"],
         lowestLevel: level && isLogLevel(level) ? level : process.env.DEV ? "debug" : "info",
