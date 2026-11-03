@@ -1,4 +1,4 @@
-import { InlineKeyboardButton } from "@grammyjs/types";
+import { InlineKeyboardButton } from "grammy/types";
 
 type Platform = "twitter" | "instagram" | "tiktok" | "reddit" | "instagram-share" | "threads" | "youtube" | "facebook";
 
