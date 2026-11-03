@@ -1,4 +1,5 @@
 import { Bot as TelegramBot } from "grammy";
+import { run, sequentialize } from "@grammyjs/runner";
 import { notifyAdmin } from "./helpers/notifier";
 import { setupLogger, logger } from "./helpers/logger";
 import * as dotenv from "dotenv";
@@ -14,11 +15,16 @@ export const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 // Catch all errors with middleware
 bot.catch(errorHandler);
 
+// Updates are processed concurrently (see run() below), so a slow update in one
+// chat doesn't hold up every other chat. Updates within the same chat still run
+// in order, so settings toggles and expand/undo clicks can't race each other.
+bot.use(sequentialize((ctx) => ctx.chat?.id.toString()));
+
 async function main() {
   await setupLogger();
 
   try {
-    bot.api.setMyCommands([
+    await bot.api.setMyCommands([
       {
         command: "autoexpand",
         description: "Manage link autoexpand settings for this chat.",
@@ -55,10 +61,12 @@ async function main() {
   await import("./commands");
   await import("./callbacks");
 
-  bot.start().catch((error) => {
-    logger.error("Could not start bot: {error}", { error });
-    notifyAdmin(error);
-  });
+  run(bot)
+    .task()
+    ?.catch((error) => {
+      logger.error("Bot stopped polling: {error}", { error });
+      notifyAdmin(error);
+    });
 
   logger.info("Bot started...");
   notifyAdmin(`[ Bot started... ]`);
