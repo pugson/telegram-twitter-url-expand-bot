@@ -25,6 +25,7 @@
     "dev:debug": "DEV=true DEBUG=\"grammy*\" yarn dev"
   },
   "devDependencies": {
+    "railway": "^3.16.0",
     "tsx": "^4.23.15"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
