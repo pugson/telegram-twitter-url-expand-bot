@@ -1,6 +1,6 @@
 export const INSTAGRAM_DOMAINS = [
-  "ins.so",
   "adobe.lol",
+  "ins.so",
   "zzinstagram.com",
   "vxinstagram.com",
   "eeinstagram.com",
